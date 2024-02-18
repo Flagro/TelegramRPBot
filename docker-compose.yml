@@ -1,0 +1,17 @@
+version: "3"
+
+services:
+  bot:
+    restart: always
+    build: .
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:latest
+    restart: always
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
