@@ -2,9 +2,7 @@ import yaml
 from decouple import config
 from pathlib import Path
 
-config_dir = Path(__file__).parent.parent.resolve() / "config"
-
-# config parameters
+# parameters
 TELEGRAM_TOKEN = config("TELEGRAM_TOKEN")
 OPENAI_API_KEY = config("OPENAI_API_KEY")
 OPENAI_API_BASE = None
@@ -16,11 +14,8 @@ IMAGE_SIZE = "512x512"
 N_CHAT_MODES_PER_PAGE = 10
 MONGODB_URI = "mongodb://mongo:27017"
 
-# prices
-chatgpt_price_per_1000_tokens: 0.002
-gpt_price_per_1000_tokens: 0.02
-whisper_price_per_1_min: 0.006
-
+# load config
+config_dir = Path(__file__).parent.parent.resolve() / "config"
 
 # chat_modes
 with open(config_dir / "chat_modes.yml", 'r') as f:
