@@ -29,7 +29,7 @@ from telegram.constants import ParseMode, ChatAction
 
 import config
 import database
-import openai_utils
+import bot.ai.openai_utils as openai_utils
 
 
 # setup
