@@ -1,9 +1,9 @@
-import os
 import logging
-from bot import TelegramRPBot
 import yaml
 from decouple import config
 from pathlib import Path
+
+from bot import TelegramRPBot
 
 
 def main():
@@ -39,7 +39,6 @@ def main():
         ai=ai,
         localizer=localizer,
     )
-
     bot.run()
 
 
