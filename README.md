@@ -17,7 +17,6 @@ Currently this is the work in progress.
 - Flexible tracking of the AI resources usage
 
 ## Bot commands
-- `/retry` – Regenerate last bot answer
 - `/reset` – Reset the dialogue history
 - `/mode [mode]` – Select chat mode from existing ones
 - `/addmode [mode] [description]` - Add new chat mode
