@@ -18,10 +18,14 @@ Currently this is the work in progress.
 
 ## Bot commands
 - `/retry` – Regenerate last bot answer
-- `/reset` – Start new dialog
-- `/mode` – Select chat mode
-- `/balance` – Show balance
-- `/settings` – Show settings
+- `/reset` – Reset the dialogue history
+- `/mode [mode]` – Select chat mode from existing ones
+- `/addmode [mode] [description]` - Add new chat mode
+- `/deletemode [mode]` - delete existing chat mode from this chat
+- `/introduce [your introduction]` - Add fact about yourself
+- `/fact [@tg_handle] [fact]` - add fact about the person within the chat
+- `/clearfacts [@tg_handle]` - delete facts for given person
+- `/usage` – Show usage limits for your user
 - `/help` – Show help
 
 ## Setup
