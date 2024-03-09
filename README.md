@@ -26,6 +26,7 @@ Currently this is the work in progress.
 - `/fact [@tg_handle] [fact]` - add fact about the person within the chat
 - `/clearfacts [@tg_handle]` - delete facts for given person
 - `/usage` – Show usage limits for your user
+- `/language` - Set bot preferred language
 - `/help` – Show help
 
 ## Setup
