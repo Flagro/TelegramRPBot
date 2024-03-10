@@ -37,12 +37,12 @@ def command_handler(func):
     async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         sig = signature(func)
         params = {}
-        if 'user_handle' in sig.parameters:
-            params['user_handle'] = update.effective_user.username
-        if 'chat_id' in sig.parameters:
-            params['chat_id'] = update.effective_chat.id
-        if 'args' in sig.parameters:
-            params['command_args'] = context.args
+        if "user_handle" in sig.parameters:
+            params["user_handle"] = update.effective_user.username
+        if "chat_id" in sig.parameters:
+            params["chat_id"] = update.effective_chat.id
+        if "args" in sig.parameters:
+            params["command_args"] = context.args
         return await func(self, **params)
 
     return wrapper
@@ -88,7 +88,10 @@ class TelegramRPBot:
         ]
         Handler = namedtuple("Handler", ["filters", "handler"])
         self.handlers = [
-            Handler(filters.TEXT & ~filters.COMMAND, self._get_reply),
+            Handler(
+                (filters.TEXT | filters.AUDIO | filters.PHOTO) & ~filters.COMMAND,
+                self._get_reply,
+            ),
         ]
 
     async def post_init(self, application: Application):
@@ -124,50 +127,51 @@ class TelegramRPBot:
         ]
         application.add_handlers(command_handlers + message_handlers)
         application.run_polling()
-        
+
     async def send_message(self, chat_id, text, parse_mode=ParseMode.HTML):
         self.bot.send_message(chat_id=chat_id, text=text, parse_mode=parse_mode)
-    
+
     @command_handler
+    @authorized(["bot_admin", "group_admin", "group_owner"])
     async def _reset(self, chat_id, user_handle):
         pass
-    
+
     @command_handler
     async def _mode(self, chat_id, user_handle, args):
         pass
-    
+
     @command_handler
     async def _addmode(self, chat_id, user_handle, args):
         pass
-    
+
     @command_handler
     async def _deletemode(self, chat_id, user_handle, args):
         pass
-    
+
     @command_handler
     async def _introduce(self, chat_id, user_handle, args):
         pass
-    
+
     @command_handler
     async def _fact(self, chat_id, user_handle, args):
         pass
-    
+
     @command_handler
     async def _clearfacts(self, chat_id, user_handle):
         pass
-    
+
     @command_handler
     async def _usage(self, chat_id, user_handle):
         pass
-    
+
     @command_handler
     async def _language(self, chat_id, user_handle, args):
         pass
-    
+
     @command_handler
     async def _help(self, chat_id, user_handle):
         pass
-    
+
     @message_handler
     async def _get_reply(self, chat_id, user_handle, message, image, audio):
         pass
