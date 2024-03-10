@@ -54,9 +54,15 @@ def message_handler(func):
     @wraps(func)
     async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         is_private_chat = update.message.chat.type == "private"
-        is_reply = update.message.reply_to_message
-        is_bot_mentioned = "@" + context.bot.username in update.message.text
-        if not (is_private_chat or is_reply or is_bot_mentioned):
+        is_bot_mentioned = (
+            update.message.text is not None
+            and ("@" + context.bot.username) in update.message.text
+        )
+        bot_in_reply_tree = (
+            update.message.reply_to_message is not None
+            and update.message.reply_to_message.from_user.id == context.bot.id
+        )
+        if not (is_private_chat or bot_in_reply_tree or is_bot_mentioned):
             return
         user_handle = "@" + update.message.from_user.username
         chat_id = update.message.chat_id
@@ -81,7 +87,9 @@ def message_handler(func):
         else:
             audio = None
 
-        return await func(self, user_handle, chat_id, reply_message_id, message, image, audio)
+        return await func(
+            self, user_handle, chat_id, reply_message_id, message, image, audio
+        )
 
     return wrapper
 
@@ -215,5 +223,7 @@ class TelegramRPBot:
 
     @message_handler
     @authorized
-    async def _get_reply(self, chat_id, user_handle, reply_message_id, message, image, audio):
+    async def _get_reply(
+        self, chat_id, user_handle, reply_message_id, message, image, audio
+    ):
         pass
