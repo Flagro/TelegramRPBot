@@ -2,6 +2,7 @@ from telegram import Update, BotCommand
 from telegram.ext import (
     AIORateLimiter,
     ApplicationBuilder,
+    CallbackContext,
     CommandHandler,
     ContextTypes,
     MessageHandler,
@@ -11,6 +12,10 @@ from telegram.ext import (
 from telegram.constants import ParseMode
 
 import io
+import traceback
+import html
+import json
+import logging
 from collections import namedtuple
 from functools import wraps
 from inspect import signature
@@ -67,6 +72,9 @@ def message_handler(func):
         user_handle = "@" + update.message.from_user.username
         chat_id = update.message.chat_id
         reply_message_id = update.message.message_id
+        thread_id = None
+        if update.effective_message and update.effective_message.is_topic_message:
+            thread_id = update.effective_message.message_thread_id
         message = update.message.text
         # get image and audio in memory
         if update.message.photo:
@@ -88,7 +96,14 @@ def message_handler(func):
             audio = None
 
         return await func(
-            self, user_handle, chat_id, reply_message_id, message, image, audio
+            self,
+            user_handle,
+            chat_id,
+            reply_message_id,
+            thread_id,
+            message,
+            image,
+            audio,
         )
 
     return wrapper
@@ -110,6 +125,7 @@ class TelegramRPBot:
         self.db = db
         self.ai = ai
         self.localizer = localizer
+        self.logger = logging.getLogger(f"{__name__}.{id(self)}")
 
         # Define bot commands
         Command = namedtuple("Command", ["command", "description_tag", "handler"])
@@ -167,10 +183,31 @@ class TelegramRPBot:
             for handler in self.handlers
         ]
         application.add_handlers(command_handlers + message_handlers)
+        application.add_error_handler(self.error_handle)
         application.run_polling()
 
     async def send_message(self, chat_id, text, parse_mode=ParseMode.HTML):
         self.bot.send_message(chat_id=chat_id, text=text, parse_mode=parse_mode)
+
+    async def error_handle(self, update: Update, context: CallbackContext) -> None:
+        self.logger.error(msg="Exception while handling an update:", exc_info=context.error)
+        try:
+            # collect error message
+            tb_list = traceback.format_exception(
+                None, context.error, context.error.__traceback__
+            )
+            tb_string = "".join(tb_list)
+            update_str = update.to_dict() if isinstance(update, Update) else str(update)
+            message = (
+                f"An exception was raised while handling an update\n"
+                f"<pre>update = {html.escape(json.dumps(update_str, indent=2, ensure_ascii=False))}"
+                "</pre>\n\n"
+                f"<pre>{html.escape(tb_string)}</pre>"
+            )
+            # log the error message
+        except:
+            # log the exception in error handler
+            pass
 
     @command_handler
     @authorized(["bot_admin", "group_admin", "group_owner"])
@@ -224,6 +261,6 @@ class TelegramRPBot:
     @message_handler
     @authorized
     async def _get_reply(
-        self, chat_id, user_handle, reply_message_id, message, image, audio
+        self, chat_id, user_handle, reply_message_id, thread_id, message, image, audio
     ):
         pass
