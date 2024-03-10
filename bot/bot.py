@@ -1,5 +1,6 @@
 from telegram import Update, BotCommand
 from telegram.ext import (
+    AIORateLimiter,
     ApplicationBuilder,
     CommandHandler,
     ContextTypes,
@@ -146,6 +147,8 @@ class TelegramRPBot:
         application = (
             ApplicationBuilder()
             .token(self.telegram_token)
+            .concurrent_updates(True)
+            .rate_limiter(AIORateLimiter(max_retries=5))
             .post_init(self.post_init)
             .build()
         )
