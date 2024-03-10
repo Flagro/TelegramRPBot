@@ -59,6 +59,7 @@ def message_handler(func):
             return
         user_handle = "@" + update.message.from_user.username
         chat_id = update.message.chat_id
+        reply_message_id = update.message.message_id
         message = update.message.text
         # get image and audio in memory
         if update.message.photo:
@@ -79,7 +80,7 @@ def message_handler(func):
         else:
             audio = None
 
-        return await func(self, user_handle, chat_id, message, image, audio)
+        return await func(self, user_handle, chat_id, reply_message_id, message, image, audio)
 
     return wrapper
 
@@ -168,34 +169,42 @@ class TelegramRPBot:
         pass
 
     @command_handler
+    @authorized
     async def _mode(self, chat_id, user_handle, args):
         pass
 
     @command_handler
+    @authorized
     async def _addmode(self, chat_id, user_handle, args):
         pass
 
     @command_handler
+    @authorized
     async def _deletemode(self, chat_id, user_handle, args):
         pass
 
     @command_handler
+    @authorized
     async def _introduce(self, chat_id, user_handle, args):
         pass
 
     @command_handler
+    @authorized
     async def _fact(self, chat_id, user_handle, args):
         pass
 
     @command_handler
+    @authorized
     async def _clearfacts(self, chat_id, user_handle):
         pass
 
     @command_handler
+    @authorized
     async def _usage(self, chat_id, user_handle):
         pass
 
     @command_handler
+    @authorized
     async def _language(self, chat_id, user_handle, args):
         pass
 
@@ -204,5 +213,6 @@ class TelegramRPBot:
         pass
 
     @message_handler
-    async def _get_reply(self, chat_id, user_handle, message, image, audio):
+    @authorized
+    async def _get_reply(self, chat_id, user_handle, reply_message_id, message, image, audio):
         pass
