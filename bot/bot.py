@@ -9,6 +9,7 @@ from telegram.ext import (
 )
 from telegram.constants import ParseMode
 
+import io
 from collections import namedtuple
 from functools import wraps
 from inspect import signature
@@ -51,11 +52,33 @@ def command_handler(func):
 def message_handler(func):
     @wraps(func)
     async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        is_private_chat = update.message.chat.type == "private"
+        is_reply = update.message.reply_to_message
+        is_bot_mentioned = self.bot_handle in update.message.text
+        if not (is_private_chat or is_reply or is_bot_mentioned):
+            return
         user_handle = "@" + update.message.from_user.username
         chat_id = update.message.chat_id
         message = update.message.text
-        image = None
-        audio = None
+        # get image and audio in memory
+        if update.message.photo:
+            photo_file = await context.bot.getFile(update.message.photo[-1].file_id)
+            image_stream = io.BytesIO()
+            await photo_file.download(out=image_stream)
+            image_stream.seek(0)
+            image = image_stream
+        else:
+            image = None
+
+        if update.message.voice:
+            voice_file = await context.bot.getFile(update.message.voice.file_id)
+            voice_stream = io.BytesIO()
+            await voice_file.download(out=voice_stream)
+            voice_stream.seek(0)
+            audio = voice_stream
+        else:
+            audio = None
+
         return await func(self, user_handle, chat_id, message, image, audio)
 
     return wrapper
@@ -63,9 +86,17 @@ def message_handler(func):
 
 class TelegramRPBot:
     def __init__(
-        self, telegram_token, allowed_handles, admin_handles, db, ai, localizer
+        self,
+        telegram_token,
+        bot_handle,
+        allowed_handles,
+        admin_handles,
+        db,
+        ai,
+        localizer,
     ):
         self.telegram_token = telegram_token
+        self.bot_handle = bot_handle
         self.allowed_handles = allowed_handles
         self.admin_handles = admin_handles
         self.db = db
@@ -89,7 +120,7 @@ class TelegramRPBot:
         Handler = namedtuple("Handler", ["filters", "handler"])
         self.handlers = [
             Handler(
-                (filters.TEXT | filters.AUDIO | filters.PHOTO) & ~filters.COMMAND,
+                (filters.TEXT | filters.VOICE | filters.PHOTO) & ~filters.COMMAND,
                 self._get_reply,
             ),
         ]
