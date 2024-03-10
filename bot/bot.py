@@ -55,7 +55,7 @@ def message_handler(func):
     async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         is_private_chat = update.message.chat.type == "private"
         is_reply = update.message.reply_to_message
-        is_bot_mentioned = self.bot_handle in update.message.text
+        is_bot_mentioned = "@" + context.bot.username in update.message.text
         if not (is_private_chat or is_reply or is_bot_mentioned):
             return
         user_handle = "@" + update.message.from_user.username
@@ -90,7 +90,6 @@ class TelegramRPBot:
     def __init__(
         self,
         telegram_token,
-        bot_handle,
         allowed_handles,
         admin_handles,
         db,
@@ -98,7 +97,6 @@ class TelegramRPBot:
         localizer,
     ):
         self.telegram_token = telegram_token
-        self.bot_handle = bot_handle
         self.allowed_handles = allowed_handles
         self.admin_handles = admin_handles
         self.db = db
