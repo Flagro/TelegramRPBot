@@ -4,109 +4,19 @@ from telegram.ext import (
     ApplicationBuilder,
     CallbackContext,
     CommandHandler,
-    ContextTypes,
     MessageHandler,
     filters,
     Application,
 )
 from telegram.constants import ParseMode
 
-import io
 import traceback
 import html
 import json
 import logging
 from collections import namedtuple
-from functools import wraps
-from inspect import signature
 
-
-def authorized(func):
-    @wraps(func)
-    async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        user_handle = update.message.from_user.username
-        if "@" + user_handle not in self.allowed_handles:
-            await context.bot.send_message(
-                chat_id=update.message.chat_id,
-                parse_mode=ParseMode.HTML,
-                text=self._localized_text(
-                    update.message.chat_id, "unauthorized_command"
-                ),
-            )
-            return
-        return await func(self, update, context)
-
-    return wrapper
-
-
-def command_handler(func):
-    @wraps(func)
-    async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        sig = signature(func)
-        params = {}
-        if "user_handle" in sig.parameters:
-            params["user_handle"] = update.effective_user.username
-        if "chat_id" in sig.parameters:
-            params["chat_id"] = update.effective_chat.id
-        if "args" in sig.parameters:
-            params["command_args"] = context.args
-        return await func(self, **params)
-
-    return wrapper
-
-
-def message_handler(func):
-    @wraps(func)
-    async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        is_private_chat = update.message.chat.type == "private"
-        is_bot_mentioned = (
-            update.message.text is not None
-            and ("@" + context.bot.username) in update.message.text
-        )
-        bot_in_reply_tree = (
-            update.message.reply_to_message is not None
-            and update.message.reply_to_message.from_user.id == context.bot.id
-        )
-        if not (is_private_chat or bot_in_reply_tree or is_bot_mentioned):
-            return
-        user_handle = "@" + update.message.from_user.username
-        chat_id = update.message.chat_id
-        reply_message_id = update.message.message_id
-        thread_id = None
-        if update.effective_message and update.effective_message.is_topic_message:
-            thread_id = update.effective_message.message_thread_id
-        message = update.message.text
-        # get image and audio in memory
-        if update.message.photo:
-            photo_file = await context.bot.getFile(update.message.photo[-1].file_id)
-            image_stream = io.BytesIO()
-            await photo_file.download(out=image_stream)
-            image_stream.seek(0)
-            image = image_stream
-        else:
-            image = None
-
-        if update.message.voice:
-            voice_file = await context.bot.getFile(update.message.voice.file_id)
-            voice_stream = io.BytesIO()
-            await voice_file.download(out=voice_stream)
-            voice_stream.seek(0)
-            audio = voice_stream
-        else:
-            audio = None
-
-        return await func(
-            self,
-            user_handle,
-            chat_id,
-            reply_message_id,
-            thread_id,
-            message,
-            image,
-            audio,
-        )
-
-    return wrapper
+from .decorators import authorized, command_handler, message_handler
 
 
 class TelegramRPBot:
@@ -186,9 +96,6 @@ class TelegramRPBot:
         application.add_error_handler(self.error_handle)
         application.run_polling()
 
-    async def send_message(self, chat_id, text, parse_mode=ParseMode.HTML):
-        self.bot.send_message(chat_id=chat_id, text=text, parse_mode=parse_mode)
-
     async def error_handle(self, update: Update, context: CallbackContext) -> None:
         self.logger.error(msg="Exception while handling an update:", exc_info=context.error)
         try:
@@ -208,6 +115,13 @@ class TelegramRPBot:
         except:
             # log the exception in error handler
             pass
+        
+    async def send_message(self, chat_id, text, image_url=None, reply_message_id=None, thread_id=None, parse_mode=ParseMode.HTML):
+        self.bot.send_message(chat_id=chat_id, 
+                              text=text, 
+                              reply_to_message_id=reply_message_id,
+                              
+                              parse_mode=parse_mode)
 
     @command_handler
     @authorized(["bot_admin", "group_admin", "group_owner"])
