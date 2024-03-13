@@ -10,9 +10,6 @@ from telegram.ext import (
 )
 from telegram.constants import ParseMode
 
-import traceback
-import html
-import json
 import logging
 from collections import namedtuple
 
@@ -97,34 +94,28 @@ class TelegramRPBot:
         application.run_polling()
 
     async def error_handle(self, update: Update, context: CallbackContext) -> None:
-        self.logger.error(msg="Exception while handling an update:", exc_info=context.error)
-        try:
-            # collect error message
-            tb_list = traceback.format_exception(
-                None, context.error, context.error.__traceback__
-            )
-            tb_string = "".join(tb_list)
-            update_str = update.to_dict() if isinstance(update, Update) else str(update)
-            message = (
-                f"An exception was raised while handling an update\n"
-                f"<pre>update = {html.escape(json.dumps(update_str, indent=2, ensure_ascii=False))}"
-                "</pre>\n\n"
-                f"<pre>{html.escape(tb_string)}</pre>"
-            )
-            # log the error message
-        except:
-            # log the exception in error handler
-            pass
-        
-    async def send_message(self, chat_id, text, image_url=None, reply_message_id=None, thread_id=None, parse_mode=ParseMode.HTML):
-        self.bot.send_message(chat_id=chat_id, 
-                              text=text, 
-                              reply_to_message_id=reply_message_id,
-                              
-                              parse_mode=parse_mode)
+        self.logger.error(
+            msg="Exception while handling an update:", exc_info=context.error
+        )
+
+    async def send_message(
+        self,
+        chat_id,
+        text,
+        image_url=None,
+        reply_message_id=None,
+        thread_id=None,
+        parse_mode=ParseMode.HTML,
+    ):
+        self.bot.send_message(
+            chat_id=chat_id,
+            text=text,
+            reply_to_message_id=reply_message_id,
+            parse_mode=parse_mode,
+        )
 
     @command_handler
-    @authorized(["bot_admin", "group_admin", "group_owner"])
+    @authorized
     async def _reset(self, chat_id, user_handle):
         pass
 
@@ -174,7 +165,5 @@ class TelegramRPBot:
 
     @message_handler
     @authorized
-    async def _get_reply(
-        self, chat_id, user_handle, reply_message_id, thread_id, message, image, audio
-    ):
+    async def _get_reply(self, chat_id, user_handle, message, image, voice):
         pass

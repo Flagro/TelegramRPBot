@@ -11,15 +11,9 @@ from .utils import bot_mentioned, get_file_in_memory
 def authorized(func):
     @wraps(func)
     async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        user_handle = update.message.from_user.username
-        if "@" + user_handle not in self.allowed_handles:
-            await context.bot.send_message(
-                chat_id=update.message.chat_id,
-                parse_mode=ParseMode.HTML,
-                text=self._localized_text(
-                    update.message.chat_id, "unauthorized_command"
-                ),
-            )
+        user_handle = "@" + update.message.from_user.username
+        if user_handle not in self.allowed_handles:
+            # TODO: log unauthorized access
             return
         return await func(self, update, context)
 
