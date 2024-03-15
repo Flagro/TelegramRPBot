@@ -55,6 +55,9 @@ class TelegramRPBot:
                 self._get_reply,
             ),
         ]
+        
+        self.CommandResponse = namedtuple("CommandResponse", ["text", "kwargs"])
+        self.MessageResponse = namedtuple("MessageResponse", ["text", "image_url"])
 
     async def post_init(self, application: Application):
         """
@@ -160,8 +163,8 @@ class TelegramRPBot:
         pass
 
     @command_handler
-    async def _help(self, chat_id, user_handle):
-        pass
+    async def _help(self):
+        return self.CommandResponse("help_text", {})
 
     @message_handler
     @authorized
