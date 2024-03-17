@@ -1,0 +1,4 @@
+help_message:
+  english: |
+    <b> You are using the bot </b>
+  parse_mode: html
