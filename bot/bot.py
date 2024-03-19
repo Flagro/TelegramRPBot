@@ -55,7 +55,7 @@ class TelegramRPBot:
                 self._get_reply,
             ),
         ]
-        
+
         self.CommandResponse = namedtuple("CommandResponse", ["text", "kwargs"])
         self.MessageResponse = namedtuple("MessageResponse", ["text", "image_url"])
 

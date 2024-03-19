@@ -30,13 +30,19 @@ async def get_file_in_memory(file_id: str, context: ContextTypes.DEFAULT_TYPE):
     return file_stream
 
 
-async def is_user_in_group(update: Update, context: CallbackContext, user_id: int) -> bool:
+async def is_user_in_group(
+    update: Update, context: CallbackContext, user_id: int
+) -> bool:
     """
     Checks if user_id is a member of the group
     """
     try:
         chat_member = await context.bot.get_chat_member(update.message.chat_id, user_id)
-        return chat_member.status in [ChatMember.OWNER, ChatMember.ADMINISTRATOR, ChatMember.MEMBER]
+        return chat_member.status in [
+            ChatMember.OWNER,
+            ChatMember.ADMINISTRATOR,
+            ChatMember.MEMBER,
+        ]
     except telegram.error.BadRequest as e:
         if str(e) == "User not found":
             return False
@@ -61,21 +67,32 @@ def get_stream_cutoff_values(update: Update, content: str) -> int:
     """
     if is_group_chat(update):
         # group chats have stricter flood limits
-        return 180 if len(content) > 1000 else 120 if len(content) > 200 \
-            else 90 if len(content) > 50 else 50
-    return 90 if len(content) > 1000 else 45 if len(content) > 200 \
-        else 25 if len(content) > 50 else 15
+        return (
+            180
+            if len(content) > 1000
+            else 120 if len(content) > 200 else 90 if len(content) > 50 else 50
+        )
+    return (
+        90
+        if len(content) > 1000
+        else 45 if len(content) > 200 else 25 if len(content) > 50 else 15
+    )
 
 
 def split_into_chunks(text: str, chunk_size: int = 4096) -> list[str]:
     """
     Splits a string into chunks of a given size.
     """
-    return [text[i:i + chunk_size] for i in range(0, len(text), chunk_size)]
+    return [text[i : i + chunk_size] for i in range(0, len(text), chunk_size)]
 
 
-async def wrap_with_indicator(update: Update, context: CallbackContext, coroutine,
-                              chat_action: constants.ChatAction = "", is_inline=False):
+async def wrap_with_indicator(
+    update: Update,
+    context: CallbackContext,
+    coroutine,
+    chat_action: constants.ChatAction = "",
+    is_inline=False,
+):
     """
     Wraps a coroutine while repeatedly sending a chat action to the user.
     """
@@ -83,7 +100,9 @@ async def wrap_with_indicator(update: Update, context: CallbackContext, coroutin
     while not task.done():
         if not is_inline:
             context.application.create_task(
-                update.effective_chat.send_action(chat_action, message_thread_id=get_thread_id(update))
+                update.effective_chat.send_action(
+                    chat_action, message_thread_id=get_thread_id(update)
+                )
             )
         try:
             await asyncio.wait_for(asyncio.shield(task), 4.5)
@@ -91,8 +110,14 @@ async def wrap_with_indicator(update: Update, context: CallbackContext, coroutin
             pass
 
 
-async def edit_message_with_retry(context: ContextTypes.DEFAULT_TYPE, chat_id: int | None,
-                                  message_id: str, text: str, markdown: bool = True, is_inline: bool = False):
+async def edit_message_with_retry(
+    context: ContextTypes.DEFAULT_TYPE,
+    chat_id: int | None,
+    message_id: str,
+    text: str,
+    markdown: bool = True,
+    is_inline: bool = False,
+):
     """
     Edit a message with retry logic in case of failure (e.g. broken markdown)
     :param context: The context to use
@@ -122,7 +147,7 @@ async def edit_message_with_retry(context: ContextTypes.DEFAULT_TYPE, chat_id: i
                 text=text,
             )
         except Exception as e:
-            logging.warning(f'Failed to edit message: {str(e)}')
+            logging.warning(f"Failed to edit message: {str(e)}")
             raise e
 
     except Exception as e:
