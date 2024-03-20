@@ -31,7 +31,13 @@ def command_handler(func):
             params["chat_id"] = update.effective_chat.id
         if "args" in sig.parameters:
             params["command_args"] = context.args
-        return await func(self, **params)
+        result = await func(self, **params)
+        
+        self.send_message(
+            chat_id=update.effective_chat.id,
+            text=result,
+            parse_mode=ParseMode.MARKDOWN,
+        )
 
     return wrapper
 
