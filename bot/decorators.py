@@ -32,11 +32,14 @@ def command_handler(func):
         if "args" in sig.parameters:
             params["command_args"] = context.args
         result = await func(self, **params)
+        command_tag = result.text
+        command_response_args = result.kwargs
+        text_response, parse_mode = self.localizer.get_command_response(command_tag, command_response_args)
         
         self.send_message(
             chat_id=update.effective_chat.id,
-            text=result,
-            parse_mode=ParseMode.MARKDOWN,
+            text=text_response,
+            parse_mode=parse_mode,
         )
 
     return wrapper
