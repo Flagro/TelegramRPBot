@@ -9,7 +9,7 @@ from telegram import Update, ChatMember, constants
 from telegram.ext import CallbackContext, ContextTypes
 
 
-def bot_mentioned(update: Update, context: ContextTypes.DEFAULT_TYPE):
+def bot_mentioned(update: Update, context: ContextTypes.DEFAULT_TYPE) -> bool:
     is_private_chat = update.message.chat.type == "private"
     is_bot_mentioned = (
         update.message.text is not None
@@ -22,7 +22,7 @@ def bot_mentioned(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return not (is_private_chat or bot_in_reply_tree or is_bot_mentioned)
 
 
-async def get_file_in_memory(file_id: str, context: ContextTypes.DEFAULT_TYPE):
+async def get_file_in_memory(file_id: str, context: ContextTypes.DEFAULT_TYPE) -> io.BytesIO:
     file = await context.bot.getFile(file_id)
     file_stream = io.BytesIO()
     await file.download(out=file_stream)
