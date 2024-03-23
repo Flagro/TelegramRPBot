@@ -169,4 +169,14 @@ class TelegramRPBot:
     @message_handler
     @authorized
     async def _get_reply(self, chat_id, user_handle, message, image, voice):
-        pass
+        image_description = None
+        if image:
+            image_description = await self.ai.describe_image(image)
+        voice_description = None
+        if voice:
+            voice_description = await self.ai.transcribe_audio(voice)
+        user_input = self.localizer.compose_user_input(
+            message, image_description, voice_description
+        )
+        response_message, response_image_url = await self.ai.get_reply(chat_id, user_handle, user_input)
+        return self.MessageResponse(response_message, response_image_url)
