@@ -119,22 +119,22 @@ class TelegramRPBot:
 
     @command_handler
     @authorized
-    async def _reset(self, chat_id, user_handle):
+    async def _reset(self, chat_id):
         pass
 
     @command_handler
     @authorized
-    async def _mode(self, chat_id, user_handle, args):
+    async def _mode(self, chat_id, args):
         pass
 
     @command_handler
     @authorized
-    async def _addmode(self, chat_id, user_handle, args):
+    async def _addmode(self, chat_id, args):
         pass
 
     @command_handler
     @authorized
-    async def _deletemode(self, chat_id, user_handle, args):
+    async def _deletemode(self, chat_id, args):
         pass
 
     @command_handler
@@ -144,22 +144,22 @@ class TelegramRPBot:
 
     @command_handler
     @authorized
-    async def _fact(self, chat_id, user_handle, args):
+    async def _fact(self, chat_id, args):
         pass
 
     @command_handler
     @authorized
-    async def _clearfacts(self, chat_id, user_handle):
+    async def _clearfacts(self, chat_id, args):
         pass
 
     @command_handler
     @authorized
-    async def _usage(self, chat_id, user_handle):
+    async def _usage(self, user_handle):
         pass
 
     @command_handler
     @authorized
-    async def _language(self, chat_id, user_handle, args):
+    async def _language(self, chat_id, args):
         pass
 
     @command_handler
