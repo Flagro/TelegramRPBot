@@ -5,19 +5,7 @@ from telegram.constants import ParseMode
 from functools import wraps
 from inspect import signature
 
-from .utils import bot_mentioned, get_file_in_memory
-
-
-def authorized(func):
-    @wraps(func)
-    async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        user_handle = "@" + update.message.from_user.username
-        if user_handle not in self.allowed_handles:
-            # TODO: log unauthorized access
-            return
-        return await func(self, update, context)
-
-    return wrapper
+from ..utils import bot_mentioned, get_file_in_memory
 
 
 def command_handler(func):

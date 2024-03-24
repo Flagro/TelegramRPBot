@@ -13,7 +13,8 @@ from telegram.constants import ParseMode
 import logging
 from collections import namedtuple
 
-from .decorators import authorized, command_handler, message_handler
+from .decorators.handlers import command_handler, message_handler
+from .decorators.auth import authorized
 
 
 CommandResponse = namedtuple("CommandResponse", ["text", "kwargs"])
