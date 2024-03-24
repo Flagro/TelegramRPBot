@@ -60,7 +60,7 @@ class TelegramRPBot:
             ),
         ]
 
-    async def post_init(self, application: Application):
+    async def post_init(self, application: Application) -> None:
         """
         Post initialization hook for the bot.
         """
@@ -73,7 +73,7 @@ class TelegramRPBot:
         ]
         await application.bot.set_my_commands(bot_commands)
 
-    def run(self):
+    def run(self) -> None:
         """
         Runs the bot indefinitely until the user presses Ctrl+C
         """
@@ -110,7 +110,7 @@ class TelegramRPBot:
         reply_message_id=None,
         thread_id=None,
         parse_mode=ParseMode.HTML,
-    ):
+    ) -> None:
         self.bot.send_message(
             chat_id=chat_id,
             text=text,
@@ -120,47 +120,47 @@ class TelegramRPBot:
 
     @command_handler
     @authorized
-    async def _reset(self, chat_id):
+    async def _reset(self, chat_id) -> CommandResponse:
         pass
 
     @command_handler
     @authorized
-    async def _mode(self, chat_id, args):
+    async def _mode(self, chat_id, args) -> CommandResponse:
         pass
 
     @command_handler
     @authorized
-    async def _addmode(self, chat_id, args):
+    async def _addmode(self, chat_id, args) -> CommandResponse:
         pass
 
     @command_handler
     @authorized
-    async def _deletemode(self, chat_id, args):
+    async def _deletemode(self, chat_id, args) -> CommandResponse:
         pass
 
     @command_handler
     @authorized
-    async def _introduce(self, chat_id, user_handle, args):
+    async def _introduce(self, chat_id, user_handle, args) -> CommandResponse:
         pass
 
     @command_handler
     @authorized
-    async def _fact(self, chat_id, args):
+    async def _fact(self, chat_id, args) -> CommandResponse:
         pass
 
     @command_handler
     @authorized
-    async def _clearfacts(self, chat_id, args):
+    async def _clearfacts(self, chat_id, args) -> CommandResponse:
         pass
 
     @command_handler
     @authorized
-    async def _usage(self, user_handle):
+    async def _usage(self, user_handle) -> CommandResponse:
         pass
 
     @command_handler
     @authorized
-    async def _language(self, chat_id, args):
+    async def _language(self, chat_id, args) -> CommandResponse:
         language = args[0]
         try:
             self.localizer.set_language(chat_id, language)
@@ -169,12 +169,12 @@ class TelegramRPBot:
             return CommandResponse("language_set_error", {"language": language})
 
     @command_handler
-    async def _help(self):
+    async def _help(self) -> CommandResponse:
         return CommandResponse("help_text", {})
 
     @message_handler
     @authorized
-    async def _get_reply(self, chat_id, user_handle, message, image, voice):
+    async def _get_reply(self, chat_id, user_handle, message, image, voice) -> MessageResponse:
         image_description = None
         if image:
             image_description = await self.ai.describe_image(image)
