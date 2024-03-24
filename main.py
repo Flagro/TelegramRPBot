@@ -42,8 +42,7 @@ def main():
     db = DB(config("DB_URI"))
 
     ai = AI(openai_api_key=config("OPENAI_API_KEY"),
-            db=db,
-            ai_config)
+            db=db)
     
     localizer = Localizer()
 
