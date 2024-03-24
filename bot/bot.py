@@ -121,37 +121,56 @@ class TelegramRPBot:
     @command_handler
     @authorized
     async def _reset(self, chat_id) -> CommandResponse:
-        pass
+        self.db.reset(chat_id)
+        return CommandResponse("reset_done", {})
 
     @command_handler
     @authorized
     async def _mode(self, chat_id, args) -> CommandResponse:
+        # Implement tg keyboard here
         pass
 
     @command_handler
     @authorized
     async def _addmode(self, chat_id, args) -> CommandResponse:
+        # Implement parse of a new mode here
         pass
 
     @command_handler
     @authorized
     async def _deletemode(self, chat_id, args) -> CommandResponse:
+        # Implement tg keyboard here
         pass
 
     @command_handler
     @authorized
     async def _introduce(self, chat_id, user_handle, args) -> CommandResponse:
-        pass
+        introduction = " ".join(args)
+        try:
+            self.db.add_introduction(chat_id, user_handle, introduction)
+            return CommandResponse("introduction_added", {"user_handle": user_handle})
+        except ValueError as e:
+            self.logger.error(f"Error adding introduction: {e}")
+            return CommandResponse("inappropriate_introduction", {})
 
     @command_handler
     @authorized
     async def _fact(self, chat_id, args) -> CommandResponse:
-        pass
+        facts_user_handle = args[0]
+        facts = " ".join(args[1:])
+        try:
+            self.db.add_fact(chat_id, facts_user_handle, facts)
+            return CommandResponse("fact_added", {"user_handle": facts_user_handle})
+        except ValueError as e:
+            self.logger.error(f"Error adding fact: {e}")
+            return CommandResponse("inappropriate_fact", {})
 
     @command_handler
     @authorized
     async def _clearfacts(self, chat_id, args) -> CommandResponse:
-        pass
+        facts_user_handle = args[0]
+        self.db.clear_facts(chat_id, facts_user_handle)
+        return CommandResponse("facts_cleared", {"user_handle": facts_user_handle})
 
     @command_handler
     @authorized
@@ -166,7 +185,8 @@ class TelegramRPBot:
         try:
             self.localizer.set_language(chat_id, language)
             return CommandResponse("language_set", {"language": language})
-        except ValueError:
+        except ValueError as e:
+            self.logger.error(f"Error setting language: {e}")
             return CommandResponse("language_set_error", {"language": language})
 
     @command_handler
