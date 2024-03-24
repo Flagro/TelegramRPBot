@@ -19,13 +19,25 @@ def main():
     # load config dir
     config_dir = Path(__file__).parent.resolve() / "config"
     
-    # chat_modes
-    with open(config_dir / "chat_modes.yml", 'r') as f:
-        chat_modes = yaml.safe_load(f)
+    # ai config
+    with open(config_dir / "ai_config.yaml", 'r') as f:
+        ai_config = yaml.safe_load(f)
+        
+    # db config
+    with open(config_dir / "db_config.yaml", 'r') as f:
+        db_config = yaml.safe_load(f)
+    
+    # default chat_modes
+    with open(config_dir / "default_chat_modes.yaml", 'r') as f:
+        default_chat_modes = yaml.safe_load(f)
 
-    # default models
-    with open(config_dir / "models.yml", 'r') as f:
-        models = yaml.safe_load(f)
+    # localizer translations
+    with open(config_dir / "localizer_translations.yaml", 'r') as f:
+        translations = yaml.safe_load(f)
+        
+    # telegram bot config
+    with open(config_dir / "telegram_bot_config.yaml", 'r') as f:
+        telegram_bot_config = yaml.safe_load(f)
 
     db = DB(config("DB_URI"))
 
