@@ -14,12 +14,12 @@ from telegram.constants import ParseMode
 import logging
 from collections import namedtuple
 
-from .decorators.handlers import (
+from .handlers import (
     command_handler,
     callback_handler,
     message_handler,
 )
-from .decorators.auth import authorized
+from .auth import authorized
 from .keyboards import get_chat_modes_keyboard
 
 
