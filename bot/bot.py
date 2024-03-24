@@ -258,7 +258,6 @@ class TelegramRPBot:
     async def _get_reply(
         self, chat_id, user_handle, message, image, voice
     ) -> MessageResponse:
-        # TODO: add usage tracking here
         image_description = None
         if image:
             image_description = await self.ai.describe_image(image)

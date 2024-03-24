@@ -23,14 +23,15 @@ def main():
     with open(config_dir / "chat_modes.yml", 'r') as f:
         chat_modes = yaml.safe_load(f)
 
-    # models
+    # default models
     with open(config_dir / "models.yml", 'r') as f:
         models = yaml.safe_load(f)
 
-
-    ai = AI(openai_api_key=config("OPENAI_API_KEY"))
-    
     db = DB(config("DB_URI"))
+
+    ai = AI(openai_api_key=config("OPENAI_API_KEY"),
+            db=db,
+            ai_config)
     
     localizer = Localizer()
 
