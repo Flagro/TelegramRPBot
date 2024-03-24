@@ -14,13 +14,16 @@ from telegram.constants import ParseMode
 import logging
 from collections import namedtuple
 
-from .decorators.handlers import command_handler, callback_command_handler, message_handler
+from .decorators.handlers import (
+    command_handler,
+    callback_handler,
+    message_handler,
+)
 from .decorators.auth import authorized
 from .keyboards import get_chat_modes_keyboard
 
 
-CommandResponse = namedtuple("CommandResponse", ["text", "kwargs"])
-CommandKeyboardResponse = namedtuple("CommandKeyboardResponse", ["text", "keyboard"])
+CommandResponse = namedtuple("CommandResponse", ["text", "kwargs", "markup"])
 MessageResponse = namedtuple("MessageResponse", ["text", "image_url"])
 
 
@@ -66,7 +69,7 @@ class TelegramRPBot:
         Callback = namedtuple("Callbacks", ["pattern", "callback"])
         self.callbacks = [
             Callback("^set_chat_mode", self._set_chat_mode),
-            Callback("^show_chat_mode", self._show_chat_mode),
+            Callback("^show_chat_modes", self._show_chat_mode),
             Callback("^delete_chat_mode", self._delete_chat_mode),
         ]
 
@@ -107,7 +110,9 @@ class TelegramRPBot:
             CallbackQueryHandler(callback.callback, callback.pattern)
             for callback in self.callbacks
         ]
-        application.add_handlers(command_handlers + message_handlers + callback_handlers)
+        application.add_handlers(
+            command_handlers + message_handlers + callback_handlers
+        )
         application.add_error_handler(self.error_handle)
         application.run_polling()
 
@@ -132,35 +137,40 @@ class TelegramRPBot:
             parse_mode=parse_mode,
         )
 
-    @command_handler
+    @callback_handler
     @authorized
-    async def _reset(self, chat_id) -> CommandResponse:
-        self.db.reset(chat_id)
-        return CommandResponse("reset_done", {})
+    async def _show_chat_modes(self, chat_id) -> CommandResponse:
+        available_modes = self.db.get_modes(chat_id)
+        modes_keyboard = get_chat_modes_keyboard(
+            available_modes, "show_chat_modes", "set_chat_mode"
+        )
+        return CommandResponse("", {}, modes_keyboard)
 
-    @keyboard_callback_handler
+    @callback_handler
     @authorized
-    async def _show_chat_mode(self, chat_id, mode_id) -> CommandResponse:
-        mode = self.db.get_chat_mode(chat_id, mode_id)
-        return CommandResponse("show_mode", mode._asdict())
-
-    @keyboard_handler
-    @authorized
-    async def _set_chat_mode(self, chat_id, mode_id) -> CommandResponse:
+    async def _set_chat_mode(self, chat_id, callback_data) -> CommandResponse:
+        mode_id = callback_data.split("|")[1]
         self.db.set_chat_mode(chat_id, mode_id)
-        return CommandResponse("mode_set", {"mode_id": mode_id})
+        return CommandResponse("mode_set", {"mode_id": mode_id}, None)
+
+    @callback_handler
+    @authorized
+    async def _delete_chat_mode(self, chat_id, callback_data) -> CommandResponse:
+        mode_id = callback_data.split("|")[1]
+        self.db.delete_chat_mode(chat_id, mode_id)
+        return CommandResponse("mode_deleted", {"mode_id": mode_id}, None)
 
     @command_handler
     @authorized
-    async def _mode(self, chat_id, args) -> CommandKeyboardResponse:
+    async def _mode(self, chat_id, args) -> CommandResponse:
         # Implement tg keyboard here
         available_modes = self.db.get_modes(chat_id)
-        
-        modes_keyboard = get_chat_modes_keyboard(available_modes, 0, 5, "set_chat_mode")
-        
-        return CommandResponse("choose_mode", {})
+        modes_keyboard = get_chat_modes_keyboard(
+            available_modes, "show_chat_modes", "set_chat_mode"
+        )
+        return CommandResponse("choose_mode", {}, modes_keyboard)
 
-    @callback_command_handler
+    @command_handler
     @authorized
     async def _addmode(self, chat_id, args) -> CommandResponse:
         mode_description = " ".join(args)
@@ -172,20 +182,16 @@ class TelegramRPBot:
             return CommandResponse("mode_added", {"mode_name": mode_name})
         except ValueError as e:
             self.logger.error(f"Error adding mode: {e}")
-            return CommandResponse("inappropriate_mode", {})
+            return CommandResponse("inappropriate_mode", {}, None)
 
-    @keyboard_callback_handler
+    @command_handler
     @authorized
-    async def _delete_chat_mode(self, chat_id, mode_id) -> CommandResponse:
-        self.db.delete_chat_mode(chat_id, mode_id)
-        return CommandResponse("mode_deleted", {"mode_id": mode_id})
-
-    @callback_command_handler
-    @authorized
-    async def _deletemode(self, chat_id, args) -> CommandKeyboardResponse:
+    async def _deletemode(self, chat_id) -> CommandResponse:
         available_modes = self.db.get_modes(chat_id)
-        modes_keyboard = get_chat_modes_keyboard(available_modes, 0, 5, "delete_chat_mode")
-        return CommandResponse("choose_mode_to_delete", {})
+        modes_keyboard = get_chat_modes_keyboard(
+            available_modes, "show_chat_modes", "delete_chat_mode"
+        )
+        return CommandResponse("choose_mode_to_delete", {}, modes_keyboard)
 
     @command_handler
     @authorized
@@ -196,7 +202,7 @@ class TelegramRPBot:
             return CommandResponse("introduction_added", {"user_handle": user_handle})
         except ValueError as e:
             self.logger.error(f"Error adding introduction: {e}")
-            return CommandResponse("inappropriate_introduction", {})
+            return CommandResponse("inappropriate_introduction", {}, None)
 
     @command_handler
     @authorized
@@ -208,20 +214,22 @@ class TelegramRPBot:
             return CommandResponse("fact_added", {"user_handle": facts_user_handle})
         except ValueError as e:
             self.logger.error(f"Error adding fact: {e}")
-            return CommandResponse("inappropriate_fact", {})
+            return CommandResponse("inappropriate_fact", {}, None)
 
     @command_handler
     @authorized
     async def _clearfacts(self, chat_id, args) -> CommandResponse:
         facts_user_handle = args[0]
         self.db.clear_facts(chat_id, facts_user_handle)
-        return CommandResponse("facts_cleared", {"user_handle": facts_user_handle})
+        return CommandResponse(
+            "facts_cleared", {"user_handle": facts_user_handle}, None
+        )
 
     @command_handler
     @authorized
     async def _usage(self, user_handle) -> CommandResponse:
         user_usage = self.db.get_user_usage(user_handle)
-        return CommandResponse("usage_text", user_usage._asdict())
+        return CommandResponse("usage_text", user_usage._asdict(), None)
 
     @command_handler
     @authorized
@@ -232,15 +240,23 @@ class TelegramRPBot:
             return CommandResponse("language_set", {"language": language})
         except ValueError as e:
             self.logger.error(f"Error setting language: {e}")
-            return CommandResponse("language_set_error", {"language": language})
+            return CommandResponse("language_set_error", {"language": language}, None)
+
+    @command_handler
+    @authorized
+    async def _reset(self, chat_id) -> CommandResponse:
+        self.db.reset(chat_id)
+        return CommandResponse("reset_done", {}, None)
 
     @command_handler
     async def _help(self) -> CommandResponse:
-        return CommandResponse("help_text", {})
+        return CommandResponse("help_text", {}, None)
 
     @message_handler
     @authorized
-    async def _get_reply(self, chat_id, user_handle, message, image, voice) -> MessageResponse:
+    async def _get_reply(
+        self, chat_id, user_handle, message, image, voice
+    ) -> MessageResponse:
         image_description = None
         if image:
             image_description = await self.ai.describe_image(image)
@@ -250,5 +266,7 @@ class TelegramRPBot:
         user_input = self.localizer.compose_user_input(
             message, image_description, voice_description
         )
-        response_message, response_image_url = await self.ai.get_reply(chat_id, user_handle, user_input)
+        response_message, response_image_url = await self.ai.get_reply(
+            chat_id, user_handle, user_input
+        )
         return MessageResponse(response_message, response_image_url)
