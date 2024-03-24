@@ -1,11 +1,10 @@
 import tiktoken
 import openai
-import openai
+import io
+from collections import namedtuple
 
 
-async def transcribe_audio(audio_file) -> str:
-    r = await openai.Audio.atranscribe("whisper-1", audio_file)
-    return r["text"] or ""
+AIResponse = namedtuple("AIResponse", ["text", "image_url"])
 
 
 async def generate_images(prompt, n_images=4, size="512x512"):
@@ -14,10 +13,22 @@ async def generate_images(prompt, n_images=4, size="512x512"):
     return image_urls
 
 
-async def is_content_acceptable(prompt):
-    r = await openai.Moderation.acreate(input=prompt)
+async def is_content_acceptable(text: str):
+    r = await openai.Moderation.acreate(input=text)
     return not all(r.results[0].categories.values())
 
 class AI:
-    def __init__(self, openai_api_key):
+    def __init__(self, openai_api_key: str):
         self.openai_api_key = openai_api_key
+        
+    def describe_image(self, in_memory_image_stream: io.BytesIO):
+        r = openai.Image.adescribe(in_memory_image_stream)
+        return r["description"] or ""
+    
+    def transcribe_audio(self, in_memory_audio_stream: io.BytesIO):
+        r = openai.Audio.atranscribe(in_memory_audio_stream)
+        return r["text"] or ""
+
+    def get_reply(self, chat_id: str, user_handle: str, user_input: str) -> AIResponse:
+        pass
+
