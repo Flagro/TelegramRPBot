@@ -160,7 +160,12 @@ class TelegramRPBot:
     @command_handler
     @authorized
     async def _language(self, chat_id, args):
-        pass
+        language = args[0]
+        try:
+            self.localizer.set_language(chat_id, language)
+            return self.CommandResponse("language_set", {"language": language})
+        except ValueError:
+            return self.CommandResponse("language_set_error", {"language": language})
 
     @command_handler
     async def _help(self):
