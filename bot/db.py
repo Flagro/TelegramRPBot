@@ -1,35 +1,65 @@
 from typing import Optional, Any, List
+from uuid import UUID
 
 import pymongo
-import config
 from collections import namedtuple
 
 
 UserUsageResponse = namedtuple("UserUsageResponse", ["this_month_usage", "limit"])
-ChatModeResponse = namedtuple("ChatModesResponse", ["id", "mode_name", "mode_description"])
+ChatModeResponse = namedtuple(
+    "ChatModesResponse", ["id", "mode_name", "mode_description"]
+)
 
 
 class DB:
-    def __init__(self):
-        self.client = pymongo.MongoClient(config.mongodb_uri)
-        self.db = self.client["chatgpt_telegram_bot"]
+    def __init__(self, uri: str):
+        self.client = pymongo.MongoClient(uri)
 
-        self.user_collection = self.db["user"]
-        self.dialog_collection = self.db["dialog"]
+    def create_user_if_not_exists(self, user_handle: str) -> None:
+        pass
 
     def get_user_usage(self, user_handle: str) -> UserUsageResponse:
-        user = self.user_collection.find_one({"handle": user_handle})
-        if not user:
-            return UserUsageResponse(0, config.default_monthly_limit)
+        pass
 
-        return UserUsageResponse(user["this_month_usage"], user["limit"])
-    
     def get_chat_modes(self, chat_id: str) -> List[ChatModeResponse]:
-        chat = self.dialog_collection.find_one({"chat_id": chat_id})
-        if not chat:
-            return []
+        pass
 
-        return [
-            ChatModeResponse(mode["id"], mode["mode_name"], mode["mode_description"])
-            for mode in chat["chat_modes"]
-        ]
+    def set_chat_mode(self, chat_id: str, mode_id: UUID) -> None:
+        pass
+
+    def delete_chat_mode(self, chat_id: str, mode_id: UUID) -> None:
+        pass
+
+    def add_chat_mode(
+        self, chat_id: str, mode_name: str, mode_description: str
+    ) -> None:
+        pass
+
+    def add_introduction(
+        self, chat_id: str, user_handle: str, introduction: str
+    ) -> None:
+        pass
+
+    def add_fact(self, chat_id: str, facts_user_handle: str, facts: str) -> None:
+        pass
+
+    def clear_facts(self, chat_id: str, facts_user_handle: str) -> None:
+        pass
+
+    def reset(self, chat_id: str) -> None:
+        pass
+
+    def add_user_input_to_dialog(
+        self,
+        chat_id: str,
+        user_handle: str,
+        message: str,
+        image_description: str,
+        voice_description: str,
+    ) -> None:
+        pass
+
+    def add_bot_response_to_dialog(
+        self, chat_id: str, bot_response: str, response_image_url: str
+    ) -> None:
+        pass

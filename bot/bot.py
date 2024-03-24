@@ -142,7 +142,7 @@ class TelegramRPBot:
     async def _show_chat_modes(self, chat_id, args) -> CommandResponse:
         button_action = args[0]
         page_index = int(args[1])
-        available_modes = self.db.get_modes(chat_id)
+        available_modes = self.db.get_chat_modes(chat_id)
         modes_keyboard = get_chat_modes_keyboard(
             available_modes, "show_chat_modes", button_action, page_index
         )
@@ -165,7 +165,7 @@ class TelegramRPBot:
     @command_handler
     @authorized
     async def _mode(self, chat_id) -> CommandResponse:
-        available_modes = self.db.get_modes(chat_id)
+        available_modes = self.db.get_chat_modes(chat_id)
         modes_keyboard = get_chat_modes_keyboard(
             available_modes, "show_chat_modes", "set_chat_mode"
         )
@@ -179,7 +179,7 @@ class TelegramRPBot:
         # TODO: implement NER here
         mode_name = mode_description.split("\n")[0].split(".")[0]
         try:
-            self.db.add_mode(chat_id, mode_name, mode_description)
+            self.db.add_chat_mode(chat_id, mode_name, mode_description)
             return CommandResponse("mode_added", {"mode_name": mode_name})
         except ValueError as e:
             self.logger.error(f"Error adding mode: {e}")
@@ -188,7 +188,7 @@ class TelegramRPBot:
     @command_handler
     @authorized
     async def _deletemode(self, chat_id) -> CommandResponse:
-        available_modes = self.db.get_modes(chat_id)
+        available_modes = self.db.get_chat_modes(chat_id)
         modes_keyboard = get_chat_modes_keyboard(
             available_modes, "show_chat_modes", "delete_chat_mode"
         )
@@ -258,16 +258,23 @@ class TelegramRPBot:
     async def _get_reply(
         self, chat_id, user_handle, message, image, voice
     ) -> MessageResponse:
+        # TODO: add usage tracking here
         image_description = None
         if image:
             image_description = await self.ai.describe_image(image)
         voice_description = None
         if voice:
             voice_description = await self.ai.transcribe_audio(voice)
+        self.db.add_user_input_to_dialog(
+            chat_id, user_handle, message, image_description, voice_description
+        )
         user_input = self.localizer.compose_user_input(
             message, image_description, voice_description
         )
         response_message, response_image_url = await self.ai.get_reply(
             chat_id, user_handle, user_input
+        )
+        self.db.add_bot_response_to_dialog(
+            chat_id, response_message, response_image_url
         )
         return MessageResponse(response_message, response_image_url)
