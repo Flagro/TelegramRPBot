@@ -6,7 +6,7 @@ from telegram.error import BadRequest
 from functools import wraps
 from inspect import signature
 
-from ..utils import bot_mentioned, get_file_in_memory
+from .utils import bot_mentioned, get_file_in_memory
 
 
 def command_handler(func):
