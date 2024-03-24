@@ -9,7 +9,7 @@ UserUsageResponse = namedtuple("UserUsageResponse", ["this_month_usage", "limit"
 ChatModeResponse = namedtuple("ChatModesResponse", ["id", "mode_name", "mode_description"])
 
 
-class Database:
+class DB:
     def __init__(self):
         self.client = pymongo.MongoClient(config.mongodb_uri)
         self.db = self.client["chatgpt_telegram_bot"]

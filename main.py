@@ -4,6 +4,9 @@ from decouple import config
 from pathlib import Path
 
 from bot import TelegramRPBot
+from bot.ai import AI
+from bot.db import DB
+from bot.localizer import Localizer
 
 
 def main():
