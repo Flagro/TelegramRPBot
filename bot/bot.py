@@ -16,6 +16,10 @@ from collections import namedtuple
 from .decorators import authorized, command_handler, message_handler
 
 
+CommandResponse = namedtuple("CommandResponse", ["text", "kwargs"])
+MessageResponse = namedtuple("MessageResponse", ["text", "image_url"])
+
+
 class TelegramRPBot:
     def __init__(
         self,
@@ -55,9 +59,6 @@ class TelegramRPBot:
                 self._get_reply,
             ),
         ]
-
-        self.CommandResponse = namedtuple("CommandResponse", ["text", "kwargs"])
-        self.MessageResponse = namedtuple("MessageResponse", ["text", "image_url"])
 
     async def post_init(self, application: Application):
         """
@@ -163,13 +164,13 @@ class TelegramRPBot:
         language = args[0]
         try:
             self.localizer.set_language(chat_id, language)
-            return self.CommandResponse("language_set", {"language": language})
+            return CommandResponse("language_set", {"language": language})
         except ValueError:
-            return self.CommandResponse("language_set_error", {"language": language})
+            return CommandResponse("language_set_error", {"language": language})
 
     @command_handler
     async def _help(self):
-        return self.CommandResponse("help_text", {})
+        return CommandResponse("help_text", {})
 
     @message_handler
     @authorized
@@ -184,4 +185,4 @@ class TelegramRPBot:
             message, image_description, voice_description
         )
         response_message, response_image_url = await self.ai.get_reply(chat_id, user_handle, user_input)
-        return self.MessageResponse(response_message, response_image_url)
+        return MessageResponse(response_message, response_image_url)
