@@ -68,8 +68,8 @@ class TelegramRPBot:
         ]
         Callback = namedtuple("Callbacks", ["pattern", "callback"])
         self.callbacks = [
+            Callback("^show_chat_modes", self._show_chat_modes),
             Callback("^set_chat_mode", self._set_chat_mode),
-            Callback("^show_chat_modes", self._show_chat_mode),
             Callback("^delete_chat_mode", self._delete_chat_mode),
         ]
 
@@ -139,31 +139,32 @@ class TelegramRPBot:
 
     @callback_handler
     @authorized
-    async def _show_chat_modes(self, chat_id) -> CommandResponse:
+    async def _show_chat_modes(self, chat_id, args) -> CommandResponse:
+        button_action = args[0]
+        page_index = int(args[1])
         available_modes = self.db.get_modes(chat_id)
         modes_keyboard = get_chat_modes_keyboard(
-            available_modes, "show_chat_modes", "set_chat_mode"
+            available_modes, "show_chat_modes", button_action, page_index
         )
         return CommandResponse("", {}, modes_keyboard)
 
     @callback_handler
     @authorized
-    async def _set_chat_mode(self, chat_id, callback_data) -> CommandResponse:
-        mode_id = callback_data.split("|")[1]
+    async def _set_chat_mode(self, chat_id, args) -> CommandResponse:
+        mode_id = args[0]
         self.db.set_chat_mode(chat_id, mode_id)
         return CommandResponse("mode_set", {"mode_id": mode_id}, None)
 
     @callback_handler
     @authorized
-    async def _delete_chat_mode(self, chat_id, callback_data) -> CommandResponse:
-        mode_id = callback_data.split("|")[1]
+    async def _delete_chat_mode(self, chat_id, args) -> CommandResponse:
+        mode_id = args[0]
         self.db.delete_chat_mode(chat_id, mode_id)
         return CommandResponse("mode_deleted", {"mode_id": mode_id}, None)
 
     @command_handler
     @authorized
-    async def _mode(self, chat_id, args) -> CommandResponse:
-        # Implement tg keyboard here
+    async def _mode(self, chat_id) -> CommandResponse:
         available_modes = self.db.get_modes(chat_id)
         modes_keyboard = get_chat_modes_keyboard(
             available_modes, "show_chat_modes", "set_chat_mode"
