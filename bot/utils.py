@@ -5,7 +5,7 @@ import asyncio
 import logging
 
 import telegram
-from telegram import Update, ChatMember, constants
+from telegram import Update, constants
 from telegram.ext import CallbackContext, ContextTypes
 
 
@@ -22,34 +22,14 @@ def bot_mentioned(update: Update, context: ContextTypes.DEFAULT_TYPE) -> bool:
     return not (is_private_chat or bot_in_reply_tree or is_bot_mentioned)
 
 
-async def get_file_in_memory(file_id: str, context: ContextTypes.DEFAULT_TYPE) -> io.BytesIO:
+async def get_file_in_memory(
+    file_id: str, context: ContextTypes.DEFAULT_TYPE
+) -> io.BytesIO:
     file = await context.bot.getFile(file_id)
     file_stream = io.BytesIO()
     await file.download(out=file_stream)
     file_stream.seek(0)
     return file_stream
-
-
-async def is_user_in_group(
-    update: Update, context: CallbackContext, user_id: int
-) -> bool:
-    """
-    Checks if user_id is a member of the group
-    """
-    try:
-        chat_member = await context.bot.get_chat_member(update.message.chat_id, user_id)
-        return chat_member.status in [
-            ChatMember.OWNER,
-            ChatMember.ADMINISTRATOR,
-            ChatMember.MEMBER,
-        ]
-    except telegram.error.BadRequest as e:
-        if str(e) == "User not found":
-            return False
-        else:
-            raise e
-    except Exception as e:
-        raise e
 
 
 def get_thread_id(update: Update) -> int | None:
@@ -61,22 +41,18 @@ def get_thread_id(update: Update) -> int | None:
     return None
 
 
-def get_stream_cutoff_values(update: Update, content: str) -> int:
+def get_stream_cutoff_values(content: str) -> int:
     """
     Gets the stream cutoff values for the message length
     """
-    if is_group_chat(update):
-        # group chats have stricter flood limits
-        return (
-            180
-            if len(content) > 1000
-            else 120 if len(content) > 200 else 90 if len(content) > 50 else 50
-        )
-    return (
-        90
-        if len(content) > 1000
-        else 45 if len(content) > 200 else 25 if len(content) > 50 else 15
-    )
+    if len(content) > 1000:
+        return 180
+    elif len(content) > 200:
+        return 120
+    elif len(content) > 50:
+        return 90
+    else:
+        return 50
 
 
 def split_into_chunks(text: str, chunk_size: int = 4096) -> list[str]:
