@@ -5,6 +5,7 @@ from telegram.ext import (
     CallbackContext,
     CommandHandler,
     MessageHandler,
+    CallbackQueryHandler,
     filters,
     Application,
 )
@@ -13,11 +14,13 @@ from telegram.constants import ParseMode
 import logging
 from collections import namedtuple
 
-from .decorators.handlers import command_handler, message_handler
+from .decorators.handlers import command_handler, callback_command_handler, message_handler
 from .decorators.auth import authorized
+from .keyboards import get_chat_modes_keyboard
 
 
 CommandResponse = namedtuple("CommandResponse", ["text", "kwargs"])
+CommandKeyboardResponse = namedtuple("CommandKeyboardResponse", ["text", "keyboard"])
 MessageResponse = namedtuple("MessageResponse", ["text", "image_url"])
 
 
@@ -60,6 +63,12 @@ class TelegramRPBot:
                 self._get_reply,
             ),
         ]
+        Callback = namedtuple("Callbacks", ["pattern", "callback"])
+        self.callbacks = [
+            Callback("^set_chat_mode", self._set_chat_mode),
+            Callback("^show_chat_mode", self._show_chat_mode),
+            Callback("^delete_chat_mode", self._delete_chat_mode),
+        ]
 
     async def post_init(self, application: Application) -> None:
         """
@@ -94,7 +103,11 @@ class TelegramRPBot:
             MessageHandler(handler.filters, handler.handler)
             for handler in self.handlers
         ]
-        application.add_handlers(command_handlers + message_handlers)
+        callback_handlers = [
+            CallbackQueryHandler(callback.callback, callback.pattern)
+            for callback in self.callbacks
+        ]
+        application.add_handlers(command_handlers + message_handlers + callback_handlers)
         application.add_error_handler(self.error_handle)
         application.run_polling()
 
@@ -125,13 +138,29 @@ class TelegramRPBot:
         self.db.reset(chat_id)
         return CommandResponse("reset_done", {})
 
-    @command_handler
+    @keyboard_callback_handler
     @authorized
-    async def _mode(self, chat_id, args) -> CommandResponse:
-        # Implement tg keyboard here
-        pass
+    async def _show_chat_mode(self, chat_id, mode_id) -> CommandResponse:
+        mode = self.db.get_chat_mode(chat_id, mode_id)
+        return CommandResponse("show_mode", mode._asdict())
+
+    @keyboard_handler
+    @authorized
+    async def _set_chat_mode(self, chat_id, mode_id) -> CommandResponse:
+        self.db.set_chat_mode(chat_id, mode_id)
+        return CommandResponse("mode_set", {"mode_id": mode_id})
 
     @command_handler
+    @authorized
+    async def _mode(self, chat_id, args) -> CommandKeyboardResponse:
+        # Implement tg keyboard here
+        available_modes = self.db.get_modes(chat_id)
+        
+        modes_keyboard = get_chat_modes_keyboard(available_modes, 0, 5, "set_chat_mode")
+        
+        return CommandResponse("choose_mode", {})
+
+    @callback_command_handler
     @authorized
     async def _addmode(self, chat_id, args) -> CommandResponse:
         mode_description = " ".join(args)
@@ -145,11 +174,18 @@ class TelegramRPBot:
             self.logger.error(f"Error adding mode: {e}")
             return CommandResponse("inappropriate_mode", {})
 
-    @command_handler
+    @keyboard_callback_handler
     @authorized
-    async def _deletemode(self, chat_id, args) -> CommandResponse:
-        # Implement tg keyboard here
-        pass
+    async def _delete_chat_mode(self, chat_id, mode_id) -> CommandResponse:
+        self.db.delete_chat_mode(chat_id, mode_id)
+        return CommandResponse("mode_deleted", {"mode_id": mode_id})
+
+    @callback_command_handler
+    @authorized
+    async def _deletemode(self, chat_id, args) -> CommandKeyboardResponse:
+        available_modes = self.db.get_modes(chat_id)
+        modes_keyboard = get_chat_modes_keyboard(available_modes, 0, 5, "delete_chat_mode")
+        return CommandResponse("choose_mode_to_delete", {})
 
     @command_handler
     @authorized
