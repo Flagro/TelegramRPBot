@@ -8,13 +8,11 @@ AI:
     request_timeout: 60.0,
     Models:
       gpt-3.5-turbo-16k:
-        type: chat_completion
         rate:
           input_token_price: 1
           output_token_price: 2
 
       gpt-4:
-        type: chat_completion
         rate:
           input_token_price: 5
           output_token_price: 10
