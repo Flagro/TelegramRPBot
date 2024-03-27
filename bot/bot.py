@@ -80,7 +80,7 @@ class TelegramRPBot:
         bot_commands = [
             BotCommand(
                 command=command.command,
-                description=self.localizer.get(command.description_tag),
+                description=self.localizer.get_command_response(command.description_tag),
             )
             for command in self.commands
         ]
