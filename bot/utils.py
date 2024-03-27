@@ -55,13 +55,6 @@ def get_stream_cutoff_values(content: str) -> int:
         return 50
 
 
-def split_into_chunks(text: str, chunk_size: int = 4096) -> list[str]:
-    """
-    Splits a string into chunks of a given size.
-    """
-    return [text[i : i + chunk_size] for i in range(0, len(text), chunk_size)]
-
-
 async def wrap_with_indicator(
     update: Update,
     context: CallbackContext,
