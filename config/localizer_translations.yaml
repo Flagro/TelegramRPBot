@@ -47,7 +47,7 @@ language_set:
 language_set_error:
   english: "Language {language} set error"
 reset_done:
-  english: "Reset done text"
+  english: "Reset done!"
 help_text:
   english: |
     <h2>Features</h2>

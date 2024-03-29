@@ -3,7 +3,7 @@ import yaml
 from decouple import config
 from pathlib import Path
 
-from bot import TelegramRPBot
+from bot.bot import TelegramRPBot
 from bot.ai import AI
 from bot.db import DB
 from bot.localizer import Localizer
@@ -39,12 +39,15 @@ def main():
     with open(config_dir / "telegram_bot_config.yaml", 'r') as f:
         telegram_bot_config = yaml.safe_load(f)
 
-    db = DB(config("DB_URI"))
+    db = DB(config("DB_URI"),
+            db_config=db_config,
+            default_chat_modes=default_chat_modes)
 
     ai = AI(openai_api_key=config("OPENAI_API_KEY"),
-            db=db)
+            db=db,
+            ai_config=ai_config)
     
-    localizer = Localizer()
+    localizer = Localizer(db=db, translations=translations)
 
     bot = TelegramRPBot(
         telegram_token=config("TELEGRAM_TOKEN"),
@@ -53,6 +56,7 @@ def main():
         db=db,
         ai=ai,
         localizer=localizer,
+        telegram_bot_config=telegram_bot_config
     )
     bot.run()
 
