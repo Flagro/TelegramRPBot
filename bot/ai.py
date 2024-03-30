@@ -1,7 +1,10 @@
 import tiktoken
 import openai
 import io
+from typing import Any
 from collections import namedtuple
+
+from .db import DB
 
 
 AIResponse = namedtuple("AIResponse", ["text", "image_url"])
@@ -12,7 +15,7 @@ async def is_content_acceptable(text: str):
     return not all(r.results[0].categories.values())
 
 class AI:
-    def __init__(self, openai_api_key: str):
+    def __init__(self, openai_api_key: str, db: DB, ai_config: Any):
         self.openai_api_key = openai_api_key
         
     def describe_image(self, in_memory_image_stream: io.BytesIO):

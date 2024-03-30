@@ -12,7 +12,7 @@ ChatModeResponse = namedtuple(
 
 
 class DB:
-    def __init__(self, uri: str):
+    def __init__(self, uri: str, db_config: Any, default_chat_modes: Any):
         self.client = pymongo.MongoClient(uri)
 
     def create_user_if_not_exists(self, user_handle: str) -> None:

@@ -1,5 +1,8 @@
+from .db import DB
+
+
 class Localizer:
-    def __init__(self):
+    def __init__(self, db: DB, translations: dict) -> None:
         pass
 
     def set_language(self, chat_id: str, language: str) -> None:
