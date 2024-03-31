@@ -18,6 +18,9 @@ class DB:
     def create_user_if_not_exists(self, user_handle: str) -> None:
         pass
 
+    def set_language(self, chat_id: str, language: str) -> None:
+        pass
+
     def get_user_usage(self, user_handle: str) -> UserUsageResponse:
         pass
 
