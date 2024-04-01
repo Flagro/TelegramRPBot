@@ -1,6 +1,5 @@
 from telegram import Update
 from telegram.ext import ContextTypes, CallbackContext
-from telegram.constants import ParseMode
 from telegram.error import BadRequest
 
 from functools import wraps

@@ -10,6 +10,10 @@ from .db import DB
 AIResponse = namedtuple("AIResponse", ["text", "image_url"])
 
 
+def count_tokens(text: str):
+    return tiktoken.count(text)
+
+
 async def is_content_acceptable(text: str):
     r = await openai.Moderation.acreate(input=text)
     return not all(r.results[0].categories.values())
