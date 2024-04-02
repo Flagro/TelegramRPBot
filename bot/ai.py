@@ -21,6 +21,8 @@ async def is_content_acceptable(text: str):
 class AI:
     def __init__(self, openai_api_key: str, db: DB, ai_config: Any):
         self.openai_api_key = openai_api_key
+        self.db = db
+        self.ai_config = ai_config
         
     def describe_image(self, in_memory_image_stream: io.BytesIO):
         r = openai.Image.adescribe(in_memory_image_stream)
