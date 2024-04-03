@@ -38,4 +38,11 @@ class AI:
         return image_url
 
     def get_reply(self, chat_id: str, user_handle: str, user_input: str) -> AIResponse:
-        pass
+        r = openai.Chat.agenerate(
+            model=self.ai_config.model,
+            messages=[
+                {"role": "system", "content": f"User: {user_input}"},
+                {"role": "user", "content": user_input},
+            ],
+        )
+        return AIResponse(text=r.choices[0].message.content, image_url=None)
