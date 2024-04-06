@@ -6,4 +6,4 @@ motor
 decouple
 tenacity==8.2.2
 pydub~=0.25.1
-pydantic==1.9.0
+pydantic
