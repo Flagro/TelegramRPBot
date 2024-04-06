@@ -1,4 +1,4 @@
-DB:
+DBConfig:
   DB_SCHEME: mongodb
   DB_HOST: mongo
   DB_PORT: 27017

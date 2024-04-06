@@ -3,31 +3,32 @@ from typing import Dict
 import yaml
 
 
-class TGConfig(BaseModel):
-    new_dialog_timeout: int
-    enable_message_streaming: bool
-    n_chat_modes_per_page: int
-    track_conversation_thread: bool
-    
+class BaseYAMLConfigModel(BaseModel):
+    """Base model with a load method for loading from a yaml file."""
+
     @classmethod
     def load(cls, file_path: str):
         with open(file_path, 'r') as file:
             config_dict = yaml.safe_load(file)
-        return cls(**config_dict['TG'])
+            if cls.__name__ in config_dict:
+                return cls(**config_dict[cls.__name__])
+            else:
+                raise KeyError(f"{cls.__name__} not found in {file_path}")
 
 
-class ChatMode(BaseModel):
+class TGConfig(BaseYAMLConfigModel):
+    new_dialog_timeout: int
+    enable_message_streaming: bool
+    n_chat_modes_per_page: int
+    track_conversation_thread: bool
+
+
+class DefaultChatModes(BaseYAMLConfigModel):
     name: str
     model_type: str
     welcome_message: str
     prompt_start: str
     parse_mode: str
-
-    @classmethod
-    def load(cls, file_path: str):
-        with open(file_path, 'r') as file:
-            config_dict = yaml.safe_load(file)
-        return cls(**config_dict['DefaultChatModes'])
 
 
 class Translation(BaseModel):
@@ -36,26 +37,14 @@ class Translation(BaseModel):
     class Config:
         allow_population_by_field_name = True
 
-class Translations(BaseModel):
+class Translations(BaseYAMLConfigModel):
     translations: Dict[str, Translation]
 
-    @classmethod
-    def load(cls, file_path: str):
-        with open(file_path, 'r') as file:
-            config_dict = yaml.safe_load(file)
-        return cls(translations=config_dict['Translations'])
 
-
-class DBConfig(BaseModel):
+class DBConfig(BaseYAMLConfigModel):
     DB_SCHEME: str
     DB_HOST: str
     DB_PORT: int
-
-    @classmethod
-    def load(cls, file_path: str):
-        with open(file_path, 'r') as file:
-            config_dict = yaml.safe_load(file)
-        return cls(**config_dict['DB'])
 
 
 class Rate(BaseModel):
@@ -81,12 +70,6 @@ class ImageProcessing(BaseModel):
     image_size: str
 
 
-class AIConfig(BaseModel):
+class AIConfig(BaseYAMLConfigModel):
     TextGeneration: TextGeneration
     ImageProcessing: ImageProcessing
-
-    @classmethod
-    def load(cls, file_path: str):
-        with open(file_path, 'r') as file:
-            config_dict = yaml.safe_load(file)
-        return cls(**config_dict['AI'])
