@@ -7,6 +7,7 @@ from bot.bot import TelegramRPBot
 from bot.ai import AI
 from bot.db import DB
 from bot.localizer import Localizer
+from bot.config_models import TGConfig, DefaultChatModes, Translations, DBConfig, AIConfig
 
 
 def main():
@@ -16,28 +17,12 @@ def main():
         level=logging.INFO,
     )
     
-    # load config dir
     config_dir = Path(__file__).parent.resolve() / "config"
-    
-    # ai config
-    with open(config_dir / "ai_config.yaml", 'r') as f:
-        ai_config = yaml.safe_load(f)
-        
-    # db config
-    with open(config_dir / "db_config.yaml", 'r') as f:
-        db_config = yaml.safe_load(f)
-    
-    # default chat_modes
-    with open(config_dir / "default_chat_modes.yaml", 'r') as f:
-        default_chat_modes = yaml.safe_load(f)
-
-    # localizer translations
-    with open(config_dir / "localizer_translations.yaml", 'r') as f:
-        translations = yaml.safe_load(f)
-        
-    # telegram bot config
-    with open(config_dir / "telegram_bot_config.yaml", 'r') as f:
-        telegram_bot_config = yaml.safe_load(f)
+    telegram_bot_config = TGConfig.load(config_dir / "tg_config.yaml")
+    default_chat_modes = DefaultChatModes.load(config_dir / "default_chat_modes.yaml")
+    translations = Translations.load(config_dir / "localizer_translations.yaml")
+    db_config = DBConfig.load(config_dir / "db_config.yaml")
+    ai_config = AIConfig.load(config_dir / "ai_config.yaml")
 
     db = DB(config("DB_URI"),
             db_config=db_config,
