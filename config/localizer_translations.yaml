@@ -1,81 +1,82 @@
-reset_description:
-  english: "Reset description text"
-mode_description:
-  english: "Mode description text"
-addmode_description:
-  english: "Add mode description text"
-deletemode_description:
-  english: "Delete mode description text"
-introduce_description:
-  english: "Introduce description text"
-fact_description:
-  english: "Fact description text"
-clearfacts_description:
-  english: "Clear facts description text"
-usage_description:
-  english: "Usage description text"
-language_description:
-  english: "Language description text"
-help_description:
-  english: "Help description text"
-mode_set:
-  english: "Mode {mode_id} set"
-mode_deleted:
-  english: "Mode {mode_id} deleted"
-choose_mode:
-  english: "Choose mode text"
-mode_added:
-  english: "Mode {mode_name} added"
-inappropriate_mode:
-  english: "Inappropriate mode text"
-choose_mode_to_delete:
-  english: "Choose mode to delete text"
-introduction_added:
-  english: "Introduction {user_handle} added"
-inappropriate_introduction:
-  english: "Inappropriate introduction text"
-fact_added:
-  english: "Fact {user_handle} added"
-inappropriate_fact:
-  english: "Inappropriate fact text"
-facts_cleared:
-  english: "Facts {user_handle} cleared"
-usage_text:
-  english: "Usage {user_usage} text"
-language_set:
-  english: "Language {language} set"
-language_set_error:
-  english: "Language {language} set error"
-reset_done:
-  english: "Reset done!"
-help_text:
-  english: |
-    <h2>Features</h2>
-    <ul>
-      <li>Create and use chat-bounded chat modes by describing the agent and how you want it to act</li>
-      <li>Introduce yourself to the model</li>
-      <li>Add facts about yourself or other people that the model would later use</li>
-      <li>Chat with the {bot_name}
-        <ul>
-          <li>Send it text</li>
-          <li>Send it pictures</li>
-          <li>Send it voice messages</li>
-          <li>Receive back text</li>
-          <li>Receive back pictures</li>
-        </ul>
-      </li>
-      <li>Flexible tracking of the AI resources usage</li>
-    </ul>
-    <h2>Bot commands</h2>
-    <ul>
-      <li><code>/reset</code> - Reset the dialogue history</li>
-      <li><code>/mode [mode]</code> - Select chat mode from existing ones</li>
-      <li><code>/addmode [mode] [description]</code> - Add new chat mode</li>
-      <li><code>/deletemode [mode]</code> - delete existing chat mode from this chat</li>
-      <li><code>/introduce [your introduction]</code> - Add fact about yourself</li>
-      <li><code>/fact [@tg_handle] [fact]</code> - add fact about the person within the chat</li>
-      <li><code>/clearfacts [@tg_handle]</code> - delete facts for given person</li>
-      <li><code>/usage</code> - Show usage limits for your user</li>
-      <li><code>/language</code> - Set bot preferred language</li>
-      <li><code>/help</code> - Show help</li>
-    </ul>
+Translations:
+  reset_description:
+    english: "Reset description text"
+  mode_description:
+    english: "Mode description text"
+  addmode_description:
+    english: "Add mode description text"
+  deletemode_description:
+    english: "Delete mode description text"
+  introduce_description:
+    english: "Introduce description text"
+  fact_description:
+    english: "Fact description text"
+  clearfacts_description:
+    english: "Clear facts description text"
+  usage_description:
+    english: "Usage description text"
+  language_description:
+    english: "Language description text"
+  help_description:
+    english: "Help description text"
+  mode_set:
+    english: "Mode {mode_id} set"
+  mode_deleted:
+    english: "Mode {mode_id} deleted"
+  choose_mode:
+    english: "Choose mode text"
+  mode_added:
+    english: "Mode {mode_name} added"
+  inappropriate_mode:
+    english: "Inappropriate mode text"
+  choose_mode_to_delete:
+    english: "Choose mode to delete text"
+  introduction_added:
+    english: "Introduction {user_handle} added"
+  inappropriate_introduction:
+    english: "Inappropriate introduction text"
+  fact_added:
+    english: "Fact {user_handle} added"
+  inappropriate_fact:
+    english: "Inappropriate fact text"
+  facts_cleared:
+    english: "Facts {user_handle} cleared"
+  usage_text:
+    english: "Usage {user_usage} text"
+  language_set:
+    english: "Language {language} set"
+  language_set_error:
+    english: "Language {language} set error"
+  reset_done:
+    english: "Reset done!"
+  help_text:
+    english: |
+      <h2>Features</h2>
+      <ul>
+        <li>Create and use chat-bounded chat modes by describing the agent and how you want it to act</li>
+        <li>Introduce yourself to the model</li>
+        <li>Add facts about yourself or other people that the model would later use</li>
+        <li>Chat with the {bot_name}
+          <ul>
+            <li>Send it text</li>
+            <li>Send it pictures</li>
+            <li>Send it voice messages</li>
+            <li>Receive back text</li>
+            <li>Receive back pictures</li>
+          </ul>
+        </li>
+        <li>Flexible tracking of the AI resources usage</li>
+      </ul>
+      <h2>Bot commands</h2>
+      <ul>
+        <li><code>/reset</code> - Reset the dialogue history</li>
+        <li><code>/mode [mode]</code> - Select chat mode from existing ones</li>
+        <li><code>/addmode [mode] [description]</code> - Add new chat mode</li>
+        <li><code>/deletemode [mode]</code> - delete existing chat mode from this chat</li>
+        <li><code>/introduce [your introduction]</code> - Add fact about yourself</li>
+        <li><code>/fact [@tg_handle] [fact]</code> - add fact about the person within the chat</li>
+        <li><code>/clearfacts [@tg_handle]</code> - delete facts for given person</li>
+        <li><code>/usage</code> - Show usage limits for your user</li>
+        <li><code>/language</code> - Set bot preferred language</li>
+        <li><code>/help</code> - Show help</li>
+      </ul>
