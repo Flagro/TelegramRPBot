@@ -20,7 +20,7 @@ def main():
     config_dir = Path(__file__).parent.resolve() / "config"
     telegram_bot_config = TGConfig.load(config_dir / "tg_config.yaml")
     default_chat_modes = DefaultChatModes.load(config_dir / "default_chat_modes.yaml")
-    translations = Translations.load(config_dir / "localizer_translations.yaml")
+    translations = LocalizerTranslations.load(config_dir / "localizer_translations.yaml")
     db_config = DBConfig.load(config_dir / "db_config.yaml")
     ai_config = AIConfig.load(config_dir / "ai_config.yaml")
 

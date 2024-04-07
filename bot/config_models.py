@@ -31,14 +31,14 @@ class DefaultChatModes(BaseYAMLConfigModel):
     parse_mode: str
 
 
-class Translation(BaseModel):
+class LocalizerTranslation(BaseModel):
     english: str = Field(..., alias='english')
 
     class Config:
         allow_population_by_field_name = True
 
-class Translations(BaseYAMLConfigModel):
-    translations: Dict[str, Translation]
+class LocalizerTranslations(BaseYAMLConfigModel):
+    translations: Dict[str, LocalizerTranslation]
 
 
 class DBConfig(BaseYAMLConfigModel):
