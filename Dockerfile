@@ -1,23 +1,31 @@
+# Use an official Python runtime as a parent image
 FROM python:3.8-slim
 
-RUN \
-    set -eux; \
-    apt-get update; \
-    DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
-    python3-pip \
+# Set environment varibles
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# Install system dependencies
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
     build-essential \
     python3-venv \
     ffmpeg \
     git \
-    ; \
-    rm -rf /var/lib/apt/lists/*
+    curl \
+    && curl -sSL https://install.python-poetry.org | python3 -
 
-RUN pip3 install -U pip && pip3 install -U wheel && pip3 install -U setuptools==59.5.0
-COPY ./requirements.txt /tmp/requirements.txt
-RUN pip3 install -r /tmp/requirements.txt && rm -r /tmp/requirements.txt
-
-COPY . /code
+# Set work directory
 WORKDIR /code
 
-CMD ["bash"]
+# Copy project file
+COPY ./pyproject.toml /code/
 
+# Install project dependencies
+RUN poetry config virtualenvs.create false \
+    && poetry install --no-interaction --no-ansi
+
+# Copy all project
+COPY . /code/
+
+CMD ["bash"]
