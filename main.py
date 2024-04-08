@@ -7,7 +7,7 @@ from bot.bot import TelegramRPBot
 from bot.ai import AI
 from bot.db import DB
 from bot.localizer import Localizer
-from bot.config_models import TGConfig, DefaultChatModes, Translations, DBConfig, AIConfig
+from bot.config_models import TGConfig, DefaultChatModes, LocalizerTranslations, DBConfig, AIConfig
 
 
 def main():
