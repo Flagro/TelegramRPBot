@@ -1,5 +1,4 @@
 import logging
-import yaml
 from decouple import config
 from pathlib import Path
 
