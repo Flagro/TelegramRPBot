@@ -90,6 +90,7 @@ async def wrap_with_indicator(
             pass
 
 
+# TODO: adapt tenacity here
 async def edit_message_with_retry(
     context: ContextTypes.DEFAULT_TYPE,
     chat_id: int | None,
