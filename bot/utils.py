@@ -99,16 +99,6 @@ async def edit_message_with_retry(
     markdown: bool = True,
     is_inline: bool = False,
 ):
-    """
-    Edit a message with retry logic in case of failure (e.g. broken markdown)
-    :param context: The context to use
-    :param chat_id: The chat id to edit the message in
-    :param message_id: The message id to edit
-    :param text: The text to edit the message with
-    :param markdown: Whether to use markdown parse mode
-    :param is_inline: Whether the message to edit is an inline message
-    :return: None
-    """
     try:
         await context.bot.edit_message_text(
             chat_id=chat_id,
