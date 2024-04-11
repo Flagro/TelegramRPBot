@@ -256,7 +256,7 @@ class TelegramRPBot:
     @message_handler
     @authorized
     async def _get_reply(
-        self, chat_id, user_handle, message, image, voice
+        self, chat_id, thread_id, user_handle, message, image, voice
     ) -> MessageResponse:
         image_description = None
         if image:

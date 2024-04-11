@@ -93,11 +93,10 @@ def message_handler(func):
 
         return await func(
             self,
-            user_handle,
             chat_id,
-            reply_message_id,
             thread_id,
-            thread_messages,
+            user_handle,
+            message,
             image,
             voice,
         )
