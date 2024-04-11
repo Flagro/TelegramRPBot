@@ -76,7 +76,8 @@ def message_handler(func):
         message = update.message.text
 
         # Save the message to the database
-        self.db.save_thread_message(thread_id, user_handle, message)
+        if self.telegram_bot_config.track_conversation_thread:
+            self.db.save_thread_message(thread_id, user_handle, message)
 
         if not bot_mentioned(update, context):
             return
