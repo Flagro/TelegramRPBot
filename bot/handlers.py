@@ -67,8 +67,6 @@ def callback_handler(func):
 def message_handler(func):
     @wraps(func)
     async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        if not bot_mentioned(update, context):
-            return
         user_handle = "@" + update.message.from_user.username
         chat_id = update.message.chat_id
         reply_message_id = update.message.message_id
@@ -76,6 +74,12 @@ def message_handler(func):
         if update.effective_message and update.effective_message.is_topic_message:
             thread_id = update.effective_message.message_thread_id
         message = update.message.text
+
+        # Save the message to the database
+        self.db.save_thread_message(thread_id, user_handle, message)
+
+        if not bot_mentioned(update, context):
+            return
 
         # get image and audio in memory
         image = None
@@ -92,7 +96,7 @@ def message_handler(func):
             chat_id,
             reply_message_id,
             thread_id,
-            message,
+            thread_messages,
             image,
             voice,
         )
