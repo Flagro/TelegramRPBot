@@ -13,12 +13,16 @@ from telegram.constants import ParseMode
 
 import logging
 from collections import namedtuple
+from typing import List
 
 from .handlers import (
     command_handler,
     callback_handler,
     message_handler,
 )
+from .db import DB
+from .ai import AI
+from .localizer import Localizer
 from .auth import authorized
 from .keyboards import get_chat_modes_keyboard
 
@@ -30,12 +34,12 @@ MessageResponse = namedtuple("MessageResponse", ["text", "image_url"])
 class TelegramRPBot:
     def __init__(
         self,
-        telegram_token,
-        allowed_handles,
-        admin_handles,
-        db,
-        ai,
-        localizer,
+        telegram_token: str,
+        allowed_handles: List[str],
+        admin_handles: List[str],
+        db: DB,
+        ai: AI,
+        localizer: Localizer,
     ):
         self.telegram_token = telegram_token
         self.allowed_handles = allowed_handles
