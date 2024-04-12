@@ -271,7 +271,7 @@ class TelegramRPBot:
             message, image_description, voice_description
         )
         response_message, response_image_url = await self.ai.get_reply(
-            chat_id, user_handle, user_input
+            chat_id, thread_id, user_handle, user_input
         )
         self.db.add_bot_response_to_dialog(
             chat_id, response_message, response_image_url
