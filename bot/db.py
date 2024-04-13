@@ -51,6 +51,11 @@ class DB:
 
     def reset(self, chat_id: str) -> None:
         pass
+    
+    def save_thread_message(
+        self, thread_id: Optional[str], user_handle: str, message: str
+    ) -> None:
+        pass
 
     def add_user_input_to_dialog(
         self,
