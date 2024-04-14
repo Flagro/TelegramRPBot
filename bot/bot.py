@@ -13,7 +13,7 @@ from telegram.constants import ParseMode
 
 import logging
 from collections import namedtuple
-from typing import List
+from typing import List, Optional
 
 from .handlers import (
     command_handler,
@@ -260,8 +260,13 @@ class TelegramRPBot:
     @message_handler
     @authorized
     async def _get_reply(
-        self, chat_id, thread_id, user_handle, message, image, voice
-    ) -> MessageResponse:
+        self, chat_id, thread_id, is_bot_mentioned, user_handle, message, image, voice
+    ) -> Optional[MessageResponse]:
+        if self.telegram_bot_config.track_conversation_thread:
+            self.db.save_thread_message(thread_id, user_handle, message)
+        if not is_bot_mentioned:
+            return None
+        
         image_description = None
         if image:
             image_description = await self.ai.describe_image(image)

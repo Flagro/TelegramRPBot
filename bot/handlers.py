@@ -69,18 +69,10 @@ def message_handler(func):
     async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_handle = "@" + update.message.from_user.username
         chat_id = update.message.chat_id
-        reply_message_id = update.message.message_id
         thread_id = None
         if update.effective_message and update.effective_message.is_topic_message:
             thread_id = update.effective_message.message_thread_id
         message = update.message.text
-
-        # Save the message to the database
-        if self.telegram_bot_config.track_conversation_thread:
-            self.db.save_thread_message(thread_id, user_handle, message)
-
-        if not bot_mentioned(update, context):
-            return
 
         # get image and audio in memory
         image = None
@@ -95,6 +87,7 @@ def message_handler(func):
             self,
             chat_id,
             thread_id,
+            bot_mentioned(update, context),
             user_handle,
             message,
             image,
