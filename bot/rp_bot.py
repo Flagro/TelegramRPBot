@@ -15,7 +15,7 @@ import logging
 from collections import namedtuple
 from typing import List, Optional
 
-from .handlers import (
+from .handler_decorators import (
     command_handler,
     callback_handler,
     message_handler,
@@ -31,7 +31,7 @@ CommandResponse = namedtuple("CommandResponse", ["text", "kwargs", "markup"])
 MessageResponse = namedtuple("MessageResponse", ["text", "image_url"])
 
 
-class TelegramRPBot:
+class RPBot:
     def __init__(
         self,
         telegram_token: str,
