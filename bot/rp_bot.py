@@ -23,19 +23,11 @@ MessageResponse = namedtuple("MessageResponse", ["text", "image_url"])
 class RPBot:
     def __init__(
         self,
-        telegram_token: str,
-        allowed_handles: List[str],
-        admin_handles: List[str],
         db: DB,
         ai: AI,
-        localizer: Localizer,
     ):
-        self.telegram_token = telegram_token
-        self.allowed_handles = allowed_handles
-        self.admin_handles = admin_handles
         self.db = db
         self.ai = ai
-        self.localizer = localizer
         self.logger = logging.getLogger(f"{__name__}.{id(self)}")
 
         # Define bot commands
