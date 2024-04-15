@@ -1,15 +1,4 @@
-from telegram import Update, BotCommand
-from telegram.ext import (
-    AIORateLimiter,
-    ApplicationBuilder,
-    CallbackContext,
-    CommandHandler,
-    MessageHandler,
-    CallbackQueryHandler,
-    filters,
-    Application,
-)
-from telegram.constants import ParseMode
+from telegram.ext import filters
 
 import logging
 from collections import namedtuple
