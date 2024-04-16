@@ -60,17 +60,6 @@ class RPBot:
 
     @callback_handler
     @authorized
-    async def _show_chat_modes(self, chat_id, args) -> CommandResponse:
-        button_action = args[0]
-        page_index = int(args[1])
-        available_modes = self.db.get_chat_modes(chat_id)
-        modes_keyboard = get_chat_modes_keyboard(
-            available_modes, "show_chat_modes", button_action, page_index
-        )
-        return CommandResponse("", {}, modes_keyboard)
-
-    @callback_handler
-    @authorized
     async def _set_chat_mode(self, chat_id, args) -> CommandResponse:
         mode_id = args[0]
         self.db.set_chat_mode(chat_id, mode_id)
