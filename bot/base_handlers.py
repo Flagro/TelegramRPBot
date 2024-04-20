@@ -14,7 +14,7 @@ class CallbackHandler(ABC):
         self.db = db
         self.ai = ai
         self.localizer = localizer
-        
+
     async def wrapper(self, update: Update, _: CallbackContext):
         query = update.callback_query
         await query.answer()
@@ -92,7 +92,13 @@ class MessageHandler(ABC):
         is_bot_mentioned = message_text.startswith(f"@{context.bot.username}")
         thread_id = self.db.get_thread_id(chat_id, user_handle)
         return self._get_reply(
-            chat_id, thread_id, is_bot_mentioned, user_handle, message_text, image, voice
+            chat_id,
+            thread_id,
+            is_bot_mentioned,
+            user_handle,
+            message_text,
+            image,
+            voice,
         )
 
     @abstractmethod
@@ -100,8 +106,8 @@ class MessageHandler(ABC):
         self, chat_id, thread_id, is_bot_mentioned, user_handle, message, image, voice
     ):
         pass
-    
-    
+
+
 class CommandHandler(ABC):
     def __init__(self, db, ai, localizer):
         self.db = db
