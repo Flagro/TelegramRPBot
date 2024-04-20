@@ -40,11 +40,9 @@ class CallbackHandler(ABC):
             if not str(e).startswith("Message is not modified"):
                 self.logger.error(f"Error editing message: {e}")
 
-    def handle(self, update, context):
-        query = update.callback_query
-        query.answer()
-        query.edit_message_text(text="Selected option: {}".format(query.data))
-        return self.bot.STATES.END
+    @abstractmethod
+    def handle(self):
+        raise NotImplementedError
 
 
 class MessageHandler(ABC):
@@ -81,30 +79,9 @@ class MessageHandler(ABC):
             voice,
         )
 
-    def handle(self, update, context):
-        message = update.message
-        chat_id = message.chat_id
-        user_handle = message.from_user.username
-        message_text = message.text
-        image = message.photo
-        voice = message.voice
-        is_bot_mentioned = message_text.startswith(f"@{context.bot.username}")
-        thread_id = self.db.get_thread_id(chat_id, user_handle)
-        return self._get_reply(
-            chat_id,
-            thread_id,
-            is_bot_mentioned,
-            user_handle,
-            message_text,
-            image,
-            voice,
-        )
-
     @abstractmethod
-    async def _get_reply(
-        self, chat_id, thread_id, is_bot_mentioned, user_handle, message, image, voice
-    ):
-        pass
+    def handle(self):
+        raise NotImplementedError
 
 
 class CommandHandler(ABC):
@@ -133,13 +110,6 @@ class CommandHandler(ABC):
             parse_mode=parse_mode,
         )
 
-    def handle(self, update, context):
-        message = update.message
-        chat_id = message.chat_id
-        user_handle = message.from_user.username
-        command = message.text
-        return self._get_reply(chat_id, user_handle, command)
-
     @abstractmethod
-    async def _get_reply(self, chat_id, user_handle, command):
-        pass
+    def handle(self):
+        raise NotImplementedError
