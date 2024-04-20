@@ -2,7 +2,6 @@ from telegram import Update
 from telegram.ext import ContextTypes, CallbackContext
 from telegram.error import BadRequest
 
-from functools import wraps
 from inspect import signature
 from abc import ABC, abstractmethod
 
