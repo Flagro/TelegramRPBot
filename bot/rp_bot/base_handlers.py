@@ -1,12 +1,5 @@
-from telegram import Update
-from telegram.ext import ContextTypes, CallbackContext
-from telegram.error import BadRequest
-
-from inspect import signature
 from abc import ABC, abstractmethod
 import logging
-
-from ..utils import bot_mentioned, get_file_in_memory
 
 
 class BaseHandler(ABC):
@@ -52,9 +45,9 @@ class BaseCommandHandler(BaseHandler, ABC):
     command = None
     description_tag = None
 
-    def handle(self, Person, Context, Message):
-        return self.get_reply(Person, Context, Message, args)
+    def handle(self, Person, Context, args):
+        return self.get_reply(Person, Context, args)
 
     @abstractmethod
-    def get_reply(self, Person, Context, Message):
+    def get_reply(self, Person, Context, args):
         raise NotImplementedError

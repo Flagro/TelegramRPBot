@@ -4,7 +4,7 @@ from telegram.error import BadRequest
 
 from inspect import signature
 
-from ..utils import bot_mentioned, get_file_in_memory
+from .utils import bot_mentioned, get_file_in_memory
 
 
 async def callback_wrapper(self, update: Update, _: CallbackContext):
