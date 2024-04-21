@@ -7,7 +7,7 @@ async def _get_reply(
         self.db.save_thread_message(thread_id, user_handle, message)
     if not is_bot_mentioned:
         return None
-    
+
     image_description = None
     if image:
         image_description = await self.ai.describe_image(image)
@@ -23,7 +23,11 @@ async def _get_reply(
     response_message, response_image_url = await self.ai.get_reply(
         chat_id, thread_id, user_handle, user_input
     )
-    self.db.add_bot_response_to_dialog(
-        chat_id, response_message, response_image_url
-    )
+    self.db.add_bot_response_to_dialog(chat_id, response_message, response_image_url)
     return MessageResponse(response_message, response_image_url)
+
+
+Handler(
+    (filters.TEXT | filters.VOICE | filters.PHOTO) & ~filters.COMMAND,
+    self._get_reply,
+),

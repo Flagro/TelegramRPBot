@@ -2,7 +2,6 @@ import logging
 from decouple import config
 from pathlib import Path
 
-from bot.rp_bot import TelegramRPBot
 from bot.ai import AI
 from bot.db import DB
 from bot.localizer import Localizer

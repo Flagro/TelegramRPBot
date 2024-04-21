@@ -4,8 +4,9 @@ from telegram.error import BadRequest
 
 from inspect import signature
 from abc import ABC, abstractmethod
+import logging
 
-from .utils import bot_mentioned, get_file_in_memory
+from ..utils import bot_mentioned, get_file_in_memory
 
 
 class BaseHandler(ABC):
@@ -13,6 +14,7 @@ class BaseHandler(ABC):
         self.db = db
         self.ai = ai
         self.localizer = localizer
+        self.logger = logging.getLogger(f"{__name__}.{id(self)}")
         
     @abstractmethod
     def handle(self):
@@ -20,6 +22,8 @@ class BaseHandler(ABC):
 
 
 class CallbackHandler(BaseHandler, ABC):
+    pattern = None
+
     async def wrapper(self, update: Update, _: CallbackContext):
         query = update.callback_query
         await query.answer()
@@ -52,6 +56,8 @@ class CallbackHandler(BaseHandler, ABC):
 
 
 class MessageHandler(BaseHandler, ABC):
+    filters = None
+
     async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_handle = "@" + update.message.from_user.username
         chat_id = update.message.chat_id
@@ -86,6 +92,9 @@ class MessageHandler(BaseHandler, ABC):
 
 
 class CommandHandler(BaseHandler, ABC):
+    command = None
+    description_tag = None
+    
     async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         sig = signature(self.handle)
         params = {}

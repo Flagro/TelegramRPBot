@@ -8,3 +8,5 @@ async def _show_chat_modes(self, chat_id, args) -> CommandResponse:
         available_modes, "show_chat_modes", button_action, page_index
     )
     return CommandResponse("", {}, modes_keyboard)
+
+pattern = "^show_chat_modes"
