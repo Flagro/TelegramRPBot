@@ -15,11 +15,11 @@ import logging
 from collections import namedtuple
 from typing import List, Optional
 
-from .db import DB
-from .ai import AI
-from .localizer import Localizer
-from .auth import authorized
-from .rp_bot.keyboards import get_chat_modes_keyboard
+from ..db import DB
+from ..ai import AI
+from ..localizer import Localizer
+from ..auth import authorized
+from ..rp_bot.keyboards import get_chat_modes_keyboard
 
 
 class TelegramBot:
