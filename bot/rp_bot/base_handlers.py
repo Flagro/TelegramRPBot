@@ -21,7 +21,7 @@ class BaseHandler(ABC):
         raise NotImplementedError
 
 
-class CallbackHandler(BaseHandler, ABC):
+class BaseCallbackHandler(BaseHandler, ABC):
     pattern = None
 
     async def wrapper(self, update: Update, _: CallbackContext):
@@ -55,7 +55,7 @@ class CallbackHandler(BaseHandler, ABC):
         raise NotImplementedError
 
 
-class MessageHandler(BaseHandler, ABC):
+class BaseMessageHandler(BaseHandler, ABC):
     filters = None
 
     async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -91,7 +91,7 @@ class MessageHandler(BaseHandler, ABC):
         raise NotImplementedError
 
 
-class CommandHandler(BaseHandler, ABC):
+class BaseCommandHandler(BaseHandler, ABC):
     command = None
     description_tag = None
     

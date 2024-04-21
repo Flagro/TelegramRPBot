@@ -15,11 +15,6 @@ import logging
 from collections import namedtuple
 from typing import List, Optional
 
-from .handler_decorators import (
-    command_handler,
-    callback_handler,
-    message_handler,
-)
 from .db import DB
 from .ai import AI
 from .localizer import Localizer
