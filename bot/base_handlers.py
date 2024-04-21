@@ -8,12 +8,18 @@ from abc import ABC, abstractmethod
 from .utils import bot_mentioned, get_file_in_memory
 
 
-class CallbackHandler(ABC):
+class BaseHandler(ABC):
     def __init__(self, db, ai, localizer):
         self.db = db
         self.ai = ai
         self.localizer = localizer
+        
+    @abstractmethod
+    def handle(self):
+        raise NotImplementedError
 
+
+class CallbackHandler(BaseHandler, ABC):
     async def wrapper(self, update: Update, _: CallbackContext):
         query = update.callback_query
         await query.answer()
@@ -45,12 +51,7 @@ class CallbackHandler(ABC):
         raise NotImplementedError
 
 
-class MessageHandler(ABC):
-    def __init__(self, db, ai, localizer):
-        self.db = db
-        self.ai = ai
-        self.localizer = localizer
-
+class MessageHandler(BaseHandler, ABC):
     async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_handle = "@" + update.message.from_user.username
         chat_id = update.message.chat_id
@@ -84,12 +85,7 @@ class MessageHandler(ABC):
         raise NotImplementedError
 
 
-class CommandHandler(ABC):
-    def __init__(self, db, ai, localizer):
-        self.db = db
-        self.ai = ai
-        self.localizer = localizer
-
+class CommandHandler(BaseHandler, ABC):
     async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         sig = signature(self.handle)
         params = {}
