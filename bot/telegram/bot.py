@@ -14,31 +14,19 @@ from telegram.constants import ParseMode
 import logging
 from collections import namedtuple
 from typing import List, Optional
-
-from ..db import DB
-from ..ai import AI
-from ..localizer import Localizer
-from ..auth import authorized
-from ..rp_bot.keyboards import get_chat_modes_keyboard
+from ..base_bot import BaseBot
 
 
 class TelegramBot:
     def __init__(
         self,
         telegram_token: str,
-        allowed_handles: List[str],
-        admin_handles: List[str],
-        db: DB,
-        ai: AI,
-        localizer: Localizer,
+        bot: BaseBot,
     ):
         self.telegram_token = telegram_token
-        self.allowed_handles = allowed_handles
-        self.admin_handles = admin_handles
-        self.db = db
-        self.ai = ai
-        self.localizer = localizer
-        self.logger = logging.getLogger(f"{__name__}.{id(self)}")
+        self.commands = bot.commands
+        self.messages = bot.messages
+        self.callbacks = bot.callbacks
 
     async def post_init(self, application: Application) -> None:
         """
