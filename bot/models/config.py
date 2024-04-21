@@ -73,3 +73,8 @@ class ImageProcessing(BaseModel):
 class AIConfig(BaseYAMLConfigModel):
     TextGeneration: TextGeneration
     ImageProcessing: ImageProcessing
+
+
+class AuthConfig(BaseModel):
+    allowed_handles: str
+    admin_handles: str

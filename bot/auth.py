@@ -1,23 +1,4 @@
 from telegram import Update
-from telegram.ext import ContextTypes
-from functools import wraps
-
-
-def authorized(func):
-    @wraps(func)
-    async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        user_handle = "@" + update.message.from_user.username
-        self.db.create_user_if_not_exists(user_handle)
-        if user_handle not in self.allowed_handles:
-            # TODO: log unauthorized access
-            return
-        return await func(self, update, context)
-
-    return wrapper
-
-
-from functools import wraps
-from telegram import Update
 from telegram.ext import CallbackContext
 
 class BasePermission:
@@ -65,3 +46,15 @@ class BotAdmin(BasePermission):
 class AnyUser(BasePermission):
     def check(self, update: Update, context: CallbackContext) -> bool:
         return True  # Any user can use the command
+
+
+class Auth():
+    def __init__(self, allowed_handles, admin_handles):
+        self.allowed_handles = allowed_handles
+        self.admin_handles = admin_handles
+
+    def is_allowed(self, user_handle):
+        return user_handle in self.allowed_handles
+
+    def is_admin(self, user_handle):
+        return user_handle in self.admin_handles
