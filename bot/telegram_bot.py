@@ -24,7 +24,7 @@ from .db import DB
 from .ai import AI
 from .localizer import Localizer
 from .auth import authorized
-from .keyboards import get_chat_modes_keyboard
+from .rp_bot.keyboards import get_chat_modes_keyboard
 
 
 class TelegramBot:
