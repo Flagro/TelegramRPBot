@@ -4,7 +4,7 @@ from telegram import (
 )
 
 from typing import List, Optional
-from .db import ChatModeResponse
+from ..db import ChatModeResponse
 
 
 def get_chat_modes_keyboard(
