@@ -2,10 +2,10 @@ import logging
 from decouple import config
 from pathlib import Path
 
-from bot.ai import AI
-from bot.db import DB
-from bot.auth import Auth
-from bot.localizer import Localizer
+from bot.rp_bot.ai import AI
+from bot.rp_bot.db import DB
+from bot.rp_bot.auth import Auth
+from bot.rp_bot.localizer import Localizer
 from bot.models.config import (
     TGConfig,
     DefaultChatModes,
