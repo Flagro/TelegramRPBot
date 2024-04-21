@@ -1,4 +1,13 @@
-async def wrapper(self, update: Update, _: CallbackContext):
+from telegram import Update
+from telegram.ext import ContextTypes, CallbackContext
+from telegram.error import BadRequest
+
+from inspect import signature
+
+from ..utils import bot_mentioned, get_file_in_memory
+
+
+async def callback_wrapper(self, update: Update, _: CallbackContext):
     query = update.callback_query
     await query.answer()
 
@@ -25,7 +34,7 @@ async def wrapper(self, update: Update, _: CallbackContext):
             self.logger.error(f"Error editing message: {e}")
 
 
-async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def message_wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_handle = "@" + update.message.from_user.username
     chat_id = update.message.chat_id
     thread_id = None
@@ -54,7 +63,7 @@ async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def command_wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
     sig = signature(self.handle)
     params = {}
     if "user_handle" in sig.parameters:
