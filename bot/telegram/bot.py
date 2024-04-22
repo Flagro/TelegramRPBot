@@ -15,6 +15,7 @@ import logging
 from collections import namedtuple
 from typing import List, Optional
 from ..base_bot import BaseBot
+from .wrappers import command_wrapper, message_wrapper, callback_wrapper
 
 
 class TelegramBot:
@@ -54,15 +55,15 @@ class TelegramBot:
             .build()
         )
         command_handlers = [
-            CommandHandler(command.command, command.handler)
+            CommandHandler(command.command, command_wrapper(command.handler))
             for command in self.commands
         ]
         message_handlers = [
-            MessageHandler(handler.filters, handler.handler)
-            for handler in self.handlers
+            MessageHandler(message.filters, message_wrapper(message.handler))
+            for message in self.messages
         ]
         callback_handlers = [
-            CallbackQueryHandler(callback.callback, callback.pattern)
+            CallbackQueryHandler(callback.callback, callback_wrapper(callback.pattern))
             for callback in self.callbacks
         ]
         application.add_handlers(
