@@ -1,4 +1,4 @@
-from ..base_handlers import CommandHandler
+from ...base_handlers import CommandHandler
 
 
 class AddModeHandler(CommandHandler):
