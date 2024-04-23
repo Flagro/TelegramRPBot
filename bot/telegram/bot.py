@@ -63,7 +63,7 @@ class TelegramBot:
             for message in self.messages
         ]
         callback_handlers = [
-            CallbackQueryHandler(callback.callback, callback_wrapper(callback.pattern))
+            CallbackQueryHandler(callback_wrapper(callback.handler), callback.pattern)
             for callback in self.callbacks
         ]
         application.add_handlers(
