@@ -25,9 +25,9 @@ class TelegramBot:
         bot: BaseBot,
     ):
         self.telegram_token = telegram_token
-        self.commands = bot.commands
-        self.messages = bot.messages
-        self.callbacks = bot.callbacks
+        self.commands = bot.get_commands()
+        self.messages = bot.get_messages()
+        self.callbacks = bot.get_callbacks()
 
     async def post_init(self, application: Application) -> None:
         """
