@@ -14,7 +14,7 @@ from telegram.constants import ParseMode
 import logging
 from collections import namedtuple
 from typing import List, Optional
-from ..base_bot import BaseBot
+from ..models.base_bot import BaseBot
 from .wrappers import command_wrapper, message_wrapper, callback_wrapper
 
 

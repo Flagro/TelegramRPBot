@@ -1,4 +1,4 @@
-from ...base_handlers import BaseCommandHandler
+from ...models.base_handlers import BaseCommandHandler
 
 
 class CommandHandler(BaseCommandHandler):
