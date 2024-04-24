@@ -1,7 +1,7 @@
-from ...base_handlers import CommandHandler
+from ...base_handlers import BaseCommandHandler
 
 
-class AddModeHandler(CommandHandler):
+class CommandHandler(BaseCommandHandler):
     async def handle(self, chat_id, args) -> CommandResponse:
         mode_description = " ".join(args)
         # Get the first sentence or paragraph of the mode description:
