@@ -1,10 +1,11 @@
 class Person:
-    def __init__(self, user_id, username, first_name, last_name, language_code):
+    def __init__(self, user_id, user_handle, first_name, last_name, is_group_admin, is_group_owner):
         self.user_id = user_id
-        self.username = username
+        self.user_handle = user_handle
         self.first_name = first_name
         self.last_name = last_name
-        self.language_code = language_code
+        self.is_group_admin = is_group_admin
+        self.is_group_owner = is_group_owner
 
 
 class Context:
