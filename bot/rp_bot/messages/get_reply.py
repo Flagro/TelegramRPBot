@@ -2,6 +2,8 @@ from ...models.base_handlers import BaseMessageHandler
 from ...models.handlers_response import MessageResponse
 from typing import Optional
 
+from telegram.ext import filters
+
 
 class MessageHandler(BaseMessageHandler):
     filters = (filters.TEXT | filters.VOICE | filters.PHOTO) & ~filters.COMMAND
