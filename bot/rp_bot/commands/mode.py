@@ -1,5 +1,6 @@
 from ...models.base_handlers import BaseCommandHandler
 from ...models.handlers_response import CommandResponse
+from ..keyboards import get_chat_modes_keyboard
 
 
 class CommandHandler(BaseCommandHandler):
