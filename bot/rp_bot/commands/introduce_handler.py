@@ -3,6 +3,8 @@ from ...models.handlers_response import CommandResponse
 
 
 class CommandHandler(BaseCommandHandler):
+    permissions = []
+
     async def handle(self, chat_id, user_handle, args) -> CommandResponse:
         introduction = " ".join(args)
         try:

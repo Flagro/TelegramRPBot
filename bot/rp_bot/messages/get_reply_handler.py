@@ -6,6 +6,7 @@ from telegram.ext import filters
 
 
 class MessageHandler(BaseMessageHandler):
+    permissions = []
     filters = (filters.TEXT | filters.VOICE | filters.PHOTO) & ~filters.COMMAND
 
     async def handle(

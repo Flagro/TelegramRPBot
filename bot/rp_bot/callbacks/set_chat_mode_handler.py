@@ -3,6 +3,7 @@ from ...models.handlers_response import CommandResponse
 
 
 class CallbackHandler(BaseCallbackHandler):
+    permissions = []
     pattern = "^set_chat_mode"
     
     async def handle(self, chat_id, args) -> CommandResponse:

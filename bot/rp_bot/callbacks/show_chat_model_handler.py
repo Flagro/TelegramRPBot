@@ -4,6 +4,7 @@ from ..keyboards import get_chat_modes_keyboard
 
 
 class CallbackHandler(BaseCallbackHandler):
+    permissions = []
     pattern = "^show_chat_modes"
     
     async def handle(self, chat_id, args) -> CommandResponse:
