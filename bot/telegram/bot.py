@@ -15,6 +15,7 @@ import logging
 from collections import namedtuple
 from typing import List, Optional
 from ..models.base_bot import BaseBot
+from ..models.config import TGConfig
 from .wrappers import command_wrapper, message_wrapper, callback_wrapper
 
 
@@ -23,6 +24,7 @@ class TelegramBot:
         self,
         telegram_token: str,
         bot: BaseBot,
+        telegram_config: TGConfig,
     ):
         self.telegram_token = telegram_token
         self.commands = bot.get_commands()

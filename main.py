@@ -6,6 +6,7 @@ from bot.rp_bot.ai import AI
 from bot.rp_bot.db import DB
 from bot.rp_bot.auth import Auth
 from bot.rp_bot.localizer import Localizer
+from bot.rp_bot.bot import RPBot
 from bot.models.config import (
     TGConfig,
     DefaultChatModes,
@@ -13,6 +14,7 @@ from bot.models.config import (
     DBConfig,
     AIConfig,
 )
+from bot.telegram.bot import TelegramBot
 
 
 def main():
@@ -41,15 +43,15 @@ def main():
     
     auth = Auth(allowed_handles=config("ALLOWED_HANDLES").split(","),
                 admin_handles=config("ADMIN_HANDLES").split(","))
+    
+    rp_bot = RPBot(ai=ai, db=db, localizer=localizer, auth=auth, logger=logging.getLogger("RPBot"))
 
-    bot = TelegramRPBot(
+    tg_bot = TelegramBot(
         telegram_token=config("TELEGRAM_TOKEN"),
-        db=db,
-        ai=ai,
-        localizer=localizer,
+        bot=rp_bot,
         telegram_bot_config=telegram_bot_config,
     )
-    bot.run()
+    tg_bot.run()
 
 
 if __name__ == "__main__":
