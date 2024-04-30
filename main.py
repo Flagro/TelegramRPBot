@@ -12,7 +12,6 @@ from bot.models.config import (
     LocalizerTranslations,
     DBConfig,
     AIConfig,
-    AuthConfig,
 )
 
 
