@@ -4,6 +4,8 @@ from uuid import UUID
 from motor.motor_asyncio import AsyncIOMotorClient
 from collections import namedtuple
 
+from ..models.config import DefaultChatModes
+
 UserUsageResponse = namedtuple("UserUsageResponse", ["this_month_usage", "limit"])
 ChatModeResponse = namedtuple(
     "ChatModeResponse", ["id", "mode_name", "mode_description"]
@@ -11,12 +13,22 @@ ChatModeResponse = namedtuple(
 
 
 class DB:
-    def __init__(self, uri: str, db_name: str):
+    def __init__(self, uri: str, default_chat_modes: DefaultChatModes):
         self.client = AsyncIOMotorClient(uri)
+        self.default_chat_modes = default_chat_modes
+        db_name = uri.split("/")[-1]
         self.db = self.client[db_name]
         self.users = self.db.users
         self.chat_modes = self.db.chat_modes
         self.dialogs = self.db.dialogs
+        
+    def _init_default_chat_modes(self, chat_id: str) -> None:
+        for mode in self.default_chat_modes:
+            self.chat_modes.update_one(
+                {"chat_id": chat_id, "mode_name": mode.name},
+                {"$setOnInsert": {"mode_description": mode.description}},
+                upsert=True,
+            )
 
     async def create_user_if_not_exists(self, user_handle: str) -> None:
         await self.users.update_one(

@@ -11,7 +11,6 @@ from bot.models.config import (
     TGConfig,
     DefaultChatModes,
     LocalizerTranslations,
-    DBConfig,
     AIConfig,
 )
 from bot.telegram.bot import TelegramBot
@@ -30,11 +29,10 @@ def main():
     translations = LocalizerTranslations.load(
         config_dir / "localizer_translations.yaml"
     )
-    db_config = DBConfig.load(config_dir / "db_config.yaml")
     ai_config = AIConfig.load(config_dir / "ai_config.yaml")
 
     db = DB(
-        config("DB_URI"), db_config=db_config, default_chat_modes=default_chat_modes
+        config("DB_URI"), default_chat_modes=default_chat_modes
     )
 
     ai = AI(openai_api_key=config("OPENAI_API_KEY"), db=db, ai_config=ai_config)
