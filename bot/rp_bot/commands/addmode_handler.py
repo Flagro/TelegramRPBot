@@ -5,7 +5,7 @@ from ...models.handlers_response import CommandResponse
 class CommandHandler(BaseCommandHandler):
     permissions = []
 
-    async def handle(self, chat_id, args) -> CommandResponse:
+    async def get_command_response(self, chat_id, args) -> CommandResponse:
         mode_description = " ".join(args)
         # Get the first sentence or paragraph of the mode description:
         # TODO: implement NER here

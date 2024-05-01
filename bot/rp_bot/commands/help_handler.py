@@ -5,5 +5,5 @@ from ...models.handlers_response import CommandResponse
 class CommandHandler(BaseCommandHandler):
     permissions = []
 
-    async def handle(self) -> CommandResponse:
+    async def get_command_response(self) -> CommandResponse:
         return CommandResponse("help_text", {}, None)

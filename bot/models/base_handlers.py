@@ -24,7 +24,7 @@ class BaseCallbackHandler(BaseHandler, ABC):
         return response
 
     @abstractmethod
-    def get_command_response(self, tag, kwargs=None):
+    def get_callback_response(self, tag, kwargs=None):
         raise NotImplementedError
 
 

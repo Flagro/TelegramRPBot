@@ -7,7 +7,7 @@ class CallbackHandler(BaseCallbackHandler):
     permissions = []
     pattern = "^show_chat_modes"
     
-    async def handle(self, chat_id, args) -> CommandResponse:
+    async def get_callback_response(self, chat_id, args) -> CommandResponse:
         button_action = args[0]
         page_index = int(args[1])
         available_modes = self.db.get_chat_modes(chat_id)

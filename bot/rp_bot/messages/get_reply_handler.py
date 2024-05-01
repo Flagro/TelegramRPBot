@@ -9,7 +9,7 @@ class MessageHandler(BaseMessageHandler):
     permissions = []
     filters = (filters.TEXT | filters.VOICE | filters.PHOTO) & ~filters.COMMAND
 
-    async def handle(
+    async def get_reply(
         self, chat_id, thread_id, is_bot_mentioned, user_handle, message, image, voice
     ) -> Optional[MessageResponse]:
         if self.telegram_bot_config.track_conversation_thread:

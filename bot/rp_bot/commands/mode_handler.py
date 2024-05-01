@@ -6,7 +6,7 @@ from ..keyboards import get_chat_modes_keyboard
 class CommandHandler(BaseCommandHandler):
     permissions = []
 
-    async def handle(self, chat_id) -> CommandResponse:
+    async def get_command_response(self, chat_id) -> CommandResponse:
         available_modes = self.db.get_chat_modes(chat_id)
         modes_keyboard = get_chat_modes_keyboard(
             available_modes, "show_chat_modes", "set_chat_mode"
