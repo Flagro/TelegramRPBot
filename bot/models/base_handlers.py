@@ -19,6 +19,7 @@ class BaseCallbackHandler(BaseHandler, ABC):
 
     @abstractmethod
     def handle(self, Person, Context, args):
+        self.db.create_user_if_not_exists(Person)
         context_response = self.get_command_response(Person, Context, args)
         response = self.localizer.get_command_response(context_response.tag, context_response.kwargs)
         return response
@@ -32,6 +33,7 @@ class BaseMessageHandler(BaseHandler, ABC):
     filters = None
 
     def handle(self, Person, Context, args):
+        self.db.create_user_if_not_exists(Person)
         context_response = self.get_command_response(Person, Context, args)
         response = self.localizer.get_command_response(context_response.tag, context_response.kwargs)
         return response
@@ -46,6 +48,7 @@ class BaseCommandHandler(BaseHandler, ABC):
     description_tag = None
 
     def handle(self, Person, Context, args):
+        self.db.create_user_if_not_exists(Person)
         return self.get_reply(Person, Context, args)
 
     @abstractmethod
