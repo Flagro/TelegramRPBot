@@ -12,7 +12,7 @@ class BaseHandler(ABC):
         self.ai = ai
         self.localizer = localizer
         self.logger = logging.getLogger(f"{__name__}.{id(self)}")
-        
+
     @abstractmethod
     def handle(self):
         raise NotImplementedError
@@ -25,7 +25,9 @@ class BaseCallbackHandler(BaseHandler, ABC):
     def handle(self, Person, Context, args):
         self.db.create_user_if_not_exists(Person)
         context_response = self.get_callback_response(Person, Context, args)
-        response = self.localizer.get_command_response(context_response.tag, context_response.kwargs)
+        response = self.localizer.get_command_response(
+            context_response.tag, context_response.kwargs
+        )
         return response
 
     @abstractmethod
@@ -39,10 +41,12 @@ class BaseMessageHandler(BaseHandler, ABC):
     def handle(self, Person, Context, args):
         self.db.create_user_if_not_exists(Person)
         context_response = self.get_command_response(Person, Context, args)
-        response = self.localizer.get_command_response(context_response.tag, context_response.kwargs)
+        response = self.localizer.get_command_response(
+            context_response.tag, context_response.kwargs
+        )
         return response
 
-    @abstractmethod    
+    @abstractmethod
     def get_command_response(self, tag, kwargs=None):
         raise NotImplementedError
 
