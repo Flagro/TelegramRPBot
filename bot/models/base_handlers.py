@@ -4,6 +4,7 @@ import logging
 from ..rp_bot.db import DB
 from ..rp_bot.ai import AI
 from ..rp_bot.localizer import Localizer
+from ..models.handlers_input import Person, Context, Message
 
 
 class BaseHandler(ABC):
@@ -22,9 +23,9 @@ class BaseCallbackHandler(BaseHandler, ABC):
     pattern = None
 
     @abstractmethod
-    def handle(self, Person, Context, args):
-        self.db.create_user_if_not_exists(Person)
-        context_response = self.get_callback_response(Person, Context, args)
+    def handle(self, person: Person, context: Context, args: list):
+        self.db.create_user_if_not_exists(person)
+        context_response = self.get_callback_response(person, context, args)
         response = self.localizer.get_command_response(
             context_response.tag, context_response.kwargs
         )
@@ -38,16 +39,16 @@ class BaseCallbackHandler(BaseHandler, ABC):
 class BaseMessageHandler(BaseHandler, ABC):
     filters = None
 
-    def handle(self, Person, Context, args):
-        self.db.create_user_if_not_exists(Person)
-        context_response = self.get_command_response(Person, Context, args)
+    def handle(self, person: Person, context: Context, message: Message):
+        self.db.create_user_if_not_exists(person)
+        context_response = self.get_reply(person, context, message)
         response = self.localizer.get_command_response(
             context_response.tag, context_response.kwargs
         )
         return response
 
     @abstractmethod
-    def get_command_response(self, tag, kwargs=None):
+    def get_reply(self, person: Person, message: Message):
         raise NotImplementedError
 
 
@@ -55,10 +56,10 @@ class BaseCommandHandler(BaseHandler, ABC):
     command = None
     description_tag = None
 
-    def handle(self, Person, Context, args):
+    def handle(self, person: Person, context: Context, args):
         self.db.create_user_if_not_exists(Person)
-        return self.get_reply(Person, Context, args)
+        return self.get_reply(person, context, args)
 
     @abstractmethod
-    def get_reply(self, Person, Context, args):
+    def get_reply(self, person: Person, context: Context, args):
         raise NotImplementedError
