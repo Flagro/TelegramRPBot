@@ -25,9 +25,9 @@ class BaseCallbackHandler(BaseHandler, ABC):
     @abstractmethod
     def handle(self, person: Person, context: Context, args: list):
         self.db.create_user_if_not_exists(person)
-        context_response = self.get_callback_response(person, context, args)
+        callback_response = self.get_callback_response(person, context, args)
         response = self.localizer.get_command_response(
-            context_response.tag, context_response.kwargs
+            callback_response.tag, callback_response.kwargs
         )
         return response
 
@@ -36,30 +36,31 @@ class BaseCallbackHandler(BaseHandler, ABC):
         raise NotImplementedError
 
 
-class BaseMessageHandler(BaseHandler, ABC):
-    filters = None
-
-    def handle(self, person: Person, context: Context, message: Message):
-        self.db.create_user_if_not_exists(person)
-        context_response = self.get_reply(person, context, message)
-        response = self.localizer.get_command_response(
-            context_response.tag, context_response.kwargs
-        )
-        return response
-
-    @abstractmethod
-    def get_reply(self, person: Person, message: Message):
-        raise NotImplementedError
-
-
 class BaseCommandHandler(BaseHandler, ABC):
     command = None
     description_tag = None
 
     def handle(self, person: Person, context: Context, args):
-        self.db.create_user_if_not_exists(Person)
-        return self.get_reply(person, context, args)
+        self.db.create_user_if_not_exists(person)
+        command_response = self.get_command_response(person, context, args)
+        response = self.localizer.get_command_response(
+            command_response.tag, command_response.kwargs
+        )
+        return response
 
     @abstractmethod
-    def get_reply(self, person: Person, context: Context, args):
+    def get_command_response(self, person: Person, context: Context, args):
+        raise NotImplementedError
+
+
+class BaseMessageHandler(BaseHandler, ABC):
+    filters = None
+
+    def handle(self, person: Person, context: Context, message: Message):
+        self.db.create_user_if_not_exists(person)
+        message_response = self.get_reply(person, context, message)
+        return message_response
+
+    @abstractmethod
+    def get_reply(self, person: Person, message: Message):
         raise NotImplementedError
