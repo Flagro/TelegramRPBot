@@ -5,21 +5,21 @@ from telegram.error import BadRequest
 
 from inspect import signature
 
-from .utils import bot_mentioned, get_file_in_memory
+from .utils import bot_mentioned, get_file_in_memory, get_context, get_person, get_message
 
 
 def callback_wrapper(func):
     @wraps(func)
-    async def wrapper(self, update: Update, _: CallbackContext):
+    async def wrapper(self, update: Update, context: CallbackContext):
         query = update.callback_query
         await query.answer()
 
         sig = signature(func)
         params = {}
-        if "user_handle" in sig.parameters:
-            params["user_handle"] = update.callback_query.from_user.username
-        if "chat_id" in sig.parameters:
-            params["chat_id"] = update.callback_query.message.chat.id
+        if "context" in sig.parameters:
+            params["context"] = get_context(update, context)
+        if "person" in sig.parameters:
+            params["person"] = get_person(update, context)
         if "args" in sig.parameters:
             params["callback_args"] = query.data.split("|")[1:]
 

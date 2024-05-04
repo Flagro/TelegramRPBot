@@ -22,7 +22,7 @@ def get_context(update: Update, context) -> Context:
         )
     elif type(context) == ContextTypes.CALLBACK_TYPE:
         return Context(
-            chat_id=update.callback_query.message.chat_id,
+            chat_id=update.callback_query.message.chat.id,
             thread_id=None,
             is_bot_mentioned=False,
         )
