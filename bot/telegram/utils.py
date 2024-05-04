@@ -10,6 +10,31 @@ import telegram
 from telegram import Update, constants
 from telegram.ext import CallbackContext, ContextTypes
 
+from ..models.handlers_input import Person, Context, Message
+
+
+def get_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Context:
+    return Context(
+        chat_id=update.message.chat_id,
+        thread_id=get_thread_id(update),
+        is_bot_mentioned=bot_mentioned(update, context),
+    )
+
+
+def get_person(update: Update) -> Person:
+    return Person(
+        user_id=update.message.from_user.id,
+        user_handle=update.message.from_user.username,
+    )
+
+
+def get_message(update: Update) -> Message:
+    return Message(
+        message=update.message.text,
+        image=update.message.photo,
+        voice=update.message.voice,
+    )
+
 
 def bot_mentioned(update: Update, context: ContextTypes.DEFAULT_TYPE) -> bool:
     is_private_chat = update.message.chat.type == "private"
