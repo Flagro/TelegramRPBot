@@ -13,19 +13,32 @@ from telegram.ext import CallbackContext, ContextTypes
 from ..models.handlers_input import Person, Context, Message
 
 
-def get_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Context:
-    return Context(
-        chat_id=update.message.chat_id,
-        thread_id=get_thread_id(update),
-        is_bot_mentioned=bot_mentioned(update, context),
-    )
+def get_context(update: Update, context) -> Context:
+    if type(context) == ContextTypes.DEFAULT_TYPE:
+        return Context(
+            chat_id=update.message.chat_id,
+            thread_id=get_thread_id(update),
+            is_bot_mentioned=bot_mentioned(update, context),
+        )
+    elif type(context) == ContextTypes.CALLBACK_TYPE:
+        return Context(
+            chat_id=update.callback_query.message.chat_id,
+            thread_id=None,
+            is_bot_mentioned=False,
+        )
 
 
-def get_person(update: Update) -> Person:
-    return Person(
-        user_id=update.message.from_user.id,
-        user_handle=update.message.from_user.username,
-    )
+def get_person(update: Update, context) -> Person:
+    if type(context) == ContextTypes.DEFAULT_TYPE:
+        return Person(
+            user_id=update.message.from_user.id,
+            user_handle=update.message.from_user.username,
+        )
+    elif type(context) == ContextTypes.CALLBACK_TYPE:
+        return Person(
+            user_id=update.callback_query.from_user.id,
+            user_handle=update.callback_query.from_user.username,
+        )
 
 
 def get_message(update: Update) -> Message:
