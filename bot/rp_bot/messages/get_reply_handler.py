@@ -10,9 +10,9 @@ class MessageHandler(BaseMessageHandler):
     filters = (filters.TEXT | filters.VOICE | filters.PHOTO) & ~filters.COMMAND
 
     async def get_reply(
-        self, chat_id, thread_id, is_bot_mentioned, user_handle, message, image, voice
+        self, chat_id, thread_id, is_bot_mentioned, track_conversation_thread, user_handle, message, image, voice
     ) -> Optional[MessageResponse]:
-        if self.telegram_bot_config.track_conversation_thread:
+        if track_conversation_thread:
             self.db.save_thread_message(thread_id, user_handle, message)
         if not is_bot_mentioned:
             return None

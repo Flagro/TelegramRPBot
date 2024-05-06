@@ -62,6 +62,7 @@ def message_wrapper(func):
             chat_id,
             thread_id,
             bot_mentioned(update, context),
+            self.telegram_bot_config.track_conversation_thread,
             user_handle,
             message,
             image,
