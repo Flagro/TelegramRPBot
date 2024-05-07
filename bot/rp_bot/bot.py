@@ -8,6 +8,8 @@ from .messages import handlers as message_handlers
 
 class RPBot(BaseBot):
     def __init__(self, ai, db, localizer, auth, logger):
+        # TODO: init here the handlers with parameters
+        # and store them in a class attribute
         pass
 
     def get_callbacks(self) -> List[BaseCallbackHandler]:
