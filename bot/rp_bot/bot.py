@@ -1,6 +1,9 @@
 from typing import List
 from bot.models.base_handlers import BaseCallbackHandler
 from ..models.base_bot import BaseBot
+from .commands import handlers as command_handlers
+from .callbacks import handlers as callback_handlers
+from .messages import handlers as message_handlers
 
 
 class RPBot(BaseBot):
@@ -8,10 +11,10 @@ class RPBot(BaseBot):
         pass
 
     def get_callbacks(self) -> List[BaseCallbackHandler]:
-        return super().get_callbacks()
+        return callback_handlers
     
     def get_commands(self) -> List[BaseCallbackHandler]:
-        return super().get_commands()
+        return command_handlers
 
     def get_messages(self) -> List[BaseCallbackHandler]:
-        return super().get_messages()
+        return message_handlers
