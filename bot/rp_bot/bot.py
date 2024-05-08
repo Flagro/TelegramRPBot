@@ -17,7 +17,7 @@ class RPBot(BaseBot):
             handler.ai = ai
             handler.db = db
             handler.localizer = localizer
-            handler.auth = auth
+            handler.auth = auth # TODO: init permissions
             handler.logger = logger
 
     def get_callbacks(self) -> List[BaseCallbackHandler]:
