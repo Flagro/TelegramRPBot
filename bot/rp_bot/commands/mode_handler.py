@@ -1,10 +1,11 @@
 from ...models.base_handlers import BaseCommandHandler
 from ...models.handlers_response import CommandResponse
 from ..keyboards import get_chat_modes_keyboard
+from ..auth import AllowedUser
 
 
 class CommandHandler(BaseCommandHandler):
-    permissions = []
+    permissions = [AllowedUser]
     list_priority_order = 1
 
     async def get_command_response(self, chat_id) -> CommandResponse:

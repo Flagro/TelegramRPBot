@@ -1,10 +1,11 @@
 from ...models.base_handlers import BaseCallbackHandler
 from ...models.handlers_response import CommandResponse
 from ..keyboards import get_chat_modes_keyboard
+from ..commands.mode_handler import CommandHandler
 
 
 class CallbackHandler(BaseCallbackHandler):
-    permissions = []
+    permissions = CommandHandler.permissions
     pattern = "^show_chat_modes"
     
     async def get_callback_response(self, chat_id, args) -> CommandResponse:

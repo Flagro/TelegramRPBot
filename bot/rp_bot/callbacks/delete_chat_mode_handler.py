@@ -1,9 +1,10 @@
 from ...models.base_handlers import BaseCallbackHandler
 from ...models.handlers_response import CommandResponse
+from ..commands.deletemode_handler import CommandHandler
 
 
 class CallbackHandler(BaseCallbackHandler):
-    permissions = []
+    permissions = CommandHandler.permissions
     pattern = "^delete_chat_mode"
     
     async def get_callback_response(self, chat_id, args) -> CommandResponse:
