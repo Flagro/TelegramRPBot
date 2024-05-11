@@ -15,17 +15,6 @@ import logging
 from collections import namedtuple
 from typing import List, Optional
 
-from .handlers import (
-    command_handler,
-    callback_handler,
-    message_handler,
-)
-from .db import DB
-from .ai import AI
-from .localizer import Localizer
-from .auth import authorized
-from .keyboards import get_chat_modes_keyboard
-
 from telegram import Update
 from telegram.ext import ContextTypes, CallbackContext
 from telegram.error import BadRequest
@@ -33,16 +22,12 @@ from telegram.error import BadRequest
 from functools import wraps
 from inspect import signature
 
-from .utils import bot_mentioned, get_file_in_memory
-
-
 from telegram import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
 )
 
 from typing import List, Optional
-from .db import ChatModeResponse
 
 
 from __future__ import annotations
