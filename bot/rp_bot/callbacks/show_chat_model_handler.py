@@ -1,18 +1,12 @@
 from ...models.base_handlers import BaseCallbackHandler
-from ...models.handlers_response import CommandResponse
-from ..keyboards import get_chat_modes_keyboard
+from ...models.handlers_response import ListResponse
 from ..commands.mode_handler import CommandHandler
 
 
 class CallbackHandler(BaseCallbackHandler):
     permissions = CommandHandler.permissions
-    pattern = "^show_chat_modes"
+    callback_action = "show_chat_modes" # TODO: add "^" concat in TG handler
     
-    async def get_callback_response(self, chat_id, args) -> CommandResponse:
-        button_action = args[0]
-        page_index = int(args[1])
+    async def get_callback_response(self, chat_id, args) -> ListResponse:
         available_modes = self.db.get_chat_modes(chat_id)
-        modes_keyboard = get_chat_modes_keyboard(
-            available_modes, "show_chat_modes", button_action, page_index
-        )
-        return CommandResponse("", {}, modes_keyboard)
+        return ListResponse(available_modes, self.callback_action)
