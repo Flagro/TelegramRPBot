@@ -7,6 +7,6 @@ class CallbackHandler(BaseCallbackHandler):
     permissions = CommandHandler.permissions
     callback_action = "show_chat_modes" # TODO: add "^" concat in TG handler
     
-    async def get_callback_response(self, chat_id, args) -> ListResponse:
+    async def get_callback_response(self, chat_id) -> ListResponse:
         available_modes = self.db.get_chat_modes(chat_id)
         return ListResponse(available_modes, self.callback_action)
