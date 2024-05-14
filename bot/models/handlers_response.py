@@ -2,10 +2,9 @@ from typing import Optional, Any
 from uuid import UUID
 
 class CommandResponse:
-    def __init__(self, text, kwargs: Optional[dict] = None, markup: Optional[Any] = None):
+    def __init__(self, text, kwargs: Optional[dict] = None):
         self.text = text
         self.kwargs = kwargs
-        self.markup = markup
         
 
 class MessageResponse:
@@ -15,7 +14,8 @@ class MessageResponse:
 
 
 class ListResponse:
-    def __init__(self, text, names: list[str], ids: list[UUID]):
+    def __init__(self, text, kwargs: Optional[dict], names: list[str], ids: list[UUID]):
         self.text = text
+        self.kwargs = kwargs
         self.names = names
         self.ids = ids
