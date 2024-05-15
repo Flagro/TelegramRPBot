@@ -9,10 +9,13 @@ class CommandHandler(BaseCommandHandler):
 
     async def get_command_response(self, chat_id) -> ListResponse:
         available_modes = self.db.get_chat_modes(chat_id)
+        modes_names = [mode.name for mode in available_modes]
+        modes_ids = [mode.id for mode in available_modes]
         return ListResponse(
             "choose_mode",
             {},
             "show_chat_modes",
             "set_chat_mode",
-            available_modes
+            modes_names,
+            modes_ids,
         )
