@@ -14,7 +14,7 @@ class MessageResponse:
         self.image_url = image_url
 
 
-class ListResponse:
+class KeyboardResponse:
     def __init__(
         self,
         text,
