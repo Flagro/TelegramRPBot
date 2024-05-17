@@ -28,16 +28,12 @@ class GroupAdmin(BasePermission):
 
 
 class AllowedUser(BasePermission):
-    allowed_users = ['user_id1', 'user_id2']  # User IDs from config
-    
     def check(self, update: Update, context: CallbackContext) -> bool:
         user_id = update.effective_user.id
         return str(user_id) in self.allowed_users
 
 
 class BotAdmin(BasePermission):
-    bot_admins = ['admin_id1', 'admin_id2']  # Admin IDs from config
-    
     def check(self, update: Update, context: CallbackContext) -> bool:
         user_id = update.effective_user.id
         return str(user_id) in self.bot_admins
