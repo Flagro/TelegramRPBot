@@ -1,46 +1,49 @@
-from telegram import Update
-from telegram.ext import CallbackContext
+from abc import ABC, abstractmethod
+from ..models.handlers_input import Person, Context
+from ..models.handlers_response import CommandResponse
 
-class BasePermission:
+
+class BasePermission(ABC):
     def __init__(self, func):
         self.func = func
 
-    def __call__(self, update: Update, context: CallbackContext):
-        if self.check(update, context):
-            return self.func(update, context)
+    def __call__(self, person: Person, context: Context):
+        if self.check(person, context):
+            return self.func(person, context)
         else:
-            update.message.reply_text("You do not have permission to use this command.")
+            return CommandResponse("You do not have permission to use this command.")
 
-    def check(self, update: Update, context: CallbackContext) -> bool:
+    @abstractmethod
+    def check(self, person: Person, context: Context) -> bool:
         raise NotImplementedError("Permission check method must be implemented by subclasses.")
 
 
 class GroupOwner(BasePermission):
-    def check(self, update: Update, context: CallbackContext) -> bool:
+    def check(self, person: Person, context: Context) -> bool:
         # Implement logic to check if the user is the group owner
         return True  # Placeholder
 
 
 class GroupAdmin(BasePermission):
-    def check(self, update: Update, context: CallbackContext) -> bool:
+    def check(self, person: Person, context: Context) -> bool:
         # Implement logic to check if the user is an admin in the group
         return True  # Placeholder
 
 
 class AllowedUser(BasePermission):
-    def check(self, update: Update, context: CallbackContext) -> bool:
+    def check(self, person: Person, context: Context) -> bool:
         user_id = update.effective_user.id
         return str(user_id) in self.allowed_users
 
 
 class BotAdmin(BasePermission):
-    def check(self, update: Update, context: CallbackContext) -> bool:
+    def check(self, person: Person, context: Context) -> bool:
         user_id = update.effective_user.id
         return str(user_id) in self.bot_admins
 
 
 class AnyUser(BasePermission):
-    def check(self, update: Update, context: CallbackContext) -> bool:
+    def check(self, person: Person, context: Context) -> bool:
         return True  # Any user can use the command
 
 
