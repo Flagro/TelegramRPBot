@@ -32,26 +32,22 @@ class BasePermission(ABC):
 
 class GroupOwner(BasePermission):
     def check(self, person: Person, context: Context, auth: Auth) -> bool:
-        # Implement logic to check if the user is the group owner
-        return True  # Placeholder
+        return person.is_group_owner
 
 
 class GroupAdmin(BasePermission):
     def check(self, person: Person, context: Context, auth: Auth) -> bool:
-        # Implement logic to check if the user is an admin in the group
-        return True  # Placeholder
+        return person.is_group_admin
 
 
 class AllowedUser(BasePermission):
     def check(self, person: Person, context: Context, auth: Auth) -> bool:
-        user_id = update.effective_user.id
-        return str(user_id) in self.allowed_users
+        return auth.is_allowed(person.user_handle)
 
 
 class BotAdmin(BasePermission):
     def check(self, person: Person, context: Context, auth: Auth) -> bool:
-        user_id = update.effective_user.id
-        return str(user_id) in self.bot_admins
+        return auth.is_admin(person.user_handle)
 
 
 class AnyUser(BasePermission):
