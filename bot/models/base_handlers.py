@@ -1,17 +1,22 @@
 from abc import ABC, abstractmethod
+from functools import wraps
 import logging
 
 from ..rp_bot.db import DB
 from ..rp_bot.ai import AI
 from ..rp_bot.localizer import Localizer
+from ..rp_bot.auth import Auth
 from ..models.handlers_input import Person, Context, Message
 
 
 class BaseHandler(ABC):
-    def __init__(self, db: DB, ai: AI, localizer: Localizer):
+    permissions: list = []
+    
+    def __init__(self, db: DB, ai: AI, localizer: Localizer, auth: Auth):
         self.db = db
         self.ai = ai
         self.localizer = localizer
+        self.auth = auth
         self.logger = logging.getLogger(f"{__name__}.{id(self)}")
 
     @abstractmethod
@@ -19,9 +24,19 @@ class BaseHandler(ABC):
         raise NotImplementedError
 
 
+def is_authenticated(func):
+    @wraps(func)
+    def wrapper(self, person: Person, context: Context, *args, **kwargs):
+        for permission in self.permissions:
+            if not permission(person, context, self.auth):
+                return self.localizer.get_command_response("not_authenticated")
+        return func(self, person, context, *args, **kwargs)
+
+
 class BaseCallbackHandler(BaseHandler, ABC):
     pattern = None
 
+    @is_authenticated
     def handle(self, person: Person, context: Context, args: list):
         self.db.create_user_if_not_exists(person)
         callback_response = self.get_callback_response(person, context, args)
@@ -39,6 +54,7 @@ class BaseCommandHandler(BaseHandler, ABC):
     command = None
     description_tag = None
 
+    @is_authenticated
     def handle(self, person: Person, context: Context, args):
         self.db.create_user_if_not_exists(person)
         command_response = self.get_command_response(person, context, args)
@@ -55,6 +71,7 @@ class BaseCommandHandler(BaseHandler, ABC):
 class BaseMessageHandler(BaseHandler, ABC):
     filters = None
 
+    @is_authenticated
     def handle(self, person: Person, context: Context, message: Message):
         self.db.create_user_if_not_exists(person)
         message_response = self.get_reply(person, context, message)
