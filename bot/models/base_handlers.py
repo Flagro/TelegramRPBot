@@ -22,7 +22,6 @@ class BaseHandler(ABC):
 class BaseCallbackHandler(BaseHandler, ABC):
     pattern = None
 
-    @abstractmethod
     def handle(self, person: Person, context: Context, args: list):
         self.db.create_user_if_not_exists(person)
         callback_response = self.get_callback_response(person, context, args)
