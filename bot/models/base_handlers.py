@@ -35,6 +35,7 @@ def is_authenticated(func):
 
 class BaseCallbackHandler(BaseHandler, ABC):
     pattern = None
+    callback_action: str = None
 
     @is_authenticated
     def handle(self, person: Person, context: Context, args: list):
