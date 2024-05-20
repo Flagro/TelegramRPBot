@@ -5,7 +5,7 @@ from ..commands.mode_handler import CommandHandler
 
 class CallbackHandler(BaseCallbackHandler):
     permissions = CommandHandler.permissions
-    callback_action = "show_chat_modes"  # TODO: add "^" concat in TG handler
+    callback_action = "show_chat_modes"
 
     async def get_callback_response(self, chat_id, args) -> KeyboardResponse:
         old_action = args[0]
