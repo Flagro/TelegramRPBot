@@ -30,6 +30,7 @@ def is_authenticated(func):
         for permission in self.permissions:
             if not permission(person, context, self.auth):
                 return self.localizer.get_command_response("not_authenticated")
+        self.db.create_user_if_not_exists(person)
         return func(self, person, context, *args, **kwargs)
 
 
@@ -38,7 +39,6 @@ class BaseCallbackHandler(BaseHandler, ABC):
 
     @is_authenticated
     def handle(self, person: Person, context: Context, args: list):
-        self.db.create_user_if_not_exists(person)
         callback_response = self.get_callback_response(person, context, args)
         response = self.localizer.get_command_response(
             callback_response.tag, callback_response.kwargs
@@ -56,7 +56,6 @@ class BaseCommandHandler(BaseHandler, ABC):
 
     @is_authenticated
     def handle(self, person: Person, context: Context, args):
-        self.db.create_user_if_not_exists(person)
         command_response = self.get_command_response(person, context, args)
         response = self.localizer.get_command_response(
             command_response.tag, command_response.kwargs
@@ -73,7 +72,6 @@ class BaseMessageHandler(BaseHandler, ABC):
 
     @is_authenticated
     def handle(self, person: Person, context: Context, message: Message):
-        self.db.create_user_if_not_exists(person)
         message_response = self.get_reply(person, context, message)
         return message_response
 
