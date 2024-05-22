@@ -52,7 +52,6 @@ class BaseCallbackHandler(BaseHandler, ABC):
 
 class BaseCommandHandler(BaseHandler, ABC):
     command = None
-    description_tag = None
 
     @is_authenticated
     def handle(self, person: Person, context: Context, args):
