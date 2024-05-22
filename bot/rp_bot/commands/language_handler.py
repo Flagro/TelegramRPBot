@@ -5,6 +5,7 @@ from ..auth import AllowedUser
 
 class CommandHandler(BaseCommandHandler):
     permissions = [AllowedUser]
+    command = "set_language"
     list_priority_order = 1
 
     async def get_command_response(self, chat_id, args) -> CommandResponse:

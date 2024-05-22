@@ -5,7 +5,8 @@ from ..auth import AnyUser
 
 class CommandHandler(BaseCommandHandler):
     permissions = [AnyUser]
-    list_priority_order = 1
+    command = "help"
+    list_priority_order = 3
 
     async def get_command_response(self) -> CommandResponse:
         return CommandResponse("help_text", {}, None)

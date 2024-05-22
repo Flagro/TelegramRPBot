@@ -5,6 +5,7 @@ from ..auth import AllowedUser
 
 class CommandHandler(BaseCommandHandler):
     permissions = [AllowedUser]
+    command = "usage"
     list_priority_order = 1
 
     async def get_command_response(self, user_handle) -> CommandResponse:

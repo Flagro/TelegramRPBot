@@ -5,6 +5,7 @@ from ..auth import BotAdmin
 
 class CommandHandler(BaseCommandHandler):
     permissions = [BotAdmin]
+    command = "addmode"
     list_priority_order = 1
 
     async def get_command_response(self, chat_id, args) -> CommandResponse:
