@@ -13,7 +13,9 @@ class Localizer:
     def compose_user_input(
         self, message: str, image_description: str, voice_description: str
     ) -> str:
-        pass
+        return (
+            f"{message}\n{image_description}\n{voice_description}"
+        )
 
     def get_command_response(self, text: str, kwargs: dict) -> tuple[str, str]:
-        pass
+        return self.translations.get_command_response(text, kwargs)
