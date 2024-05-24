@@ -11,3 +11,6 @@ class LocalizerTranslation(BaseModel):
 
 class LocalizerTranslations(BaseYAMLConfigModel):
     translations: Dict[str, LocalizerTranslation]
+    
+    def get_command_response(self, text: str, kwargs: dict) -> tuple[str, str]:
+        return self.translations[text].english.format(**kwargs)
