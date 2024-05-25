@@ -27,6 +27,7 @@ class TelegramBot:
         telegram_config: TGConfig,
     ):
         self.telegram_token = telegram_token
+        self.telegram_config = telegram_config
         self.commands = bot.get_commands()
         self.messages = bot.get_messages()
         self.callbacks = bot.get_callbacks()
