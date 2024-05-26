@@ -32,12 +32,12 @@ def get_person(update: Update, context) -> Person:
     if type(context) == ContextTypes.DEFAULT_TYPE:
         return Person(
             user_id=update.message.from_user.id,
-            user_handle=update.message.from_user.username,
+            user_handle="@" + update.message.from_user.username,
         )
     elif type(context) == ContextTypes.CALLBACK_TYPE:
         return Person(
             user_id=update.callback_query.from_user.id,
-            user_handle=update.callback_query.from_user.username,
+            user_handle="@" + update.callback_query.from_user.username,
         )
 
 
