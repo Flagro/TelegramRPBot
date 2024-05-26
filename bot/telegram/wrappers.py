@@ -41,32 +41,15 @@ def callback_wrapper(func):
 def message_wrapper(func):
     @wraps(func)
     async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        user_handle = "@" + update.message.from_user.username
-        chat_id = update.message.chat_id
-        thread_id = None
-        if update.effective_message and update.effective_message.is_topic_message:
-            thread_id = update.effective_message.message_thread_id
-        message = update.message.text
-
-        # get image and audio in memory
-        image = None
-        if update.message.photo:
-            image = get_file_in_memory(update.message.photo[-1].file_id, context)
-
-        voice = None
-        if update.message.voice:
-            voice = get_file_in_memory(update.message.voice.file_id, context)
+        rp_person = get_person(update, context)
+        rp_context = get_context(update, context)
+        rp_message = get_message(update, context)
 
         return await func(
             self,
-            chat_id,
-            thread_id,
-            bot_mentioned(update, context),
-            self.telegram_bot_config.track_conversation_thread,
-            user_handle,
-            message,
-            image,
-            voice,
+            rp_person,
+            rp_context,
+            rp_message,
         )
     return wrapper
 

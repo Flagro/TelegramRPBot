@@ -41,11 +41,21 @@ def get_person(update: Update, context) -> Person:
         )
 
 
-def get_message(update: Update) -> Message:
+def get_message(update: Update, context) -> Message:
+    message = update.message.text
+    is_bot_mentioned = bot_mentioned(update, context)
+    # get image and audio in memory
+    image = None
+    if is_bot_mentioned and update.message.photo:
+        image = get_file_in_memory(update.message.photo[-1].file_id, context)
+
+    voice = None
+    if is_bot_mentioned and update.message.voice:
+        voice = get_file_in_memory(update.message.voice.file_id, context)
     return Message(
-        message=update.message.text,
-        image=update.message.photo,
-        voice=update.message.voice,
+        message=message,
+        image=image,
+        voice=voice,
     )
 
 
