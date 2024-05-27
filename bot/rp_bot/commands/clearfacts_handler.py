@@ -9,8 +9,9 @@ class CommandHandler(BaseCommandHandler):
     command = "clearfacts"
     list_priority_order = 1
 
-    async def get_command_response(self, chat_id, args) -> CommandResponse:
+    async def get_command_response(self, person, context, args) -> CommandResponse:
         facts_user_handle = args[0]
+        chat_id = context.chat_id
         self.db.clear_facts(chat_id, facts_user_handle)
         return CommandResponse(
             "facts_cleared", {"user_handle": facts_user_handle}, None
