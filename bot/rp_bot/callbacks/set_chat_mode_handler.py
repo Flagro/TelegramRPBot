@@ -1,6 +1,7 @@
 from ...models.base_handlers import BaseCallbackHandler
 from ...models.handlers_response import CommandResponse
 from ..commands.mode_handler import CommandHandler
+from ...models.handlers_input import Person, Context, Message
 
 
 class CallbackHandler(BaseCallbackHandler):

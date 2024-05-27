@@ -1,5 +1,6 @@
 from ...models.base_handlers import BaseCommandHandler
 from ...models.handlers_response import CommandResponse
+from ...models.handlers_input import Person, Context, Message
 from ..auth import BotAdmin
 
 
@@ -8,8 +9,9 @@ class CommandHandler(BaseCommandHandler):
     command = "addmode"
     list_priority_order = 1
 
-    async def get_command_response(self, chat_id, args) -> CommandResponse:
+    async def get_command_response(self, Person, Context, Message, args) -> CommandResponse:
         mode_description = " ".join(args)
+        chat_id = Context.chat_id
         # Get the first sentence or paragraph of the mode description:
         # TODO: implement NER here
         mode_name = mode_description.split("\n")[0].split(".")[0]

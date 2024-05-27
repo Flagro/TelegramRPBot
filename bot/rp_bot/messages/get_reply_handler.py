@@ -1,5 +1,6 @@
 from ...models.base_handlers import BaseMessageHandler
 from ...models.handlers_response import MessageResponse
+from ...models.handlers_input import Person, Context, Message
 from ..auth import AllowedUser
 from typing import Optional
 
