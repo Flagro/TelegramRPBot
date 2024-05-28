@@ -9,7 +9,10 @@ class CommandHandler(BaseCommandHandler):
     command_name = "fact"
     list_priority_order = 1
 
-    async def get_command_response(self, chat_id, args) -> CommandResponse:
+    async def get_command_response(
+        self, person: Person, context: Context, message: Message, args
+    ) -> CommandResponse:
+        chat_id = context.chat_id
         facts_user_handle = args[0]
         facts = " ".join(args[1:])
         try:

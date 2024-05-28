@@ -9,7 +9,10 @@ class CommandHandler(BaseCommandHandler):
     command = "language"
     list_priority_order = 1
 
-    async def get_command_response(self, chat_id, args) -> CommandResponse:
+    async def get_command_response(
+        self, person: Person, context: Context, message: Message, args
+    ) -> CommandResponse:
+        chat_id = context.chat_id
         language = args[0]
         try:
             self.localizer.set_language(chat_id, language)

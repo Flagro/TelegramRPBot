@@ -9,7 +9,13 @@ class CommandHandler(BaseCommandHandler):
     command = "deletemode"
     list_priority_order = 1
 
-    async def get_command_response(self, chat_id) -> KeyboardResponse:
+    async def get_command_response(
+        self,
+        person: Person,
+        context: Context,
+        message: Message,
+    ) -> KeyboardResponse:
+        chat_id = context.chat_id
         available_modes = self.db.get_chat_modes(chat_id)
         modes_names = [mode.name for mode in available_modes]
         modes_ids = [mode.id for mode in available_modes]

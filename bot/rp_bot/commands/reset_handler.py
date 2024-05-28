@@ -9,6 +9,7 @@ class CommandHandler(BaseCommandHandler):
     command = "reset"
     list_priority_order = 1
 
-    async def get_command_response(self, chat_id) -> CommandResponse:
+    async def get_command_response(self, person: Person, context: Context, message: Message) -> CommandResponse:
+        chat_id = context.chat_id
         self.db.reset(chat_id)
         return CommandResponse("reset_done", {}, None)

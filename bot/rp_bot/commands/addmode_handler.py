@@ -9,9 +9,11 @@ class CommandHandler(BaseCommandHandler):
     command = "addmode"
     list_priority_order = 1
 
-    async def get_command_response(self, Person, Context, Message, args) -> CommandResponse:
+    async def get_command_response(
+        self, person: Person, context: Context, message: Message, args
+    ) -> CommandResponse:
         mode_description = " ".join(args)
-        chat_id = Context.chat_id
+        chat_id = context.chat_id
         # Get the first sentence or paragraph of the mode description:
         # TODO: implement NER here
         mode_name = mode_description.split("\n")[0].split(".")[0]

@@ -9,7 +9,11 @@ class CommandHandler(BaseCommandHandler):
     command = "introduce"
     list_priority_order = 1
 
-    async def get_command_response(self, chat_id, user_handle, args) -> CommandResponse:
+    async def get_command_response(
+        self, person: Person, context: Context, message: Message, args
+    ) -> CommandResponse:
+        chat_id = context.chat_id
+        user_handle = person.user_handle
         introduction = " ".join(args)
         try:
             self.db.add_introduction(chat_id, user_handle, introduction)
