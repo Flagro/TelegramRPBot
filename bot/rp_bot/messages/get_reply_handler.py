@@ -12,8 +12,15 @@ class MessageHandler(BaseMessageHandler):
     filters = (filters.TEXT | filters.VOICE | filters.PHOTO) & ~filters.COMMAND
 
     async def get_reply(
-        self, chat_id, thread_id, is_bot_mentioned, track_conversation_thread, user_handle, message, image, voice
+        self, person: Person, context: Context, message: Message,
     ) -> Optional[MessageResponse]:
+        image = message.image
+        voice = message.voice
+        chat_id = context.chat_id
+        thread_id = context.thread_id
+        user_handle = person.user_handle
+        track_conversation_thread = self.db.get_chat_mode(chat_id).track_conversation_thread
+        is_bot_mentioned = context.is_bot_mentioned
         if track_conversation_thread:
             self.db.save_thread_message(thread_id, user_handle, message)
         if not is_bot_mentioned:
