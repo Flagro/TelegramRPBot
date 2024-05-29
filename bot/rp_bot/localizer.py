@@ -16,6 +16,10 @@ class Localizer:
         return (
             f"{message}\n{image_description}\n{voice_description}"
         )
+        
+    def compose_history_message(self, chat_id) -> str:
+        messages = self.db.get_messages(chat_id, 100)
+        return "\n".join(messages)
 
     def get_command_response(self, text: str, kwargs: dict) -> tuple[str, str]:
         return self.translations.get_command_response(text, kwargs)
