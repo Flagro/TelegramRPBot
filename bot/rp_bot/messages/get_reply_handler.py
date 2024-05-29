@@ -12,18 +12,22 @@ class MessageHandler(BaseMessageHandler):
     filters = (filters.TEXT | filters.VOICE | filters.PHOTO) & ~filters.COMMAND
 
     async def get_reply(
-        self, person: Person, context: Context, message: Message,
+        self,
+        person: Person,
+        context: Context,
+        message: Message,
     ) -> Optional[MessageResponse]:
         image = message.image
         voice = message.voice
         chat_id = context.chat_id
         thread_id = context.thread_id
         user_handle = person.user_handle
-        track_conversation_thread = self.db.get_chat_mode(chat_id).track_conversation_thread
-        is_bot_mentioned = context.is_bot_mentioned
+        track_conversation_thread = self.db.get_chat_mode(
+            chat_id
+        ).track_conversation_thread
         if track_conversation_thread:
             self.db.save_thread_message(thread_id, user_handle, message)
-        if not is_bot_mentioned:
+        if not context.is_bot_mentioned:
             return None
 
         image_description = None
@@ -41,5 +45,7 @@ class MessageHandler(BaseMessageHandler):
         response_message, response_image_url = await self.ai.get_reply(
             chat_id, thread_id, user_handle, user_input
         )
-        self.db.add_bot_response_to_dialog(chat_id, response_message, response_image_url)
+        self.db.add_bot_response_to_dialog(
+            chat_id, response_message, response_image_url
+        )
         return MessageResponse(response_message, response_image_url)
