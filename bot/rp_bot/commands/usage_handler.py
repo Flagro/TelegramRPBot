@@ -9,7 +9,9 @@ class CommandHandler(BaseCommandHandler):
     command = "usage"
     list_priority_order = 1
 
-    async def get_command_response(self, person: Person, context: Context, message: Message) -> CommandResponse:
+    async def get_command_response(
+        self, person: Person, context: Context
+    ) -> CommandResponse:
         user_handle = person.user_handle
         user_usage = self.db.get_user_usage(user_handle)
         return CommandResponse("usage_text", user_usage._asdict(), None)

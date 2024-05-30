@@ -10,7 +10,7 @@ class CommandHandler(BaseCommandHandler):
     list_priority_order = 1
 
     async def get_command_response(
-        self, person: Person, context: Context, message: Message
+        self, person: Person, context: Context
     ) -> KeyboardResponse:
         chat_id = context.chat_id
         available_modes = self.db.get_chat_modes(chat_id)

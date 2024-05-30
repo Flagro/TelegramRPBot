@@ -9,7 +9,7 @@ class CallbackHandler(BaseCallbackHandler):
     callback_action = "delete_chat_mode"
 
     async def get_callback_response(
-        self, person: Person, context: Context, message: Message, args
+        self, person: Person, context: Context, args
     ) -> CommandResponse:
         chat_id = context.chat_id
         mode_id = args[0]

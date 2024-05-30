@@ -10,7 +10,7 @@ class CommandHandler(BaseCommandHandler):
     list_priority_order = 1
 
     async def get_command_response(
-        self, person: Person, context: Context, message: Message, args
+        self, person: Person, context: Context, args
     ) -> CommandResponse:
         chat_id = context.chat_id
         language = args[0]

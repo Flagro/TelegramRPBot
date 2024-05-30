@@ -9,7 +9,7 @@ class CallbackHandler(BaseCallbackHandler):
     callback_action = "show_chat_modes"
 
     async def get_callback_response(
-        self, person: Person, context: Context, message: Message, args
+        self, person: Person, context: Context, args
     ) -> KeyboardResponse:
         chat_id = context.chat_id
         old_action = args[0]
