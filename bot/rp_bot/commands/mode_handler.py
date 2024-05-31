@@ -14,13 +14,11 @@ class CommandHandler(BaseCommandHandler):
     ) -> KeyboardResponse:
         chat_id = context.chat_id
         available_modes = self.db.get_chat_modes(chat_id)
-        modes_names = [mode.name for mode in available_modes]
-        modes_ids = [mode.id for mode in available_modes]
+        modes_dict = {mode.id: mode.name for mode in available_modes}
         return KeyboardResponse(
             "choose_mode",
             {},
             "show_chat_modes",
             "set_chat_mode",
-            modes_names,
-            modes_ids,
+            modes_dict
         )
