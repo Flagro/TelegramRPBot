@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Dict
 from uuid import UUID
 
 
@@ -19,14 +19,12 @@ class KeyboardResponse:
         self,
         text,
         kwargs: Optional[dict],
-        names: list[str],
-        ids: list[UUID],
+        modes_dict: Dict[UUID, str],
         callback: str,
         button_action: str,
     ):
         self.text = text
         self.kwargs = kwargs
-        self.names = names
-        self.ids = ids
+        self.modes_dict = modes_dict
         self.callback = callback
         self.button_action = button_action

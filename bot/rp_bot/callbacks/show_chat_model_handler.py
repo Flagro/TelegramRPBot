@@ -14,14 +14,12 @@ class CallbackHandler(BaseCallbackHandler):
         chat_id = context.chat_id
         old_action = args[0]
         available_modes = self.db.get_chat_modes(chat_id)
-        modes_names = [mode.name for mode in available_modes]
-        modes_ids = [mode.id for mode in available_modes]
+        modes_dict = {mode.id: mode.name for mode in available_modes}
 
         return KeyboardResponse(
             "choose_mode_to_delete",
             {},
             "show_chat_modes",
             old_action,
-            modes_names,
-            modes_ids,
+            modes_dict,
         )
