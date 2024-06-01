@@ -1,6 +1,6 @@
 from ...models.base_handlers import BaseCommandHandler
 from ...models.handlers_response import KeyboardResponse
-from ...models.handlers_input import Person, Context, Message
+from ...models.handlers_input import Person, Context
 from ..auth import AllowedUser
 
 
