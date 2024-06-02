@@ -52,6 +52,7 @@ class BaseCallbackHandler(BaseHandler, ABC):
 
 class BaseCommandHandler(BaseHandler, ABC):
     command = None
+    list_priority_order = 0
 
     @is_authenticated
     def handle(self, person: Person, context: Context, args):

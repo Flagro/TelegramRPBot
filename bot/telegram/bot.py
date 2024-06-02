@@ -59,7 +59,7 @@ class TelegramBot:
         )
         command_handlers = [
             CommandHandler(command.command, command_wrapper(command.handler))
-            for command in self.commands
+            for command in sorted(self.commands, key=lambda x: len(x.list_priority_order))
         ]
         message_handlers = [
             MessageHandler(message.filters, message_wrapper(message.handler))
