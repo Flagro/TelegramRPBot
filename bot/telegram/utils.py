@@ -71,15 +71,6 @@ def bot_mentioned(update: Update, context: ContextTypes.DEFAULT_TYPE) -> bool:
     return not (is_private_chat or bot_in_reply_tree or is_bot_mentioned)
 
 
-def get_messages_tree(update: Update, context: ContextTypes.DEFAULT_TYPE) -> List[str]:
-    messages = [update.message.text]
-    current_message = update.message
-    while current_message.reply_to_message:
-        current_message = current_message.reply_to_message
-        messages.append(current_message.text)
-    return messages
-
-
 async def get_file_in_memory(
     file_id: str, context: ContextTypes.DEFAULT_TYPE
 ) -> io.BytesIO:
