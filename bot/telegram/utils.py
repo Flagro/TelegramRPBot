@@ -4,9 +4,8 @@ import io
 import asyncio
 import logging
 
-from typing import List
+from typing import List, Optional
 
-import telegram
 from telegram import Update, constants
 from telegram.ext import CallbackContext, ContextTypes
 
@@ -91,7 +90,7 @@ async def get_file_in_memory(
     return file_stream
 
 
-def get_thread_id(update: Update) -> int | None:
+def get_thread_id(update: Update) -> Optional[str]:
     """
     Gets the message thread id for the update, if any
     """
