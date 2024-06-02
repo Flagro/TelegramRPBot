@@ -38,22 +38,6 @@ def callback_wrapper(func):
     return wrapper
 
 
-def message_wrapper(func):
-    @wraps(func)
-    async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        rp_person = get_person(update, context)
-        rp_context = get_context(update, context)
-        rp_message = get_message(update, context)
-
-        return await func(
-            self,
-            rp_person,
-            rp_context,
-            rp_message,
-        )
-    return wrapper
-
-
 def command_wrapper(func):
     @wraps(func)
     async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -74,5 +58,21 @@ def command_wrapper(func):
             chat_id=update.effective_chat.id,
             text=text_response,
             parse_mode=parse_mode,
+        )
+    return wrapper
+
+
+def message_wrapper(func):
+    @wraps(func)
+    async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        rp_person = get_person(update, context)
+        rp_context = get_context(update, context)
+        rp_message = get_message(update, context)
+
+        return await func(
+            self,
+            rp_person,
+            rp_context,
+            rp_message,
         )
     return wrapper
