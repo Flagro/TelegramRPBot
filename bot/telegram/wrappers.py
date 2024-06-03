@@ -3,8 +3,6 @@ from telegram import Update
 from telegram.ext import ContextTypes, CallbackContext
 from telegram.error import BadRequest
 
-from inspect import signature
-
 from .utils import get_context, get_person, get_message
 
 
@@ -14,16 +12,11 @@ def callback_wrapper(func):
         query = update.callback_query
         await query.answer()
 
-        sig = signature(func)
-        params = {}
-        if "context" in sig.parameters:
-            params["context"] = get_context(update, context)
-        if "person" in sig.parameters:
-            params["person"] = get_person(update, context)
-        if "args" in sig.parameters:
-            params["callback_args"] = query.data.split("|")[1:]
+        callback_context = get_context(update, context)
+        callback_person = get_person(update, context)
+        args = query.data.split("|")[1:]
 
-        result = await func(self, **params)
+        result = await func(self, callback_person, callback_context, args)
         text_response, parse_mode = self.localizer.get_command_response(
             result.text, result.kwargs
         )
@@ -41,15 +34,10 @@ def callback_wrapper(func):
 def command_wrapper(func):
     @wraps(func)
     async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        sig = signature(func)
-        params = {}
-        if "user_handle" in sig.parameters:
-            params["user_handle"] = update.effective_user.username
-        if "chat_id" in sig.parameters:
-            params["chat_id"] = update.effective_chat.id
-        if "args" in sig.parameters:
-            params["command_args"] = context.args
-        result = await func(self, **params)
+        command_context = get_context(update, context)
+        command_person = get_person(update, context)
+        args = context.args
+        result = await func(self, command_person, command_context, args)
         text_response, parse_mode = self.localizer.get_command_response(
             result.text, result.kwargs
         )
