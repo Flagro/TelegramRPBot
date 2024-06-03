@@ -10,6 +10,6 @@ class CommandHandler(BaseCommandHandler):
     list_priority_order = 3
 
     async def get_command_response(
-        self, person: Person, context: Context
+        self, person: Person, context: Context, args
     ) -> CommandResponse:
         return CommandResponse("help_text", {}, None)

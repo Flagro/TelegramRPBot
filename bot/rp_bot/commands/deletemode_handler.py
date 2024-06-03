@@ -13,6 +13,7 @@ class CommandHandler(BaseCommandHandler):
         self,
         person: Person,
         context: Context,
+        args,
     ) -> KeyboardResponse:
         chat_id = context.chat_id
         available_modes = self.db.get_chat_modes(chat_id)
