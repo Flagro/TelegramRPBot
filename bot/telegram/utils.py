@@ -58,6 +58,16 @@ def get_message(update: Update, context) -> Message:
     )
 
 
+def get_args(update: Update, context) -> List[str]:
+    if type(context) == ContextTypes.DEFAULT_TYPE:
+        return context.args
+    elif type(context) == ContextTypes.CALLBACK_TYPE:
+        query = update.callback_query
+        asyncio.run(query.answer)
+        args = query.data.split("|")[1:]
+        return args
+
+
 def bot_mentioned(update: Update, context: ContextTypes.DEFAULT_TYPE) -> bool:
     is_private_chat = update.message.chat.type == "private"
     is_bot_mentioned = (
