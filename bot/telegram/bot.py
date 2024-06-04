@@ -16,7 +16,7 @@ from collections import namedtuple
 from typing import List, Optional
 from ..models.base_bot import BaseBot
 from ..models.config import TGConfig
-from .wrappers import command_wrapper, message_wrapper, callback_wrapper
+from .wrappers import handler_wrapper
 
 
 class TelegramBot:
@@ -58,15 +58,15 @@ class TelegramBot:
             .build()
         )
         command_handlers = [
-            CommandHandler(command.command, command_wrapper(command.handler))
+            CommandHandler(command.command, handler_wrapper(command.handler))
             for command in sorted(self.commands, key=lambda x: len(x.list_priority_order))
         ]
         message_handlers = [
-            MessageHandler(message.filters, message_wrapper(message.handler))
+            MessageHandler(message.filters, handler_wrapper(message.handler))
             for message in self.messages
         ]
         callback_handlers = [
-            CallbackQueryHandler(callback_wrapper(callback.handler), "^" + callback.callback_action)
+            CallbackQueryHandler(handler_wrapper(callback.handler), "^" + callback.callback_action)
             for callback in self.callbacks
         ]
         application.add_handlers(
