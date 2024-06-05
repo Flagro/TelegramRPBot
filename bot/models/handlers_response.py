@@ -8,12 +8,6 @@ class CommandResponse:
         self.kwargs = kwargs
 
 
-class MessageResponse:
-    def __init__(self, text, image_url: Optional[str] = None):
-        self.text = text
-        self.image_url = image_url
-
-
 class KeyboardResponse:
     def __init__(
         self,

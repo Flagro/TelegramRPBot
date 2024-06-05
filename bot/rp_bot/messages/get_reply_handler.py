@@ -1,5 +1,5 @@
 from ...models.base_handlers import BaseMessageHandler
-from ...models.handlers_response import MessageResponse
+from ...models.handlers_response import CommandResponse
 from ...models.handlers_input import Person, Context, Message
 from ..auth import AllowedUser
 from typing import Optional
@@ -16,7 +16,7 @@ class MessageHandler(BaseMessageHandler):
         person: Person,
         context: Context,
         message: Message,
-    ) -> Optional[MessageResponse]:
+    ) -> Optional[CommandResponse]:
         image = message.image
         voice = message.voice
         chat_id = context.chat_id
@@ -48,4 +48,4 @@ class MessageHandler(BaseMessageHandler):
         self.db.add_bot_response_to_dialog(
             chat_id, response_message, response_image_url
         )
-        return MessageResponse(response_message, response_image_url)
+        return CommandResponse("message_response", {"response_text": response_message})
