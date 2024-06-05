@@ -19,7 +19,7 @@ class CallbackHandler(BaseCallbackHandler):
         return KeyboardResponse(
             "choose_mode_to_delete",
             {},
+            modes_dict,
             "show_chat_modes",
             old_action,
-            modes_dict,
         )

@@ -18,7 +18,7 @@ class CommandHandler(BaseCommandHandler):
         return KeyboardResponse(
             "choose_mode",
             {},
+            modes_dict,
             "show_chat_modes",
             "set_chat_mode",
-            modes_dict
         )

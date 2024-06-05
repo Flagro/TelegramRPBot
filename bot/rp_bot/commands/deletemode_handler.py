@@ -21,7 +21,7 @@ class CommandHandler(BaseCommandHandler):
         return KeyboardResponse(
             "choose_mode_to_delete",
             {},
+            modes_dict,
             "show_chat_modes",
             "delete_chat_mode",
-            modes_dict
         )
