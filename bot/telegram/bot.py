@@ -11,9 +11,6 @@ from telegram.ext import (
 )
 from telegram.constants import ParseMode
 
-import logging
-from collections import namedtuple
-from typing import List, Optional
 from ..models.base_bot import BaseBot
 from ..models.config import TGConfig
 from .wrappers import handler_wrapper
