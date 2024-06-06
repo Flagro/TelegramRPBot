@@ -31,18 +31,20 @@ def main():
     )
     ai_config = AIConfig.load(config_dir / "ai_config.yaml")
 
-    db = DB(
-        config("DB_URI"), default_chat_modes=default_chat_modes
-    )
+    db = DB(config("DB_URI"), default_chat_modes=default_chat_modes)
 
     ai = AI(openai_api_key=config("OPENAI_API_KEY"), db=db, ai_config=ai_config)
 
     localizer = Localizer(db=db, translations=translations)
-    
-    auth = Auth(allowed_handles=config("ALLOWED_HANDLES").split(","),
-                admin_handles=config("ADMIN_HANDLES").split(","))
-    
-    rp_bot = RPBot(ai=ai, db=db, localizer=localizer, auth=auth, logger=logging.getLogger("RPBot"))
+
+    auth = Auth(
+        allowed_handles=config("ALLOWED_HANDLES").split(","),
+        admin_handles=config("ADMIN_HANDLES").split(","),
+    )
+
+    rp_bot = RPBot(
+        ai=ai, db=db, localizer=localizer, auth=auth, logger=logging.getLogger("RPBot")
+    )
 
     tg_bot = TelegramBot(
         telegram_token=config("TELEGRAM_TOKEN"),
