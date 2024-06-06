@@ -1,5 +1,5 @@
 from ...models.base_handlers import BaseCommandHandler
-from ...models.handlers_response import KeyboardResponse
+from ...models.handlers_response import KeyboardResponse, CommandResponse
 from ...models.handlers_input import Person, Context
 from ..auth import BotAdmin
 
@@ -14,14 +14,16 @@ class CommandHandler(BaseCommandHandler):
         person: Person,
         context: Context,
         args,
-    ) -> KeyboardResponse:
+    ) -> CommandResponse:
         chat_id = context.chat_id
         available_modes = self.db.get_chat_modes(chat_id)
         modes_dict = {mode.id: mode.name for mode in available_modes}
-        return KeyboardResponse(
+        return CommandResponse(
             "choose_mode_to_delete",
             {},
-            modes_dict,
-            "show_chat_modes",
-            "delete_chat_mode",
+            KeyboardResponse(
+                modes_dict,
+                "show_chat_modes",
+                "delete_chat_mode",
+            )
         )
