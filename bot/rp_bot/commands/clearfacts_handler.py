@@ -15,6 +15,4 @@ class CommandHandler(BaseCommandHandler):
         facts_user_handle = args[0]
         chat_id = context.chat_id
         self.db.clear_facts(chat_id, facts_user_handle)
-        return CommandResponse(
-            "facts_cleared", {"user_handle": facts_user_handle}, None
-        )
+        return CommandResponse("facts_cleared", {"user_handle": facts_user_handle})

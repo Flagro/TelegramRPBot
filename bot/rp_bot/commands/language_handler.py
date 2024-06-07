@@ -19,4 +19,4 @@ class CommandHandler(BaseCommandHandler):
             return CommandResponse("language_set", {"language": language})
         except ValueError as e:
             self.logger.error(f"Error setting language: {e}")
-            return CommandResponse("language_set_error", {"language": language}, None)
+            return CommandResponse("language_set_error", {"language": language})

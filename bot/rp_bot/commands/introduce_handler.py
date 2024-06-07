@@ -20,4 +20,4 @@ class CommandHandler(BaseCommandHandler):
             return CommandResponse("introduction_added", {"user_handle": user_handle})
         except ValueError as e:
             self.logger.error(f"Error adding introduction: {e}")
-            return CommandResponse("inappropriate_introduction", {}, None)
+            return CommandResponse("inappropriate_introduction", {})

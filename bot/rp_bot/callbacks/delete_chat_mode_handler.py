@@ -14,4 +14,4 @@ class CallbackHandler(BaseCallbackHandler):
         chat_id = context.chat_id
         mode_id = args[0]
         self.db.delete_chat_mode(chat_id, mode_id)
-        return CommandResponse("mode_deleted", {"mode_id": mode_id}, None)
+        return CommandResponse("mode_deleted", {"mode_id": mode_id})

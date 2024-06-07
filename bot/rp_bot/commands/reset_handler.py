@@ -14,4 +14,4 @@ class CommandHandler(BaseCommandHandler):
     ) -> CommandResponse:
         chat_id = context.chat_id
         self.db.reset(chat_id)
-        return CommandResponse("reset_done", {}, None)
+        return CommandResponse("reset_done", {})

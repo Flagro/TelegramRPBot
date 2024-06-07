@@ -14,4 +14,4 @@ class CommandHandler(BaseCommandHandler):
     ) -> CommandResponse:
         user_handle = person.user_handle
         user_usage = self.db.get_user_usage(user_handle)
-        return CommandResponse("usage_text", user_usage._asdict(), None)
+        return CommandResponse("usage_text", user_usage._asdict())

@@ -22,4 +22,4 @@ class CommandHandler(BaseCommandHandler):
             return CommandResponse("mode_added", {"mode_name": mode_name})
         except ValueError as e:
             self.logger.error(f"Error adding mode: {e}")
-            return CommandResponse("inappropriate_mode", {}, None)
+            return CommandResponse("inappropriate_mode", {})

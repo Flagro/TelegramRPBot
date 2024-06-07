@@ -12,4 +12,4 @@ class CommandHandler(BaseCommandHandler):
     async def get_command_response(
         self, person: Person, context: Context, args
     ) -> CommandResponse:
-        return CommandResponse("help_text", {}, None)
+        return CommandResponse("help_text", {})
