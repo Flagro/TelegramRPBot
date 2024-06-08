@@ -63,7 +63,10 @@ class TelegramBot:
             )
         ]
         message_handlers = [
-            MessageHandler(message.filters, handler_wrapper(message.handler))
+            MessageHandler(
+                (filters.TEXT | filters.VOICE | filters.PHOTO) & ~filters.COMMAND,
+                handler_wrapper(message.handler),
+            )
             for message in self.messages
         ]
         callback_handlers = [

@@ -4,12 +4,9 @@ from ...models.handlers_input import Person, Context, Message
 from ..auth import AllowedUser
 from typing import Optional
 
-from telegram.ext import filters
-
 
 class MessageHandler(BaseMessageHandler):
     permissions = [AllowedUser]
-    filters = (filters.TEXT | filters.VOICE | filters.PHOTO) & ~filters.COMMAND
 
     async def get_reply(
         self,
