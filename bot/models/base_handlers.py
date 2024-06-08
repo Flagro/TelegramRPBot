@@ -68,8 +68,6 @@ class BaseCommandHandler(BaseHandler, ABC):
 
 
 class BaseMessageHandler(BaseHandler, ABC):
-    filters = None
-
     @is_authenticated
     def handle(self, person: Person, context: Context, message: Message):
         message_response = self.get_reply(person, context, message)
