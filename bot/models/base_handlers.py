@@ -12,7 +12,7 @@ from ..models.handlers_input import Person, Context, Message
 
 class BaseHandler(ABC):
     permissions: list = []
-    
+
     def __init__(self, db: DB, ai: AI, localizer: Localizer, auth: Auth):
         self.db = db
         self.ai = ai
@@ -39,15 +39,16 @@ class BaseCallbackHandler(BaseHandler, ABC):
     callback_action: str = None
 
     @is_authenticated
-    def handle(self, person: Person, context: Context, message: Message, args: List[str]):
+    def handle(
+        self, person: Person, context: Context, message: Message, args: List[str]
+    ):
         callback_response = self.get_callback_response(person, context, message, args)
-        response = self.localizer.get_command_response(
-            callback_response.tag, callback_response.kwargs
-        )
-        return response
+        return callback_response
 
     @abstractmethod
-    def get_callback_response(self, tag, kwargs=None):
+    def get_callback_response(
+        self, person: Person, context: Context, message: Message, args: List[str]
+    ):
         raise NotImplementedError
 
 
@@ -56,24 +57,29 @@ class BaseCommandHandler(BaseHandler, ABC):
     list_priority_order = 0
 
     @is_authenticated
-    def handle(self, person: Person, context: Context, message: Message, args: List[str]):
+    def handle(
+        self, person: Person, context: Context, message: Message, args: List[str]
+    ):
         command_response = self.get_command_response(person, context, message, args)
-        response = self.localizer.get_command_response(
-            command_response.tag, command_response.kwargs
-        )
-        return response
+        return command_response
 
     @abstractmethod
-    def get_command_response(self, person: Person, context: Context, args: List[str]):
+    def get_command_response(
+        self, person: Person, context: Context, message: Message, args: List[str]
+    ):
         raise NotImplementedError
 
 
 class BaseMessageHandler(BaseHandler, ABC):
     @is_authenticated
-    def handle(self, person: Person, context: Context, message: Message, args: List[str]):
+    def handle(
+        self, person: Person, context: Context, message: Message, args: List[str]
+    ):
         message_response = self.get_reply(person, context, message, args)
         return message_response
 
     @abstractmethod
-    def get_reply(self, person: Person, message: Message, args: List[str]):
+    def get_reply(
+        self, person: Person, context: Context, message: Message, args: List[str]
+    ):
         raise NotImplementedError
