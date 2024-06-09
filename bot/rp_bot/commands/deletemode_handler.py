@@ -2,7 +2,7 @@ from typing import List
 
 from ...models.base_handlers import BaseCommandHandler
 from ...models.handlers_response import KeyboardResponse, CommandResponse
-from ...models.handlers_input import Person, Context
+from ...models.handlers_input import Person, Context, Message
 from ..auth import BotAdmin
 
 
@@ -15,6 +15,7 @@ class CommandHandler(BaseCommandHandler):
         self,
         person: Person,
         context: Context,
+        message: Message,
         args: List[str],
     ) -> CommandResponse:
         chat_id = context.chat_id
