@@ -15,7 +15,12 @@ class KeyboardResponse:
 
 
 class CommandResponse:
-    def __init__(self, text, kwargs: Optional[dict] = None, keyboard: Optional[KeyboardResponse] = None):
+    def __init__(
+        self,
+        text,
+        kwargs: Optional[dict] = None,
+        keyboard: Optional[KeyboardResponse] = None,
+    ):
         self.text = text
         self.kwargs = kwargs
         self.keyboard = keyboard

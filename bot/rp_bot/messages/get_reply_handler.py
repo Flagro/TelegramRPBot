@@ -1,3 +1,5 @@
+from typing import List
+
 from ...models.base_handlers import BaseMessageHandler
 from ...models.handlers_response import CommandResponse
 from ...models.handlers_input import Person, Context, Message
@@ -13,6 +15,7 @@ class MessageHandler(BaseMessageHandler):
         person: Person,
         context: Context,
         message: Message,
+        args: List[str],
     ) -> Optional[CommandResponse]:
         image = message.image
         voice = message.voice

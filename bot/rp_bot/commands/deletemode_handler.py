@@ -1,3 +1,5 @@
+from typing import List
+
 from ...models.base_handlers import BaseCommandHandler
 from ...models.handlers_response import KeyboardResponse, CommandResponse
 from ...models.handlers_input import Person, Context
@@ -13,7 +15,7 @@ class CommandHandler(BaseCommandHandler):
         self,
         person: Person,
         context: Context,
-        args,
+        args: List[str],
     ) -> CommandResponse:
         chat_id = context.chat_id
         available_modes = self.db.get_chat_modes(chat_id)

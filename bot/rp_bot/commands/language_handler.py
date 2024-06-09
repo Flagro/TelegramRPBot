@@ -1,3 +1,5 @@
+from typing import List
+
 from ...models.base_handlers import BaseCommandHandler
 from ...models.handlers_response import CommandResponse
 from ...models.handlers_input import Person, Context
@@ -10,7 +12,7 @@ class CommandHandler(BaseCommandHandler):
     list_priority_order = 1
 
     async def get_command_response(
-        self, person: Person, context: Context, args
+        self, person: Person, context: Context, args: List[str]
     ) -> CommandResponse:
         chat_id = context.chat_id
         language = args[0]
