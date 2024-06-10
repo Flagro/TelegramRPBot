@@ -8,6 +8,7 @@ from ..rp_bot.ai import AI
 from ..rp_bot.localizer import Localizer
 from ..rp_bot.auth import Auth
 from ..models.handlers_input import Person, Context, Message
+from ..models.handlers_response import CommandResponse
 
 
 class BaseHandler(ABC):
@@ -30,7 +31,7 @@ def is_authenticated(func):
     def wrapper(self, person: Person, context: Context, *args, **kwargs):
         for permission in self.permissions:
             if not permission(person, context, self.auth):
-                return self.localizer.get_command_response("not_authenticated")
+                return CommandResponse("not_authenticated")
         self.db.create_user_if_not_exists(person)
         return func(self, person, context, *args, **kwargs)
 
