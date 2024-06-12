@@ -1,16 +1,27 @@
 from .base_config import BaseYAMLConfigModel
 from pydantic import BaseModel, Field
 from typing import Dict
+import yaml
 
 
 class LocalizerTranslation(BaseModel):
-    english: str = Field(..., alias='english')
-
-    class Config:
-        populate_by_name = True
+    language_translation: Dict[str, str]
 
 class LocalizerTranslations(BaseYAMLConfigModel):
     translations: Dict[str, LocalizerTranslation]
     
+    @classmethod
+    def load(cls, file_path: str):
+        with open(file_path, 'r') as file:
+            config_dict = yaml.safe_load(file)
+            if 'LocalizerTranslations' in config_dict:
+                translations_dict = config_dict['LocalizerTranslations']
+                translations = {key: LocalizerTranslation(language_translation=value) for key, value in translations_dict.items()}
+                return cls(translations=translations)
+            else:
+                raise KeyError(f"LocalizerTranslations not found in {file_path}") 
+
     def get_command_response(self, text: str, kwargs: dict) -> tuple[str, str]:
-        return self.translations[text].english.format(**kwargs)
+        # TODO: fix this
+        language = 'english'
+        return self.translations[language].language_translation[text], "html"
