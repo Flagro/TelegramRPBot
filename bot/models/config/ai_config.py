@@ -1,6 +1,7 @@
 from .base_config import BaseYAMLConfigModel
 from pydantic import BaseModel
 from typing import Dict
+import yaml
 
 
 class Rate(BaseModel):
@@ -29,3 +30,12 @@ class ImageProcessing(BaseModel):
 class AIConfig(BaseYAMLConfigModel):
     TextGeneration: TextGeneration
     ImageProcessing: ImageProcessing
+    
+    @classmethod
+    def load(self, file_path: str):
+        with open(file_path, "r") as file:
+            config_dict = yaml.safe_load(file)
+            if "AIConfig" in config_dict:
+                return AIConfig(**config_dict["AIConfig"])
+            else:
+                raise KeyError(f"AIConfig not found in {file_path}")        
