@@ -30,7 +30,7 @@ class ImageProcessing(BaseModel):
 class AIConfig(BaseYAMLConfigModel):
     TextGeneration: TextGeneration
     ImageProcessing: ImageProcessing
-    
+
     @classmethod
     def load(self, file_path: str):
         with open(file_path, "r") as file:
@@ -38,4 +38,4 @@ class AIConfig(BaseYAMLConfigModel):
             if "AIConfig" in config_dict:
                 return AIConfig(**config_dict["AIConfig"])
             else:
-                raise KeyError(f"AIConfig not found in {file_path}")        
+                raise KeyError(f"AIConfig not found in {file_path}")
