@@ -5,7 +5,6 @@ from pydantic import BaseModel
 
 class ChatMode(BaseModel):
     name: str
-    model_type: str = None
     welcome_message: str
     prompt_start: str
     parse_mode: str = None
