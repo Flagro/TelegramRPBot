@@ -47,7 +47,7 @@ def main():
     )
 
     tg_bot = TelegramBot(
-        telegram_token=config("TELEGRAM_TOKEN"),
+        telegram_token=config("TELEGRAM_BOT_TOKEN"),
         bot=rp_bot,
         telegram_bot_config=telegram_bot_config,
     )
