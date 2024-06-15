@@ -21,10 +21,10 @@ class TelegramBot:
         self,
         telegram_token: str,
         bot: BaseBot,
-        telegram_config: TGConfig,
+        telegram_bot_config: TGConfig,
     ):
         self.telegram_token = telegram_token
-        self.telegram_config = telegram_config
+        self.telegram_bot_config = telegram_bot_config
         self.commands = bot.get_commands()
         self.messages = bot.get_messages()
         self.callbacks = bot.get_callbacks()
