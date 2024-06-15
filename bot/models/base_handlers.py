@@ -54,8 +54,8 @@ class BaseCallbackHandler(BaseHandler, ABC):
 
 
 class BaseCommandHandler(BaseHandler, ABC):
-    command = None
-    list_priority_order = 0
+    command: str = None
+    list_priority_order: int = 0
 
     @is_authenticated
     def handle(

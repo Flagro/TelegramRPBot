@@ -8,7 +8,7 @@ from ..auth import AllowedUser
 
 class CommandHandler(BaseCommandHandler):
     permissions = [AllowedUser]
-    command_name = "fact"
+    command = "fact"
     list_priority_order = 1
 
     async def get_command_response(
