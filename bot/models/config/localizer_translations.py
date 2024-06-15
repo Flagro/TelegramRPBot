@@ -26,6 +26,7 @@ class LocalizerTranslations(BaseYAMLConfigModel):
                 raise KeyError(f"LocalizerTranslations not found in {file_path}")
 
     def get_command_response(self, text: str, kwargs: dict) -> tuple[str, str]:
-        # TODO: fix this
         language = "english"
-        return self.translations[language].language_translation[text], "html"
+        localizer_translation = self.translations[text]
+        response_text = localizer_translation.language_translation[language].format(**kwargs)
+        return response_text, "html"
