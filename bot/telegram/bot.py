@@ -40,7 +40,7 @@ class TelegramBot:
             BotCommand(
                 command=command.command,
                 description=self.localizer.get_command_response(
-                    command.description_tag
+                    f"{command.command}_description", {}
                 ),
             )
             for command in self.commands
