@@ -12,6 +12,7 @@ from telegram.ext import (
 from telegram.constants import ParseMode
 
 from ..models.base_bot import BaseBot
+from ..models.localizer import Localizer
 from ..models.config import TGConfig
 from .wrappers import handler_wrapper
 
@@ -21,10 +22,12 @@ class TelegramBot:
         self,
         telegram_token: str,
         bot: BaseBot,
+        localizer: Localizer,
         telegram_bot_config: TGConfig,
     ):
         self.telegram_token = telegram_token
         self.telegram_bot_config = telegram_bot_config
+        self.localizer = localizer
         self.commands = bot.get_commands()
         self.messages = bot.get_messages()
         self.callbacks = bot.get_callbacks()

@@ -5,7 +5,7 @@ from pathlib import Path
 from bot.rp_bot.ai import AI
 from bot.rp_bot.db import DB
 from bot.rp_bot.auth import Auth
-from bot.rp_bot.localizer import Localizer
+from bot.models.localizer import Localizer
 from bot.rp_bot.bot import RPBot
 from bot.models.config import (
     TGConfig,
@@ -49,6 +49,7 @@ def main():
     tg_bot = TelegramBot(
         telegram_token=config("TELEGRAM_BOT_TOKEN"),
         bot=rp_bot,
+        localizer=localizer,
         telegram_bot_config=telegram_bot_config,
     )
     tg_bot.run()

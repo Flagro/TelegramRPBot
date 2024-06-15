@@ -1,5 +1,5 @@
-from .db import DB
-from ..models.config.localizer_translations import LocalizerTranslations
+from ..rp_bot.db import DB
+from .config.localizer_translations import LocalizerTranslations
 
 
 class Localizer:

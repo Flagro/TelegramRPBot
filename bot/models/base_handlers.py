@@ -5,7 +5,7 @@ import logging
 
 from ..rp_bot.db import DB
 from ..rp_bot.ai import AI
-from ..rp_bot.localizer import Localizer
+from .localizer import Localizer
 from ..rp_bot.auth import Auth
 from ..models.handlers_input import Person, Context, Message
 from ..models.handlers_response import CommandResponse
