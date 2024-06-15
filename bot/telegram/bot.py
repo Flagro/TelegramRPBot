@@ -57,7 +57,7 @@ class TelegramBot:
             .build()
         )
         command_handlers = [
-            CommandHandler(command.command, handler_wrapper(command.handler))
+            CommandHandler(command.command, handler_wrapper(command.handle))
             for command in sorted(
                 self.commands, key=lambda x: x.list_priority_order
             )
@@ -65,13 +65,13 @@ class TelegramBot:
         message_handlers = [
             MessageHandler(
                 (filters.TEXT | filters.VOICE | filters.PHOTO) & ~filters.COMMAND,
-                handler_wrapper(message.handler),
+                handler_wrapper(message.handle),
             )
             for message in self.messages
         ]
         callback_handlers = [
             CallbackQueryHandler(
-                handler_wrapper(callback.handler), "^" + callback.callback_action
+                handler_wrapper(callback.handle), "^" + callback.callback_action
             )
             for callback in self.callbacks
         ]
