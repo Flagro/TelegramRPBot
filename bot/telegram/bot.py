@@ -11,6 +11,8 @@ from telegram.ext import (
 )
 from telegram.constants import ParseMode
 
+import logging
+
 from ..models.base_bot import BaseBot
 from ..models.localizer import Localizer
 from ..models.config import TGConfig
@@ -31,6 +33,7 @@ class TelegramBot:
         self.commands = bot.get_commands()
         self.messages = bot.get_messages()
         self.callbacks = bot.get_callbacks()
+        self.logger = logging.getLogger("TelegramBot")
 
     async def post_init(self, application: Application) -> None:
         """
