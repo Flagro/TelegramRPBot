@@ -21,5 +21,5 @@ class Localizer:
         messages = self.db.get_messages(chat_id, 100)
         return "\n".join(messages)
 
-    def get_command_response(self, text: str, kwargs: dict) -> tuple[str, str]:
+    def get_command_response(self, text: str, kwargs: dict) -> str:
         return self.translations.get_command_response(text, kwargs)
