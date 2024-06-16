@@ -1,12 +1,14 @@
 from functools import wraps
 from telegram import Update
+from telegram.ext import CallbackContext, ContextTypes
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, filters, Application
 
 from .utils import get_context, get_person, get_message, get_args
 
 
 def handler_wrapper(func):
     @wraps(func)
-    async def wrapper(self, update: Update, context):
+    async def wrapper(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         handler_context = get_context(update, context)
         handler_person = get_person(update, context)
         handler_message = get_message(update, context)
