@@ -51,32 +51,26 @@ LocalizerTranslations:
     english: "Reset done!"
   help_text:
     english: |
-      <h2>Features</h2>
-      <ul>
-        <li>Create and use chat-bounded chat modes by describing the agent and how you want it to act</li>
-        <li>Introduce yourself to the model</li>
-        <li>Add facts about yourself or other people that the model would later use</li>
-        <li>Chat with the bot
-          <ul>
-            <li>Send it text</li>
-            <li>Send it pictures</li>
-            <li>Send it voice messages</li>
-            <li>Receive back text</li>
-            <li>Receive back pictures</li>
-          </ul>
-        </li>
-        <li>Flexible tracking of the AI resources usage</li>
-      </ul>
-      <h2>Bot commands</h2>
-      <ul>
-        <li><code>/reset</code> - Reset the dialogue history</li>
-        <li><code>/mode [mode]</code> - Select chat mode from existing ones</li>
-        <li><code>/addmode [mode] [description]</code> - Add new chat mode</li>
-        <li><code>/deletemode [mode]</code> - delete existing chat mode from this chat</li>
-        <li><code>/introduce [your introduction]</code> - Add fact about yourself</li>
-        <li><code>/fact [@tg_handle] [fact]</code> - add fact about the person within the chat</li>
-        <li><code>/clearfacts [@tg_handle]</code> - delete facts for given person</li>
-        <li><code>/usage</code> - Show usage limits for your user</li>
-        <li><code>/language</code> - Set bot preferred language</li>
-        <li><code>/help</code> - Show help</li>
-      </ul>
+      <strong>Features 🌟</strong>
+      • <b>Create and use chat-bounded chat modes</b> by describing the agent and how you want it to act
+      • <b>Introduce yourself to the model</b>
+      • <b>Add facts about yourself or other people</b> that the model would later use
+      • <b>Chat with the bot</b>:
+        - Send it text 📝
+        - Send it pictures 📷
+        - Send it voice messages 🎙
+        - Receive back text 📩
+        - Receive back pictures 🖼
+      • <b>Flexible tracking of the AI resources usage</b> 📊
+
+      <strong>Bot commands 🔧</strong>
+      • <em>/reset</em> - Reset the dialogue history
+      • <em>/mode [mode]</em> - Select chat mode from existing ones
+      • <em>/addmode [mode] [description]</em> - Add new chat mode
+      • <em>/deletemode [mode]</em> - delete existing chat mode from this chat
+      • <em>/introduce [your introduction]</em> - Add fact about yourself
+      • <em>/fact [@tg_handle] [fact]</em> - add fact about the person within the chat
+      • <em>/clearfacts [@tg_handle]</em> - delete facts for given person
+      • <em>/usage</em> - Show usage limits for your user
+      • <em>/language</em> - Set bot preferred language
+      • <em>/help</em> - Show help
