@@ -19,7 +19,7 @@ def get_context(update: Update, context) -> Context:
             thread_id=get_thread_id(update),
             is_bot_mentioned=bot_mentioned(update, context),
         )
-    elif type(context) == ContextTypes.CALLBACK_TYPE:
+    elif type(context) == CallbackContext:
         return Context(
             chat_id=update.callback_query.message.chat.id,
             thread_id=None,
@@ -33,7 +33,7 @@ def get_person(update: Update, context) -> Person:
             user_id=update.message.from_user.id,
             user_handle="@" + update.message.from_user.username,
         )
-    elif type(context) == ContextTypes.CALLBACK_TYPE:
+    elif type(context) == CallbackContext:
         return Person(
             user_id=update.callback_query.from_user.id,
             user_handle="@" + update.callback_query.from_user.username,
@@ -61,7 +61,7 @@ def get_message(update: Update, context) -> Message:
 def get_args(update: Update, context) -> List[str]:
     if type(context) == ContextTypes.DEFAULT_TYPE:
         return context.args
-    elif type(context) == ContextTypes.CALLBACK_TYPE:
+    elif type(context) == CallbackContext:
         query = update.callback_query
         asyncio.run(query.answer)
         args = query.data.split("|")[1:]
