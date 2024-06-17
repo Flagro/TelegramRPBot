@@ -97,7 +97,7 @@ class TelegramBot:
         )
 
     async def handle(
-        self, bot_handler: BaseHandler, update: Update, context: CallbackContext
+        self, update: Update, context: CallbackContext, bot_handler: BaseHandler
     ) -> None:
         """
         Handles the update and sends the response back to the user.
