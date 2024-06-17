@@ -8,15 +8,20 @@ from telegram.ext import (
     CallbackQueryHandler,
     filters,
     Application,
+    ContextTypes,
 )
 from telegram.constants import ParseMode
 
 import logging
+from functools import partial
+
+from .utils import get_context, get_person, get_message, get_args
+
 
 from ..models.base_bot import BaseBot
 from ..models.localizer import Localizer
 from ..models.config import TGConfig
-from .wrappers import handler_wrapper
+from ..models.base_handlers import BaseHandler
 
 
 class TelegramBot:
@@ -63,21 +68,20 @@ class TelegramBot:
             .build()
         )
         command_handlers = [
-            CommandHandler(command.command, handler_wrapper(command.handle))
-            for command in sorted(
-                self.commands, key=lambda x: x.list_priority_order
-            )
+            CommandHandler(command.command, partial(self.handler, bot_handler=command))
+            for command in sorted(self.commands, key=lambda x: x.list_priority_order)
         ]
         message_handlers = [
             MessageHandler(
                 (filters.TEXT | filters.VOICE | filters.PHOTO) & ~filters.COMMAND,
-                handler_wrapper(message.handle),
+                partial(self.handler, bot_handler=message),
             )
             for message in self.messages
         ]
         callback_handlers = [
             CallbackQueryHandler(
-                handler_wrapper(callback.handle), "^" + callback.callback_action
+                partial(self.handler, bot_handler=callback),
+                "^" + callback.callback_action,
             )
             for callback in self.callbacks
         ]
@@ -90,6 +94,32 @@ class TelegramBot:
     async def error_handle(self, update: Update, context: CallbackContext) -> None:
         self.logger.error(
             msg="Exception while handling an update:", exc_info=context.error
+        )
+
+    async def handle(
+        self, bot_handler: BaseHandler, update: Update, context: CallbackContext
+    ) -> None:
+        """
+        Handles the update and sends the response back to the user.
+        """
+        handler_context = get_context(update, context)
+        handler_person = get_person(update, context)
+        handler_message = get_message(update, context)
+        handler_args = get_args(update, context)
+
+        # TODO: fix this (different self passed into the handlers)
+        # it needs implementation of a universal handler in a telegram rp bot
+        result = await bot_handler.handle(
+            handler_person, handler_context, handler_message, handler_args
+        )
+        text_response, parse_mode = self.localizer.get_command_response(
+            result.text, result.kwargs
+        )
+
+        self.send_message(
+            chat_id=update.effective_chat.id,
+            text=text_response,
+            parse_mode=parse_mode,
         )
 
     async def send_message(
