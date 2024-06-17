@@ -112,18 +112,20 @@ class TelegramBot:
         result = await bot_handler.handle(
             person=handler_person, context=handler_context, message=handler_message, args=handler_args
         )
-        text_response, parse_mode = self.localizer.get_command_response(
+        text_response = self.localizer.get_command_response(
             result.text, result.kwargs
         )
 
-        self.send_message(
+        await self.send_message(
+            context=context,
             chat_id=update.effective_chat.id,
             text=text_response,
-            parse_mode=parse_mode,
+            parse_mode=ParseMode.HTML,
         )
 
     async def send_message(
         self,
+        context,
         chat_id,
         text,
         image_url=None,
@@ -131,7 +133,7 @@ class TelegramBot:
         thread_id=None,
         parse_mode=ParseMode.HTML,
     ) -> None:
-        self.bot.send_message(
+        await context.bot.send_message(
             chat_id=chat_id,
             text=text,
             reply_to_message_id=reply_message_id,

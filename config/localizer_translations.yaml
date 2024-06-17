@@ -56,7 +56,7 @@ LocalizerTranslations:
         <li>Create and use chat-bounded chat modes by describing the agent and how you want it to act</li>
         <li>Introduce yourself to the model</li>
         <li>Add facts about yourself or other people that the model would later use</li>
-        <li>Chat with the {bot_name}
+        <li>Chat with the bot
           <ul>
             <li>Send it text</li>
             <li>Send it pictures</li>
