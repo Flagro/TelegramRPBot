@@ -12,35 +12,39 @@ from telegram.ext import CallbackContext, ContextTypes
 from ..models.handlers_input import Person, Context, Message
 
 
-def get_context(update: Update, context) -> Context:
-    if type(context) == ContextTypes.DEFAULT_TYPE:
-        return Context(
-            chat_id=update.message.chat_id,
-            thread_id=get_thread_id(update),
-            is_bot_mentioned=bot_mentioned(update, context),
-        )
-    elif type(context) == CallbackContext:
+def is_callback(update: Update) -> bool:
+    return update.callback_query is not None
+
+
+def get_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Context:
+    if is_callback(update):
         return Context(
             chat_id=update.callback_query.message.chat.id,
             thread_id=None,
             is_bot_mentioned=False,
         )
-
-
-def get_person(update: Update, context) -> Person:
-    if type(context) == ContextTypes.DEFAULT_TYPE:
-        return Person(
-            user_id=update.message.from_user.id,
-            user_handle="@" + update.message.from_user.username,
+    else:
+        return Context(
+            chat_id=update.message.chat_id,
+            thread_id=get_thread_id(update),
+            is_bot_mentioned=bot_mentioned(update, context),
         )
-    elif type(context) == CallbackContext:
+
+
+def get_person(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Person:
+    if is_callback(update):
         return Person(
             user_id=update.callback_query.from_user.id,
             user_handle="@" + update.callback_query.from_user.username,
         )
+    else:
+        return Person(
+            user_id=update.message.from_user.id,
+            user_handle="@" + update.message.from_user.username,
+        )
 
 
-def get_message(update: Update, context) -> Message:
+def get_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Message:
     message = update.message.text
     is_bot_mentioned = bot_mentioned(update, context)
     # get image and audio in memory
@@ -58,14 +62,14 @@ def get_message(update: Update, context) -> Message:
     )
 
 
-def get_args(update: Update, context) -> List[str]:
-    if type(context) == ContextTypes.DEFAULT_TYPE:
-        return context.args
-    elif type(context) == CallbackContext:
+def get_args(update: Update, context: ContextTypes.DEFAULT_TYPE) -> List[str]:
+    if is_callback(update):
         query = update.callback_query
         asyncio.run(query.answer)
         args = query.data.split("|")[1:]
         return args
+    else:
+        return context.args
 
 
 def bot_mentioned(update: Update, context: ContextTypes.DEFAULT_TYPE) -> bool:
