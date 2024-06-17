@@ -16,14 +16,11 @@ class Auth():
 
 
 class BasePermission(ABC):
-    def __init__(self, func):
-        self.func = func
-
     def __call__(self, person: Person, context: Context, auth: Auth):
-        if self.check(person, context):
-            return self.func(person, context)
+        if self.check(person, context, auth):
+            return True
         else:
-            return CommandResponse("You do not have permission to use this command.")
+            return False
 
     @abstractmethod
     def check(self, person: Person, context: Context, auth: Auth) -> bool:

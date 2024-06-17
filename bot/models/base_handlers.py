@@ -13,12 +13,12 @@ from ..models.handlers_response import CommandResponse
 
 def is_authenticated(func):
     @wraps(func)
-    async def wrapper(self, person: Person, context: Context, *args, **kwargs):
+    async def wrapper(self, person: Person, context: Context, message: Message, args: List[str]):
         for permission in self.permissions:
-            if not permission(person, context, self.auth):
+            if not permission()(person, context, self.auth):
                 return CommandResponse("not_authenticated")
         self.db.create_user_if_not_exists(person)
-        return await func(self, person, context, *args, **kwargs)
+        return await func(self, person, context, message, args)
     
     return wrapper
 
@@ -42,7 +42,7 @@ class BaseCommandHandler(BaseHandler, ABC):
     command: str = None
     list_priority_order: int = 0
 
-    # @is_authenticated
+    @is_authenticated
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
     ):
@@ -59,7 +59,7 @@ class BaseCommandHandler(BaseHandler, ABC):
 class BaseCallbackHandler(BaseHandler, ABC):
     callback_action: str = None
 
-    # @is_authenticated
+    @is_authenticated
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
     ):
@@ -74,7 +74,7 @@ class BaseCallbackHandler(BaseHandler, ABC):
 
 
 class BaseMessageHandler(BaseHandler, ABC):
-    # @is_authenticated
+    @is_authenticated
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
     ):
