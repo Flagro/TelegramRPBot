@@ -22,32 +22,34 @@ class BaseHandler(ABC):
         self.logger = logging.getLogger(f"{__name__}.{id(self)}")
 
     @abstractmethod
-    def handle(self):
+    async def handle(self, person: Person, context: Context, message: Message, args: List[str]):
         raise NotImplementedError
 
 
 def is_authenticated(func):
     @wraps(func)
-    def wrapper(self, person: Person, context: Context, *args, **kwargs):
+    async def wrapper(self, person: Person, context: Context, *args, **kwargs):
         for permission in self.permissions:
             if not permission(person, context, self.auth):
                 return CommandResponse("not_authenticated")
         self.db.create_user_if_not_exists(person)
-        return func(self, person, context, *args, **kwargs)
+        return await func(self, person, context, *args, **kwargs)
+    
+    return wrapper
 
 
 class BaseCallbackHandler(BaseHandler, ABC):
     callback_action: str = None
 
     @is_authenticated
-    def handle(
+    async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
     ):
-        callback_response = self.get_callback_response(person, context, message, args)
+        callback_response = await self.get_callback_response(person, context, message, args)
         return callback_response
 
     @abstractmethod
-    def get_callback_response(
+    async def get_callback_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ):
         raise NotImplementedError
@@ -58,14 +60,14 @@ class BaseCommandHandler(BaseHandler, ABC):
     list_priority_order: int = 0
 
     @is_authenticated
-    def handle(
+    async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
     ):
-        command_response = self.get_command_response(person, context, message, args)
+        command_response = await self.get_command_response(person, context, message, args)
         return command_response
 
     @abstractmethod
-    def get_command_response(
+    async def get_command_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ):
         raise NotImplementedError
@@ -73,14 +75,14 @@ class BaseCommandHandler(BaseHandler, ABC):
 
 class BaseMessageHandler(BaseHandler, ABC):
     @is_authenticated
-    def handle(
+    async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
     ):
-        message_response = self.get_reply(person, context, message, args)
+        message_response = await self.get_reply(person, context, message, args)
         return message_response
 
     @abstractmethod
-    def get_reply(
+    async def get_reply(
         self, person: Person, context: Context, message: Message, args: List[str]
     ):
         raise NotImplementedError
