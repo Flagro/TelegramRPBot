@@ -14,7 +14,9 @@ def handler_wrapper(func):
         handler_message = get_message(update, context)
         handler_args = get_args(update, context)
 
-        result = await func(self, handler_person, handler_context, handler_args)
+        # TODO: fix this (different self passed into the handlers)
+        # it needs implementation of a universal handler in a telegram rp bot
+        result = await func(self, handler_person, handler_context, handler_message, handler_args)
         text_response, parse_mode = self.localizer.get_command_response(
             result.text, result.kwargs
         )
