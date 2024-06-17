@@ -9,10 +9,11 @@ class Person:
 
 
 class Context:
-    def __init__(self, chat_id, thread_id, is_group):
+    def __init__(self, chat_id, thread_id, is_group, is_bot_mentioned):
         self.chat_id = chat_id
         self.thread_id = thread_id
         self.is_group = is_group
+        self.is_bot_mentioned = is_bot_mentioned
 
 
 class Message:

@@ -21,12 +21,14 @@ def get_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Context:
         return Context(
             chat_id=update.callback_query.message.chat.id,
             thread_id=None,
+            is_group=True,
             is_bot_mentioned=False,
         )
     else:
         return Context(
             chat_id=update.message.chat_id,
             thread_id=get_thread_id(update),
+            is_group=True,
             is_bot_mentioned=bot_mentioned(update, context),
         )
 
@@ -36,11 +38,19 @@ def get_person(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Person:
         return Person(
             user_id=update.callback_query.from_user.id,
             user_handle="@" + update.callback_query.from_user.username,
+            first_name=update.callback_query.from_user.first_name,
+            last_name=update.callback_query.from_user.last_name,
+            is_group_admin=False,
+            is_group_owner=False,
         )
     else:
         return Person(
             user_id=update.message.from_user.id,
             user_handle="@" + update.message.from_user.username,
+            first_name=update.message.from_user.first_name,
+            last_name=update.message.from_user.last_name,
+            is_group_admin=False,
+            is_group_owner=False,
         )
 
 
@@ -56,9 +66,9 @@ def get_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Message:
     if is_bot_mentioned and update.message.voice:
         voice = get_file_in_memory(update.message.voice.file_id, context)
     return Message(
-        message=message,
-        image=image,
-        voice=voice,
+        message_text=message,
+        in_file_image=image,
+        in_file_audio=voice,
     )
 
 
