@@ -11,6 +11,18 @@ from ..models.handlers_input import Person, Context, Message
 from ..models.handlers_response import CommandResponse
 
 
+def is_authenticated(func):
+    @wraps(func)
+    async def wrapper(self, person: Person, context: Context, *args, **kwargs):
+        for permission in self.permissions:
+            if not permission(person, context, self.auth):
+                return CommandResponse("not_authenticated")
+        self.db.create_user_if_not_exists(person)
+        return await func(self, person, context, *args, **kwargs)
+    
+    return wrapper
+
+
 class BaseHandler(ABC):
     permissions: list = []
 
@@ -26,40 +38,11 @@ class BaseHandler(ABC):
         raise NotImplementedError
 
 
-def is_authenticated(func):
-    @wraps(func)
-    async def wrapper(self, person: Person, context: Context, *args, **kwargs):
-        for permission in self.permissions:
-            if not permission(person, context, self.auth):
-                return CommandResponse("not_authenticated")
-        self.db.create_user_if_not_exists(person)
-        return await func(self, person, context, *args, **kwargs)
-    
-    return wrapper
-
-
-class BaseCallbackHandler(BaseHandler, ABC):
-    callback_action: str = None
-
-    @is_authenticated
-    async def handle(
-        self, person: Person, context: Context, message: Message, args: List[str]
-    ):
-        callback_response = await self.get_callback_response(person, context, message, args)
-        return callback_response
-
-    @abstractmethod
-    async def get_callback_response(
-        self, person: Person, context: Context, message: Message, args: List[str]
-    ):
-        raise NotImplementedError
-
-
 class BaseCommandHandler(BaseHandler, ABC):
     command: str = None
     list_priority_order: int = 0
 
-    @is_authenticated
+    # @is_authenticated
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
     ):
@@ -73,8 +56,25 @@ class BaseCommandHandler(BaseHandler, ABC):
         raise NotImplementedError
 
 
+class BaseCallbackHandler(BaseHandler, ABC):
+    callback_action: str = None
+
+    # @is_authenticated
+    async def handle(
+        self, person: Person, context: Context, message: Message, args: List[str]
+    ):
+        callback_response = await self.get_callback_response(person, context, message, args)
+        return callback_response
+
+    @abstractmethod
+    async def get_callback_response(
+        self, person: Person, context: Context, message: Message, args: List[str]
+    ):
+        raise NotImplementedError
+
+
 class BaseMessageHandler(BaseHandler, ABC):
-    @is_authenticated
+    # @is_authenticated
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
     ):
