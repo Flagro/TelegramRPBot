@@ -10,22 +10,24 @@ class RPBot(BaseBot):
     callbacks = callback_handlers
     commands = command_handlers
     messages = message_handlers
+    
+    def _init_handler(self, handler):
+        return handler(self.ai, self.db, self.localizer, self.auth)
+    
+    def get_commands(self) -> List[BaseCommandHandler]:
+        return [self._init_handler(handler) for handler in self.commands]
 
     def get_callbacks(self) -> List[BaseCallbackHandler]:
-        return self.callbacks
-
-    def get_commands(self) -> List[BaseCommandHandler]:
-        return self.commands
+        return [self._init_handler(handler) for handler in self.callbacks]
 
     def get_messages(self) -> List[BaseMessageHandler]:
-        return self.messages
+        return [self._init_handler(handler) for handler in self.messages]
 
     def __init__(self, ai, db, localizer, auth, logger):
         # TODO: init here the handlers with parameters
         # and store them in a class attribute
-        for handler in self.callbacks + self.commands + self.messages:
-            handler.ai = ai
-            handler.db = db
-            handler.localizer = localizer
-            handler.auth = auth  # TODO: init permissions
-            handler.logger = logger
+        self.ai = ai
+        self.db = db
+        self.localizer = localizer
+        self.auth = auth # TODO: init permissions
+        self.logger = logger

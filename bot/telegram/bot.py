@@ -110,7 +110,7 @@ class TelegramBot:
         # TODO: fix this (different self passed into the handlers)
         # it needs implementation of a universal handler in a telegram rp bot
         result = await bot_handler.handle(
-            handler_person, handler_context, handler_message, handler_args
+            person=handler_person, context=handler_context, message=handler_message, args=handler_args
         )
         text_response, parse_mode = self.localizer.get_command_response(
             result.text, result.kwargs
