@@ -31,7 +31,6 @@ class DB:
             )
 
     async def create_user_if_not_exists(self, user_handle: str) -> None:
-        return
         await self.users.update_one(
             {"handle": user_handle},
             {"$setOnInsert": {"handle": user_handle}},
