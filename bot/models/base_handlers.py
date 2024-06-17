@@ -17,7 +17,7 @@ def is_authenticated(func):
         for permission in self.permissions:
             if not permission()(person, context, self.auth):
                 return CommandResponse("not_authenticated")
-        self.db.create_user_if_not_exists(person)
+        await self.db.create_user_if_not_exists(person)
         return await func(self, person, context, message, args)
     
     return wrapper
