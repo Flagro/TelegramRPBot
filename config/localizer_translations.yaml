@@ -49,6 +49,8 @@ LocalizerTranslations:
     english: "Language {language} set error"
   reset_done:
     english: "Reset done!"
+  not_authenticated:
+    english: "You are not authenticated to do this action"
   help_text:
     english: |
       <strong>Features 🌟</strong>

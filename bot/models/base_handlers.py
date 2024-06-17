@@ -16,7 +16,7 @@ def is_authenticated(func):
     async def wrapper(self, person: Person, context: Context, message: Message, args: List[str]):
         for permission in self.permissions:
             if not permission()(person, context, self.auth):
-                return CommandResponse("not_authenticated")
+                return CommandResponse("not_authenticated", {})
         await self.db.create_user_if_not_exists(person)
         return await func(self, person, context, message, args)
     
