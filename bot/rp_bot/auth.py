@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from ..models.handlers_input import Person, Context
-from ..models.handlers_response import CommandResponse
 
 
 class Auth():
