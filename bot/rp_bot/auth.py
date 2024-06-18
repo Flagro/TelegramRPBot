@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from ..models.handlers_input import Person, Context
 
 
-class Auth():
+class Auth:
     def __init__(self, allowed_handles, admin_handles):
         self.allowed_handles = allowed_handles
         self.admin_handles = admin_handles
@@ -23,7 +23,9 @@ class BasePermission(ABC):
 
     @abstractmethod
     def check(self, person: Person, context: Context, auth: Auth) -> bool:
-        raise NotImplementedError("Permission check method must be implemented by subclasses.")
+        raise NotImplementedError(
+            "Permission check method must be implemented by subclasses."
+        )
 
 
 class GroupOwner(BasePermission):

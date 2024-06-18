@@ -39,8 +39,8 @@ def get_person(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Person:
             user_handle="@" + update.callback_query.from_user.username,
             first_name=update.callback_query.from_user.first_name,
             last_name=update.callback_query.from_user.last_name,
-            is_group_admin=False,
-            is_group_owner=False,
+            is_group_admin=False,  # TODO: check this properly
+            is_group_owner=False,  # TODO: check this properly
         )
     else:
         return Person(
@@ -48,8 +48,8 @@ def get_person(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Person:
             user_handle="@" + update.message.from_user.username,
             first_name=update.message.from_user.first_name,
             last_name=update.message.from_user.last_name,
-            is_group_admin=False,
-            is_group_owner=False,
+            is_group_admin=False,  # TODO: check this properly
+            is_group_owner=False,  # TODO: check this properly
         )
 
 
