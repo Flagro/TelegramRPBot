@@ -2,12 +2,11 @@ from __future__ import annotations
 
 import io
 import asyncio
-import logging
 
 from typing import List, Optional
 
-from telegram import Update, constants
-from telegram.ext import CallbackContext, ContextTypes
+from telegram import Update
+from telegram.ext import ContextTypes
 
 from ..models.handlers_input import Person, Context, Message
 
