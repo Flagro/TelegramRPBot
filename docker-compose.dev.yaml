@@ -9,7 +9,7 @@ services:
     volumes:
       - mongo_data:/data/db
     ports:
-      - "localhost:${DB_PORT}:27017"
+      - "127.0.0.1:${DB_PORT}:27017"
     networks:
       - localnet
 
