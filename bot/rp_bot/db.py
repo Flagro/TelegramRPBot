@@ -13,7 +13,13 @@ ChatModeResponse = namedtuple(
 
 
 class DB:
-    def __init__(self, uri: str, default_chat_modes: DefaultChatModes):
+    def __init__(self,
+                 db_user: str,
+                 db_password: str,
+                 db_host: str,
+                 db_port: str,
+                 db_name: str,
+                 default_chat_modes: DefaultChatModes):
         self.client = AsyncIOMotorClient(uri)
         self.default_chat_modes = default_chat_modes
         db_name = uri.split("/")[-1]

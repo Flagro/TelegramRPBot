@@ -31,7 +31,12 @@ def main():
     )
     ai_config = AIConfig.load(config_dir / "ai_config.yaml")
 
-    db = DB(config("DB_URI"), default_chat_modes=default_chat_modes)
+    db = DB(db_user=config("DB_USER"),
+            db_password=config("DB_PASSWORD"),
+            db_host=config("DB_HOST"),
+            db_port=config("DB_PORT"),
+            db_name=config("DB_NAME"),
+            default_chat_modes=default_chat_modes)
 
     ai = AI(openai_api_key=config("OPENAI_API_KEY"), db=db, ai_config=ai_config)
 
