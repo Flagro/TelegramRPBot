@@ -20,9 +20,9 @@ class DB:
                  db_port: str,
                  db_name: str,
                  default_chat_modes: DefaultChatModes):
+        uri = f"mongodb://{db_user}:{db_password}@{db_host}:{db_port}"
         self.client = AsyncIOMotorClient(uri)
         self.default_chat_modes = default_chat_modes
-        db_name = uri.split("/")[-1]
         self.db = self.client[db_name]
         self.users = self.db.users
         self.chat_modes = self.db.chat_modes
