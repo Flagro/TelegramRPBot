@@ -50,6 +50,12 @@ class DB:
             {"chat_id": chat_id}, {"$set": {"language": language}}
         )
 
+    async def get_language(self, chat_id: str) -> Optional[str]:
+        chat_data = await self.chat_modes.find_one(
+            {"chat_id": chat_id}, {"_id": 0, "language": 1}
+        )
+        return chat_data.get("language")
+
     async def get_user_usage(self, user_handle: str) -> UserUsageResponse:
         usage_data = await self.users.find_one(
             {"handle": user_handle}, {"_id": 0, "usage": 1, "limit": 1}
