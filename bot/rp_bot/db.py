@@ -13,13 +13,15 @@ ChatModeResponse = namedtuple(
 
 
 class DB:
-    def __init__(self,
-                 db_user: str,
-                 db_password: str,
-                 db_host: str,
-                 db_port: str,
-                 db_name: str,
-                 default_chat_modes: DefaultChatModes):
+    def __init__(
+        self,
+        db_user: str,
+        db_password: str,
+        db_host: str,
+        db_port: str,
+        db_name: str,
+        default_chat_modes: DefaultChatModes,
+    ):
         uri = f"mongodb://{db_user}:{db_password}@{db_host}:{db_port}"
         self.client = AsyncIOMotorClient(uri)
         self.default_chat_modes = default_chat_modes
@@ -27,7 +29,7 @@ class DB:
         self.users = self.db.users
         self.chat_modes = self.db.chat_modes
         self.dialogs = self.db.dialogs
-        
+
     def _init_default_chat_modes(self, chat_id: str) -> None:
         for mode in self.default_chat_modes:
             self.chat_modes.update_one(
