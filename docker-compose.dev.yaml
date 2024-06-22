@@ -1,5 +1,19 @@
 version: '3.8'
 services:
+  bot:
+    build: .
+    container_name: telegram_rp_bot
+    environment:
+      BOT_TOKEN: ${BOT_TOKEN}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_PORT: ${DB_PORT}
+    networks:
+      - localnet
+    depends_on:
+      - mongodb
+
   mongodb:
     image: mongo:latest
     container_name: telegram_rp_bot_mongo
