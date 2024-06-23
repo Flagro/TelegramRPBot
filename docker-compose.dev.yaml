@@ -19,5 +19,17 @@ services:
     ports:
       - "127.0.0.1:${DB_PORT}:27017"
 
+  mongo-express:
+    image: mongo-express:latest
+    container_name: telegram_rp_bot_mongo_express
+    depends_on:
+      - mongodb
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${DB_USER}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${DB_PASSWORD}
+      ME_CONFIG_MONGODB_SERVER: mongodb
+    ports:
+      - "8081:8081"
+
 volumes:
   mongo_data:
