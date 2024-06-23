@@ -1,31 +1,13 @@
-# Use an official Python runtime as a parent image
-FROM python:3.8-slim
+FROM python:3.9
 
-# Set environment varibles
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-    build-essential \
-    python3-venv \
-    ffmpeg \
-    git \
-    curl \
-    && curl -sSL https://install.python-poetry.org | python3 -
+COPY pyproject.toml poetry.lock ./
 
-# Set work directory
-WORKDIR /code
+RUN pip install poetry
 
-# Copy project file
-COPY ./pyproject.toml /code/
+RUN poetry install
 
-# Install project dependencies
-RUN poetry config virtualenvs.create false \
-    && poetry install --no-interaction --no-ansi
+COPY . .
 
-# Copy all project
-COPY . /code/
-
-CMD ["bash"]
+CMD ["poetry", "run", "python", "bot.py"]
