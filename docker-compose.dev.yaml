@@ -16,8 +16,6 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
     volumes:
       - mongo_data:/data/db
-    ports:
-      - "127.0.0.1:${DB_PORT}:27017"
 
   mongo-express:
     image: mongo-express:latest
@@ -29,7 +27,7 @@ services:
       ME_CONFIG_MONGODB_ADMINPASSWORD: ${DB_PASSWORD}
       ME_CONFIG_MONGODB_SERVER: mongodb
     ports:
-      - "8081:8081"
+      - "127.0.0.1:8081:8081"
 
 volumes:
   mongo_data:
