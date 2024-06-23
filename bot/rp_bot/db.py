@@ -5,6 +5,8 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from collections import namedtuple
 
 from ..models.config import DefaultChatModes
+from ..models.handlers_input import Person, Context, Message
+
 
 UserUsageResponse = namedtuple("UserUsageResponse", ["this_month_usage", "limit"])
 ChatModeResponse = namedtuple(
@@ -38,7 +40,8 @@ class DB:
                 upsert=True,
             )
 
-    async def create_user_if_not_exists(self, user_handle: str) -> None:
+    async def create_user_if_not_exists(self, person: Person) -> None:
+        user_handle = person.user_handle
         await self.users.update_one(
             {"handle": user_handle},
             {"$setOnInsert": {"handle": user_handle}},
