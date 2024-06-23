@@ -7,6 +7,8 @@ services:
       - .env
     depends_on:
       - mongodb
+    networks:
+      - internal
 
   mongodb:
     image: mongo:latest
@@ -16,6 +18,8 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
     volumes:
       - mongo_data:/data/db
+    networks:
+      - internal
 
   mongo-express:
     image: mongo-express:latest
@@ -28,6 +32,12 @@ services:
       ME_CONFIG_MONGODB_SERVER: mongodb
     ports:
       - "127.0.0.1:8081:8081"
+    networks:
+      - internal
 
 volumes:
   mongo_data:
+
+networks:
+  internal:
+    driver: bridge
