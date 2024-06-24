@@ -32,7 +32,8 @@ class DB:
         self.chat_modes = self.db.chat_modes
         self.dialogs = self.db.dialogs
 
-    def _init_default_chat_modes(self, chat_id: str) -> None:
+    def _init_default_chat_modes(self, context: Context) -> None:
+        chat_id = context.chat_id
         for mode in self.default_chat_modes:
             self.chat_modes.update_one(
                 {"chat_id": chat_id, "mode_name": mode.name},
@@ -48,24 +49,28 @@ class DB:
             upsert=True,
         )
 
-    async def set_language(self, chat_id: str, language: str) -> None:
+    async def set_language(self, context: Context, language: str) -> None:
+        chat_id = context.chat_id
         await self.chat_modes.update_one(
             {"chat_id": chat_id}, {"$set": {"language": language}}
         )
 
-    async def get_language(self, chat_id: str) -> Optional[str]:
+    async def get_language(self, context: Context) -> Optional[str]:
+        chat_id = context.chat_id
         chat_data = await self.chat_modes.find_one(
             {"chat_id": chat_id}, {"_id": 0, "language": 1}
         )
         return chat_data.get("language")
 
-    async def get_user_usage(self, user_handle: str) -> UserUsageResponse:
+    async def get_user_usage(self, person: Person) -> UserUsageResponse:
+        user_handle = person.user_handle
         usage_data = await self.users.find_one(
             {"handle": user_handle}, {"_id": 0, "usage": 1, "limit": 1}
         )
         return UserUsageResponse(usage_data.get("usage", 0), usage_data.get("limit", 0))
 
-    async def get_chat_modes(self, chat_id: str) -> List[ChatModeResponse]:
+    async def get_chat_modes(self, context: Context) -> List[ChatModeResponse]:
+        chat_id = context.chat_id
         cursor = self.chat_modes.find({"chat_id": chat_id})
         chat_modes = []
         async for doc in cursor:
@@ -74,17 +79,20 @@ class DB:
             )
         return chat_modes
 
-    async def set_chat_mode(self, chat_id: str, mode_id: UUID) -> None:
+    async def set_chat_mode(self, context: Context, mode_id: UUID) -> None:
+        chat_id = context.chat_id
         await self.chat_modes.update_one(
             {"chat_id": chat_id, "_id": mode_id}, {"$set": {"active_mode": True}}
         )
 
-    async def delete_chat_mode(self, chat_id: str, mode_id: UUID) -> None:
+    async def delete_chat_mode(self, context: Context, mode_id: UUID) -> None:
+        chat_id = context.chat_id
         await self.chat_modes.delete_one({"chat_id": chat_id, "_id": mode_id})
 
     async def add_chat_mode(
-        self, chat_id: str, mode_name: str, mode_description: str
+        self, context: Context, mode_name: str, mode_description: str
     ) -> None:
+        chat_id = context.chat_id
         await self.chat_modes.insert_one(
             {
                 "chat_id": chat_id,
@@ -94,30 +102,39 @@ class DB:
         )
 
     async def add_introduction(
-        self, chat_id: str, user_handle: str, introduction: str
+        self, context: Context, person: Person, introduction: str
     ) -> None:
+        chat_id = context.chat_id
+        user_handle = person.user_handle
         await self.dialogs.update_one(
             {"chat_id": chat_id, "user_handle": user_handle},
             {"$set": {"introduction": introduction}},
             upsert=True,
         )
 
-    async def add_fact(self, chat_id: str, user_handle: str, fact: str) -> None:
+    async def add_fact(self, context: Context, person: Person, fact: str) -> None:
+        chat_id = context.chat_id
+        user_handle = person.user_handle
         await self.dialogs.update_one(
             {"chat_id": chat_id, "user_handle": user_handle}, {"$push": {"facts": fact}}
         )
 
-    async def clear_facts(self, chat_id: str, user_handle: str) -> None:
+    async def clear_facts(self, context: Context, person: Person) -> None:
+        chat_id = context.chat_id
+        user_handle = person.user_handle
         await self.dialogs.update_one(
             {"chat_id": chat_id, "user_handle": user_handle}, {"$set": {"facts": []}}
         )
 
-    async def reset(self, chat_id: str) -> None:
+    async def reset(self, context: Context) -> None:
+        chat_id = context.chat_id
         await self.dialogs.delete_many({"chat_id": chat_id})
 
     async def save_thread_message(
-        self, thread_id: Optional[str], user_handle: str, message: str
+        self, context: Context, person: Person, message: str
     ) -> None:
+        thread_id = context.thread_id
+        user_handle = person.user_handle
         await self.dialogs.update_one(
             {"thread_id": thread_id, "user_handle": user_handle},
             {"$push": {"messages": message}},
@@ -126,18 +143,21 @@ class DB:
 
     async def add_user_input_to_dialog(
         self,
-        chat_id: str,
-        user_handle: str,
-        message: str,
+        context: Context,
+        person: Person,
+        message: Message,
         image_description: str,
         voice_description: str,
     ) -> None:
+        chat_id = context.chat_id
+        user_handle = person.user_handle
+        message_text = message.message_text
         await self.dialogs.update_one(
             {"chat_id": chat_id, "user_handle": user_handle},
             {
                 "$push": {
                     "dialog": {
-                        "message": message,
+                        "message": message_text,
                         "image_description": image_description,
                         "voice_description": voice_description,
                     }
@@ -147,8 +167,9 @@ class DB:
         )
 
     async def add_bot_response_to_dialog(
-        self, chat_id: str, bot_response: str, response_image_url: str
+        self, context: Context, bot_response: str, response_image_url: str
     ) -> None:
+        chat_id = context.chat_id
         await self.dialogs.update_one(
             {"chat_id": chat_id},
             {
