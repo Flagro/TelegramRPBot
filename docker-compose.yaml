@@ -1,17 +1,30 @@
-version: "3"
-
+version: "3.8"
 services:
   bot:
     restart: always
-    build: .
+    container_name: telegram_rp_bot
+    env_file:
+      - .env
     depends_on:
-      - mongo
+      - mongodb
+    networks:
+      - internal
 
-  mongo:
+  mongodb:
     image: mongo:latest
     restart: always
+    container_name: telegram_rp_bot_mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - mongodb_data:/data/db
+      - mongo_data:/data/db
+    networks:
+      - internal
 
 volumes:
-  mongodb_data:
+  mongo_data:
+
+networks:
+  internal:
+    driver: bridge
