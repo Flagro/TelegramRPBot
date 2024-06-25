@@ -1,5 +1,6 @@
 from ..rp_bot.db import DB
 from .config.localizer_translations import LocalizerTranslations
+from ..models.handlers_input import Person, Context, Message
 
 
 class Localizer:
@@ -7,7 +8,8 @@ class Localizer:
         self.db = db
         self.translations = translations
 
-    def set_language(self, chat_id: str, language: str) -> None:
+    def set_language(self, context: Context, language: str) -> None:
+        chat_id = context.chat_id
         self.db.set_language(chat_id, language)
 
     def compose_user_input(
@@ -17,7 +19,8 @@ class Localizer:
             f"{message}\n{image_description}\n{voice_description}"
         )
         
-    def compose_history_message(self, chat_id) -> str:
+    def compose_history_message(self, context: Context) -> str:
+        chat_id = context.chat_id
         messages = self.db.get_messages(chat_id, 100)
         return "\n".join(messages)
 
