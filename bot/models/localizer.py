@@ -9,8 +9,7 @@ class Localizer:
         self.translations = translations
 
     def set_language(self, context: Context, language: str) -> None:
-        chat_id = context.chat_id
-        self.db.set_language(chat_id, language)
+        self.db.set_language(context, language)
 
     def compose_user_input(
         self, message: str, image_description: str, voice_description: str
@@ -20,8 +19,7 @@ class Localizer:
         )
         
     def compose_history_message(self, context: Context) -> str:
-        chat_id = context.chat_id
-        messages = self.db.get_messages(chat_id, 100)
+        messages = self.db.get_messages(context, 100)
         return "\n".join(messages)
 
     def get_command_response(self, text: str, kwargs: dict) -> str:
