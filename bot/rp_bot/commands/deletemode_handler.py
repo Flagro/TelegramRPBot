@@ -18,8 +18,7 @@ class CommandHandler(BaseCommandHandler):
         message: Message,
         args: List[str],
     ) -> CommandResponse:
-        chat_id = context.chat_id
-        available_modes = self.db.get_chat_modes(chat_id)
+        available_modes = self.db.get_chat_modes(context)
         modes_dict = {mode.id: mode.name for mode in available_modes}
         return CommandResponse(
             "choose_mode_to_delete",

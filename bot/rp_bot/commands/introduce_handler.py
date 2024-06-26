@@ -14,11 +14,10 @@ class CommandHandler(BaseCommandHandler):
     async def get_command_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
-        chat_id = context.chat_id
         user_handle = person.user_handle
         introduction = " ".join(args)
         try:
-            self.db.add_introduction(chat_id, user_handle, introduction)
+            self.db.add_introduction(context, user_handle, introduction)
             return CommandResponse("introduction_added", {"user_handle": user_handle})
         except ValueError as e:
             self.logger.error(f"Error adding introduction: {e}")

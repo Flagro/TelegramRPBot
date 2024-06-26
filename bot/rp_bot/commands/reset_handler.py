@@ -14,6 +14,5 @@ class CommandHandler(BaseCommandHandler):
     async def get_command_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
-        chat_id = context.chat_id
-        self.db.reset(chat_id)
+        self.db.reset(context)
         return CommandResponse("reset_done", {})

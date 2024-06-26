@@ -14,10 +14,9 @@ class CommandHandler(BaseCommandHandler):
     async def get_command_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
-        chat_id = context.chat_id
         language = args[0]
         try:
-            self.localizer.set_language(chat_id, language)
+            self.localizer.set_language(context, language)
             return CommandResponse("language_set", {"language": language})
         except ValueError as e:
             self.logger.error(f"Error setting language: {e}")

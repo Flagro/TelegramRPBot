@@ -14,11 +14,10 @@ class CommandHandler(BaseCommandHandler):
     async def get_command_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
-        chat_id = context.chat_id
         facts_user_handle = args[0]
         facts = " ".join(args[1:])
         try:
-            self.db.add_fact(chat_id, facts_user_handle, facts)
+            self.db.add_fact(context, facts_user_handle, facts)
             return CommandResponse("fact_added", {"user_handle": facts_user_handle})
         except ValueError as e:
             self.logger.error(f"Error adding fact: {e}")
