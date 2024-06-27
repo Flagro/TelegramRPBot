@@ -12,7 +12,7 @@ class RPBot(BaseBot):
     messages = message_handlers
     
     def _init_handler(self, handler):
-        return handler(db=self.db, ai=self.ai, localizer=self.localizer, auth=self.auth)
+        return handler(db=self.db, ai=self.ai, localizer=self.localizer, auth=self.auth, bot_config=self.bot_config)
     
     def get_commands(self) -> List[BaseCommandHandler]:
         return [self._init_handler(handler) for handler in self.commands]
@@ -23,11 +23,12 @@ class RPBot(BaseBot):
     def get_messages(self) -> List[BaseMessageHandler]:
         return [self._init_handler(handler) for handler in self.messages]
 
-    def __init__(self, ai, db, localizer, auth, logger):
+    def __init__(self, ai, db, localizer, auth, bot_config, logger):
         # TODO: init here the handlers with parameters
         # and store them in a class attribute
         self.ai = ai
         self.db = db
         self.localizer = localizer
         self.auth = auth # TODO: init permissions
+        self.bot_config = bot_config
         self.logger = logger
