@@ -2,4 +2,3 @@ TGConfig:
   new_dialog_timeout: 600
   enable_message_streaming: True
   n_chat_modes_per_page: 10
-  track_conversation_thread: True

@@ -9,6 +9,7 @@ from bot.models.localizer import Localizer
 from bot.rp_bot.bot import RPBot
 from bot.models.config import (
     TGConfig,
+    BotConfig,
     DefaultChatModes,
     LocalizerTranslations,
     AIConfig,
@@ -25,6 +26,7 @@ def main():
 
     config_dir = Path(__file__).parent.resolve() / "config"
     telegram_bot_config = TGConfig.load(config_dir / "tg_config.yaml")
+    bot_config = BotConfig.load(config_dir / "bot_config.yaml")
     default_chat_modes = DefaultChatModes.load(config_dir / "default_chat_modes.yaml")
     translations = LocalizerTranslations.load(
         config_dir / "localizer_translations.yaml"
@@ -48,7 +50,7 @@ def main():
     )
 
     rp_bot = RPBot(
-        ai=ai, db=db, localizer=localizer, auth=auth, logger=logging.getLogger("RPBot")
+        ai=ai, db=db, localizer=localizer, auth=auth, bot_config=bot_config, logger=logging.getLogger("RPBot")
     )
 
     tg_bot = TelegramBot(
