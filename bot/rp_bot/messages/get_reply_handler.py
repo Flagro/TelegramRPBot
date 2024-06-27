@@ -46,6 +46,6 @@ class MessageHandler(BaseMessageHandler):
             chat_id, thread_id, user_handle, user_input
         )
         self.db.add_bot_response_to_dialog(
-            chat_id, response_message, response_image_url
+            context, response_message, response_image_url
         )
         return CommandResponse("message_response", {"response_text": response_message})
