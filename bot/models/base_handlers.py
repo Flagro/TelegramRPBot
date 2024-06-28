@@ -14,20 +14,24 @@ from ..models.config import BotConfig
 
 def is_authenticated(func):
     @wraps(func)
-    async def wrapper(self, person: Person, context: Context, message: Message, args: List[str]):
+    async def wrapper(
+        self, person: Person, context: Context, message: Message, args: List[str]
+    ) -> CommandResponse:
         for permission in self.permissions:
             if not permission()(person, context, self.auth):
                 return CommandResponse("not_authenticated", {})
         await self.db.create_user_if_not_exists(person)
         return await func(self, person, context, message, args)
-    
+
     return wrapper
 
 
 class BaseHandler(ABC):
     permissions: list = []
 
-    def __init__(self, db: DB, ai: AI, localizer: Localizer, auth: Auth, bot_config: BotConfig):
+    def __init__(
+        self, db: DB, ai: AI, localizer: Localizer, auth: Auth, bot_config: BotConfig
+    ):
         self.db = db
         self.ai = ai
         self.localizer = localizer
@@ -36,7 +40,9 @@ class BaseHandler(ABC):
         self.logger = logging.getLogger(f"{__name__}.{id(self)}")
 
     @abstractmethod
-    async def handle(self, person: Person, context: Context, message: Message, args: List[str]):
+    async def handle(
+        self, person: Person, context: Context, message: Message, args: List[str]
+    ) -> CommandResponse:
         raise NotImplementedError
 
 
@@ -47,14 +53,16 @@ class BaseCommandHandler(BaseHandler, ABC):
     @is_authenticated
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
-    ):
-        command_response = await self.get_command_response(person, context, message, args)
+    ) -> CommandResponse:
+        command_response = await self.get_command_response(
+            person, context, message, args
+        )
         return command_response
 
     @abstractmethod
     async def get_command_response(
         self, person: Person, context: Context, message: Message, args: List[str]
-    ):
+    ) -> CommandResponse:
         raise NotImplementedError
 
 
@@ -64,14 +72,16 @@ class BaseCallbackHandler(BaseHandler, ABC):
     @is_authenticated
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
-    ):
-        callback_response = await self.get_callback_response(person, context, message, args)
+    ) -> CommandResponse:
+        callback_response = await self.get_callback_response(
+            person, context, message, args
+        )
         return callback_response
 
     @abstractmethod
     async def get_callback_response(
         self, person: Person, context: Context, message: Message, args: List[str]
-    ):
+    ) -> CommandResponse:
         raise NotImplementedError
 
 
@@ -79,12 +89,12 @@ class BaseMessageHandler(BaseHandler, ABC):
     @is_authenticated
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
-    ):
+    ) -> CommandResponse:
         message_response = await self.get_reply(person, context, message, args)
         return message_response
 
     @abstractmethod
     async def get_reply(
         self, person: Person, context: Context, message: Message, args: List[str]
-    ):
+    ) -> CommandResponse:
         raise NotImplementedError
