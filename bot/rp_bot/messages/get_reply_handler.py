@@ -17,8 +17,8 @@ class MessageHandler(BaseMessageHandler):
         message: Message,
         args: List[str],
     ) -> Optional[CommandResponse]:
-        image = message.image
-        voice = message.voice
+        image = message.in_file_image
+        voice = message.in_file_audio
         chat_id = context.chat_id
         thread_id = context.thread_id
         user_handle = person.user_handle
