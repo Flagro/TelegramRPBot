@@ -107,14 +107,13 @@ class TelegramBot:
         handler_message = get_message(update, context)
         handler_args = get_args(update, context)
 
-        # TODO: fix this (different self passed into the handlers)
-        # it needs implementation of a universal handler in a telegram rp bot
         result = await bot_handler.handle(
-            person=handler_person, context=handler_context, message=handler_message, args=handler_args
+            person=handler_person,
+            context=handler_context,
+            message=handler_message,
+            args=handler_args,
         )
-        text_response = self.localizer.get_command_response(
-            result.text, result.kwargs
-        )
+        text_response = self.localizer.get_command_response(result.text, result.kwargs)
 
         await self.send_message(
             context=context,
