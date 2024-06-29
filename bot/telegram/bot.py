@@ -114,13 +114,24 @@ class TelegramBot:
             args=handler_args,
         )
         text_response = self.localizer.get_command_response(result.text, result.kwargs)
-
-        await self.send_message(
-            context=context,
-            chat_id=update.effective_chat.id,
-            text=text_response,
-            parse_mode=ParseMode.HTML,
-        )
+        
+        if result.keyboard:
+            await self.send_message(
+                context=context,
+                chat_id=update.effective_chat.id,
+                text=text_response,
+                reply_message_id=update.effective_message.message_id,
+                thread_id=handler_context.thread_id,
+                parse_mode=ParseMode.HTML,
+                keyboard=result.keyboard,
+            )
+        else:
+            await self.send_message(
+                context=context,
+                chat_id=update.effective_chat.id,
+                text=text_response,
+                parse_mode=ParseMode.HTML,
+            )
 
     async def send_message(
         self,
