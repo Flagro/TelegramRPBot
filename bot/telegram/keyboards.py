@@ -4,16 +4,18 @@ from telegram import (
 )
 from uuid import UUID
 from typing import List, Optional
+from collections import OrderedDict
 
 
 def get_paginated_list_keyboard(
-    value_names: List[str],
-    value_ids: List[UUID],
+    value_id_to_name: OrderedDict[UUID, str],
     callback: str,
     button_action: str,
     page_index: Optional[int] = 0,
     modes_per_page: Optional[int] = 5,
 ) -> InlineKeyboardMarkup:
+    value_names = list(value_id_to_name.values())
+    value_ids = list(value_id_to_name.keys())
     values = list(zip(value_names, value_ids))
     page_start = page_index * modes_per_page
     page_end = (page_index + 1) * modes_per_page
