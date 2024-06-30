@@ -1,4 +1,5 @@
 from typing import List
+from collections import OrderedDict
 
 from ...models.base_handlers import BaseCommandHandler
 from ...models.handlers_response import KeyboardResponse, CommandResponse
@@ -15,7 +16,7 @@ class CommandHandler(BaseCommandHandler):
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
         available_modes = self.db.get_chat_modes(context)
-        modes_dict = {mode.id: mode.name for mode in available_modes}
+        modes_dict = OrderedDict({mode.id: mode.name for mode in available_modes})
         return CommandResponse(
             "choose_mode",
             {},

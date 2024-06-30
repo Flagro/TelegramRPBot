@@ -1,4 +1,5 @@
 from typing import List
+from collections import OrderedDict
 
 from ...models.base_handlers import BaseCallbackHandler
 from ...models.handlers_response import KeyboardResponse, CommandResponse
@@ -15,7 +16,7 @@ class CallbackHandler(BaseCallbackHandler):
     ) -> CommandResponse:
         old_action = args[0]
         available_modes = self.db.get_chat_modes(context)
-        modes_dict = {mode.id: mode.name for mode in available_modes}
+        modes_dict = OrderedDict({mode.id: mode.name for mode in available_modes})
 
         return CommandResponse(
             "choose_mode_to_delete",
