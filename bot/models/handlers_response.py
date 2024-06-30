@@ -1,11 +1,12 @@
 from typing import Optional, Dict
+from collections import OrderedDict
 from uuid import UUID
 
 
 class KeyboardResponse:
     def __init__(
         self,
-        modes_dict: Dict[UUID, str],
+        modes_dict: OrderedDict[UUID, str],
         callback: str,
         button_action: str,
     ):
