@@ -19,7 +19,7 @@ class Localizer:
         )
         
     def compose_history_message(self, context: Context) -> str:
-        messages = self.db.get_messages(context, 100)
+        messages = self.db.get_messages(context)
         return "\n".join(messages)
 
     def get_command_response(self, text: str, kwargs: dict) -> str:
