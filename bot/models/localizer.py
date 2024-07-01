@@ -5,8 +5,8 @@ from ..models.handlers_input import Person, Context, Message
 
 class Localizer:
     def __init__(self, db: DB, translations: LocalizerTranslations) -> None:
-        self.db = db
-        self.translations = translations
+        self.db: DB = db
+        self.translations: LocalizerTranslations = translations
 
     def set_language(self, context: Context, language: str) -> None:
         self.db.set_language(context, language)

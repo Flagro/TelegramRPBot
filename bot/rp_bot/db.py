@@ -130,6 +130,17 @@ class DB:
         chat_id = context.chat_id
         await self.dialogs.delete_many({"chat_id": chat_id})
 
+    async def get_messages(self, context: Context, last_n: int = 10) -> List[str]:
+        chat_id = context.chat_id
+        cursor = self.dialogs.find(
+            {"chat_id": chat_id},
+            {"_id": 0, "messages": {"$slice": -last_n}},
+        )
+        messages = []
+        async for doc in cursor:
+            messages.extend(doc.get("messages", []))
+        return messages
+
     async def save_thread_message(
         self, context: Context, person: Person, message: str
     ) -> None:
