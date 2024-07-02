@@ -3,7 +3,7 @@ from telegram import (
     InlineKeyboardMarkup,
 )
 from uuid import UUID
-from typing import List, Optional
+from typing import Optional
 from collections import OrderedDict
 
 
@@ -24,20 +24,22 @@ def get_paginated_list_keyboard(
     modes = []
     for value in values[page_start:page_end]:
         modes.append(
-            InlineKeyboardButton(
-                value[0], callback_data=f"{button_action}|{value[1]}"
-            )
+            InlineKeyboardButton(value[0], callback_data=f"{button_action}|{value[1]}")
         )
 
     # pagination
     pagination = []
     if page_start > 0:
         pagination.append(
-            InlineKeyboardButton("«", callback_data=f"{callback}|{button_action}|{page_index - 1}")
+            InlineKeyboardButton(
+                "«", callback_data=f"{callback}|{button_action}|{page_index - 1}"
+            )
         )
     if page_end < len(values):
         pagination.append(
-            InlineKeyboardButton("»", callback_data=f"{callback}|{button_action}|{page_index + 1}")
+            InlineKeyboardButton(
+                "»", callback_data=f"{callback}|{button_action}|{page_index + 1}"
+            )
         )
 
     keyboard = [[mode] for mode in modes] + [pagination]
