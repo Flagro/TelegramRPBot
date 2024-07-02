@@ -79,6 +79,15 @@ class DB:
             )
         return chat_modes
 
+    async def get_chat_mode(self, context: Context) -> ChatModeResponse:
+        chat_id = context.chat_id
+        chat_data = await self.chat_modes.find_one(
+            {"chat_id": chat_id, "active_mode": True}
+        )
+        return ChatModeResponse(
+            chat_data["_id"], chat_data["mode_name"], chat_data["mode_description"]
+        )
+
     async def set_chat_mode(self, context: Context, mode_id: UUID) -> None:
         chat_id = context.chat_id
         await self.chat_modes.update_one(
