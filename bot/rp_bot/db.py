@@ -62,6 +62,10 @@ class DB:
         )
         return chat_data.get("language")
 
+    async def switch_conversation_tracker(self, context: Context) -> bool:
+        # TODO: add track_conversation field to chat properties
+        return False
+
     async def get_user_usage(self, person: Person) -> UserUsageResponse:
         user_handle = person.user_handle
         usage_data = await self.users.find_one(

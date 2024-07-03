@@ -17,6 +17,8 @@ LocalizerTranslations:
     english: "Usage description text"
   language_description:
     english: "Language description text"
+  conversationtracker_description:
+    english: "Conversation tracker description text"
   help_description:
     english: "Help description text"
   mode_set:
@@ -51,6 +53,10 @@ LocalizerTranslations:
     english: "Reset done!"
   not_authenticated:
     english: "You are not authenticated to do this action"
+  conversation_tracker_turned_on:
+    english: "Conversation tracker turned on"
+  conversation_tracker_turned_off:
+    english: "Conversation tracker turned off"
   help_text:
     english: |
       <strong>Features 🌟</strong>
