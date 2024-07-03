@@ -22,11 +22,7 @@ class MessageHandler(BaseMessageHandler):
         chat_id = context.chat_id
         thread_id = context.thread_id
         user_handle = person.user_handle
-        track_conversation_thread = self.db.get_chat_mode(
-            chat_id
-        ).track_conversation_thread
-        if track_conversation_thread:
-            self.db.save_thread_message(thread_id, user_handle, message)
+        self.db.save_thread_message(thread_id, user_handle, message)
         if not context.is_bot_mentioned:
             return None
 
