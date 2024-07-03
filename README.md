@@ -26,6 +26,7 @@ Currently this is the work in progress.
 - `/clearfacts [@tg_handle]` - delete facts for given person
 - `/usage` – Show usage limits for your user
 - `/language` - Set bot preferred language
+- `/conversationtracker` - Turn on/off the conversation tracker for current chat
 - `/help` – Show help
 
 ## Setup
