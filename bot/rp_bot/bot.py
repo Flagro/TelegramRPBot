@@ -1,5 +1,9 @@
 from typing import List
-from bot.models.base_handlers import BaseCallbackHandler, BaseCommandHandler, BaseMessageHandler
+from bot.models.base_handlers import (
+    BaseCallbackHandler,
+    BaseCommandHandler,
+    BaseMessageHandler,
+)
 from ..models.base_bot import BaseBot
 from .commands import handlers as command_handlers
 from .callbacks import handlers as callback_handlers
@@ -10,10 +14,16 @@ class RPBot(BaseBot):
     callbacks = callback_handlers
     commands = command_handlers
     messages = message_handlers
-    
+
     def _init_handler(self, handler):
-        return handler(db=self.db, ai=self.ai, localizer=self.localizer, auth=self.auth, bot_config=self.bot_config)
-    
+        return handler(
+            db=self.db,
+            ai=self.ai,
+            localizer=self.localizer,
+            auth=self.auth,
+            bot_config=self.bot_config,
+        )
+
     def get_commands(self) -> List[BaseCommandHandler]:
         return [self._init_handler(handler) for handler in self.commands]
 
@@ -29,6 +39,6 @@ class RPBot(BaseBot):
         self.ai = ai
         self.db = db
         self.localizer = localizer
-        self.auth = auth # TODO: init permissions
+        self.auth = auth  # TODO: init permissions
         self.bot_config = bot_config
         self.logger = logger
