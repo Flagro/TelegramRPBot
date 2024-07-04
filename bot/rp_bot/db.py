@@ -62,14 +62,18 @@ class DB:
         )
         return chat_data.get("language")
 
-    async def switch_conversation_tracker(self, context: Context) -> bool:
+    async def get_conversation_tracker_state(self, context: Context) -> bool:
         chat_id = context.chat_id
-        old_conversation_tracker_state = self.chat_modes.find_one(
+        chat_data = await self.chat_modes.find_one(
             {"chat_id": chat_id}, {"_id": 0, "conversation_tracker": 1}
         )
+        return chat_data.get("conversation_tracker", False)
+
+    async def switch_conversation_tracker(self, context: Context) -> bool:
+        old_conversation_tracker_state = await self.get_conversation_tracker_state(context)
         new_conversation_tracker_state = not old_conversation_tracker_state
         await self.chat_modes.update_one(
-            {"chat_id": chat_id},
+            {"chat_id": context.chat_id},
             {"$set": {"conversation_tracker": new_conversation_tracker_state}},
         )
         return new_conversation_tracker_state
