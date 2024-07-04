@@ -63,8 +63,16 @@ class DB:
         return chat_data.get("language")
 
     async def switch_conversation_tracker(self, context: Context) -> bool:
-        # TODO: add track_conversation field to chat properties
-        return False
+        chat_id = context.chat_id
+        old_conversation_tracker_state = self.chat_modes.find_one(
+            {"chat_id": chat_id}, {"_id": 0, "conversation_tracker": 1}
+        )
+        new_conversation_tracker_state = not old_conversation_tracker_state
+        await self.chat_modes.update_one(
+            {"chat_id": chat_id},
+            {"$set": {"conversation_tracker": new_conversation_tracker_state}},
+        )
+        return new_conversation_tracker_state
 
     async def get_user_usage(self, person: Person) -> UserUsageResponse:
         user_handle = person.user_handle
