@@ -9,7 +9,6 @@ from .localizer import Localizer
 from ..rp_bot.auth import Auth
 from ..models.handlers_input import Person, Context, Message
 from ..models.handlers_response import CommandResponse
-from ..models.config import BotConfig
 
 
 def is_authenticated(func):
@@ -30,13 +29,12 @@ class BaseHandler(ABC):
     permissions: list = []
 
     def __init__(
-        self, db: DB, ai: AI, localizer: Localizer, auth: Auth, bot_config: BotConfig
+        self, db: DB, ai: AI, localizer: Localizer, auth: Auth
     ):
         self.db = db
         self.ai = ai
         self.localizer = localizer
         self.auth = auth
-        self.bot_config = bot_config
         self.logger = logging.getLogger(f"{__name__}.{id(self)}")
 
     @abstractmethod

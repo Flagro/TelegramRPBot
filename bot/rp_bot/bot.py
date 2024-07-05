@@ -21,7 +21,6 @@ class RPBot(BaseBot):
             ai=self.ai,
             localizer=self.localizer,
             auth=self.auth,
-            bot_config=self.bot_config,
         )
 
     def get_commands(self) -> List[BaseCommandHandler]:
@@ -40,5 +39,4 @@ class RPBot(BaseBot):
         self.db = db
         self.localizer = localizer
         self.auth = auth  # TODO: init permissions
-        self.bot_config = bot_config
         self.logger = logger
