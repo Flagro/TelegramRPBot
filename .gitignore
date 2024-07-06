@@ -161,4 +161,4 @@ cython_debug/
 
 
 # Development environment docker configurations
-docker-compose.dev.yml
+docker-compose.dev.yaml
