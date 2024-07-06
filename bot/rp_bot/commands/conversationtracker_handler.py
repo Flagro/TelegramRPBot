@@ -14,7 +14,7 @@ class CommandHandler(BaseCommandHandler):
     async def get_command_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
-        new_value = self.db.switch_conversation_tracker(context)
+        new_value = await self.db.switch_conversation_tracker(context)
         return CommandResponse(
             (
                 "conversation_tracker_turned_on"
