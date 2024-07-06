@@ -49,6 +49,15 @@ class DB:
             upsert=True,
         )
 
+    async def create_chat_if_not_exists(self, context: Context) -> None:
+        chat_id = context.chat_id
+        await self.chat_modes.update_one(
+            {"chat_id": chat_id},
+            {"$setOnInsert": {"chat_id": chat_id}},
+            upsert=True,
+        )
+        self._init_default_chat_modes(context)
+
     async def set_language(self, context: Context, language: str) -> None:
         chat_id = context.chat_id
         await self.chat_modes.update_one(
