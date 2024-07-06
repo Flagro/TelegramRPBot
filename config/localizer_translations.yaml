@@ -79,6 +79,7 @@ LocalizerTranslations:
       • <em>/introduce [your introduction]</em> - Add fact about yourself
       • <em>/fact [@tg_handle] [fact]</em> - add fact about the person within the chat
       • <em>/clearfacts [@tg_handle]</em> - delete facts for given person
+      • <em>/conversationtracker</em> - Turn on/off conversation tracker
       • <em>/usage</em> - Show usage limits for your user
       • <em>/language</em> - Set bot preferred language
       • <em>/help</em> - Show help
