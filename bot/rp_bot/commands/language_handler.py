@@ -16,7 +16,7 @@ class CommandHandler(BaseCommandHandler):
     ) -> CommandResponse:
         language = args[0]
         try:
-            self.localizer.set_language(context, language)
+            self.db.set_language(context, language)
             return CommandResponse("language_set", {"language": language})
         except ValueError as e:
             self.logger.error(f"Error setting language: {e}")

@@ -8,9 +8,6 @@ class Localizer:
         self.db: DB = db
         self.translations: LocalizerTranslations = translations
 
-    async def set_language(self, context: Context, language: str) -> None:
-        await self.db.set_language(context, language)
-
     def compose_user_input(
         self, message: str, image_description: str, voice_description: str
     ) -> str:
