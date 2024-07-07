@@ -37,7 +37,7 @@ class AI:
         image_url = r.data[0].url
         return image_url
 
-    def get_reply(self, chat_id: str, user_handle: str, user_input: str) -> AIResponse:
+    def get_reply(self, user_input: str) -> AIResponse:
         r = openai.Chat.agenerate(
             model=self.ai_config.model,
             messages=[
