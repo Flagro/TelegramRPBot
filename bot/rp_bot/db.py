@@ -1,4 +1,5 @@
 from typing import Optional, List
+from bson import ObjectId
 from uuid import UUID
 
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -106,6 +107,9 @@ class DB:
         chat_data = await self.chat_modes.find_one(
             {"chat_id": chat_id, "active_mode": True}
         )
+        if not chat_data:
+            # find the first mode by default
+            chat_data = await self.chat_modes.find_one({"chat_id": chat_id})
         return ChatModeResponse(
             chat_data["_id"], chat_data["mode_name"], chat_data["mode_description"]
         )
@@ -113,19 +117,19 @@ class DB:
     async def get_mode_name_by_id(self, context: Context, mode_id: UUID) -> str:
         chat_id = context.chat_id
         chat_data = await self.chat_modes.find_one(
-            {"chat_id": chat_id, "_id": mode_id}
+            {"chat_id": chat_id, "_id": ObjectId(mode_id)}
         )
         return chat_data["mode_name"]
 
     async def set_chat_mode(self, context: Context, mode_id: UUID) -> None:
         chat_id = context.chat_id
         await self.chat_modes.update_one(
-            {"chat_id": chat_id, "_id": mode_id}, {"$set": {"active_mode": True}}
+            {"chat_id": chat_id, "_id": ObjectId(mode_id)}, {"$set": {"active_mode": True}}
         )
 
     async def delete_chat_mode(self, context: Context, mode_id: UUID) -> None:
         chat_id = context.chat_id
-        await self.chat_modes.delete_one({"chat_id": chat_id, "_id": mode_id})
+        await self.chat_modes.delete_one({"chat_id": chat_id, "_id": ObjectId(mode_id)})
 
     async def add_chat_mode(
         self, context: Context, mode_name: str, mode_description: str
