@@ -114,6 +114,8 @@ class TelegramBot:
             message=handler_message,
             args=handler_args,
         )
+        if result is None:
+            return
         text_response = self.localizer.get_command_response(result.text, result.kwargs)
 
         await self.send_message(
