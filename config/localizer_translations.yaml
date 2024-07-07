@@ -47,6 +47,8 @@ LocalizerTranslations:
     english: "Usage {user_usage} text"
   language_set:
     english: "Language {language} set"
+  specify_language:
+    english: "Specify language text"
   language_set_error:
     english: "Language {language} set error"
   reset_done:

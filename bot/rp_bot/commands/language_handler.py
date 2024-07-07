@@ -14,6 +14,8 @@ class CommandHandler(BaseCommandHandler):
     async def get_command_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
+        if len(args) == 0:
+            return CommandResponse("specify_language", {})
         language = args[0]
         try:
             await self.db.set_language(context, language)
