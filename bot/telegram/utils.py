@@ -15,7 +15,7 @@ def is_callback(update: Update) -> bool:
     return update.callback_query is not None
 
 
-def get_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Context:
+async def get_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Context:
     if is_callback(update):
         return Context(
             chat_id=update.callback_query.message.chat.id,
@@ -32,7 +32,7 @@ def get_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Context:
         )
 
 
-def get_person(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Person:
+async def get_person(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Person:
     if is_callback(update):
         return Person(
             user_id=update.callback_query.from_user.id,
@@ -53,7 +53,13 @@ def get_person(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Person:
         )
 
 
-def get_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Message:
+async def get_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Message:
+    if is_callback(update):
+        return Message(
+            message_text=update.callback_query.message.text,
+            in_file_image=None,
+            in_file_audio=None,
+        )
     message = update.message.text
     is_bot_mentioned = bot_mentioned(update, context)
     # get image and audio in memory
@@ -71,10 +77,10 @@ def get_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Message:
     )
 
 
-def get_args(update: Update, context: ContextTypes.DEFAULT_TYPE) -> List[str]:
+async def get_args(update: Update, context: ContextTypes.DEFAULT_TYPE) -> List[str]:
     if is_callback(update):
         query = update.callback_query
-        asyncio.run(query.answer)
+        await query.answer()
         args = query.data.split("|")[1:]
         return args
     else:
