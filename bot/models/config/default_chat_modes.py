@@ -5,11 +5,8 @@ from pydantic import BaseModel
 
 class ChatMode(BaseModel):
     name: str
-    welcome_message: str
-    prompt_start: str
-    parse_mode: str = None
+    description: str
 
 
 class DefaultChatModes(BaseYAMLConfigModel):
-    assistant: ChatMode
-    motivator: ChatMode
+    default_chat_modes: Dict[str, ChatMode]
