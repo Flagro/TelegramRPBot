@@ -16,6 +16,7 @@ import logging
 from functools import partial
 
 from .utils import get_context, get_person, get_message, get_args
+from .keyboards import get_paginated_list_keyboard
 
 
 from ..models.base_bot import BaseBot
@@ -102,10 +103,10 @@ class TelegramBot:
         """
         Handles the update and sends the response back to the user.
         """
-        handler_context = get_context(update, context)
-        handler_person = get_person(update, context)
-        handler_message = get_message(update, context)
-        handler_args = get_args(update, context)
+        handler_context = await get_context(update, context)
+        handler_person = await get_person(update, context)
+        handler_message = await get_message(update, context)
+        handler_args = await get_args(update, context)
 
         result = await bot_handler.handle(
             person=handler_person,
@@ -114,24 +115,16 @@ class TelegramBot:
             args=handler_args,
         )
         text_response = self.localizer.get_command_response(result.text, result.kwargs)
-        
-        if result.keyboard:
-            await self.send_message(
-                context=context,
-                chat_id=update.effective_chat.id,
-                text=text_response,
-                reply_message_id=update.effective_message.message_id,
-                thread_id=handler_context.thread_id,
-                parse_mode=ParseMode.HTML,
-                keyboard=result.keyboard,
-            )
-        else:
-            await self.send_message(
-                context=context,
-                chat_id=update.effective_chat.id,
-                text=text_response,
-                parse_mode=ParseMode.HTML,
-            )
+
+        await self.send_message(
+            context=context,
+            chat_id=update.effective_chat.id,
+            text=text_response,
+            reply_message_id=update.effective_message.message_id,
+            thread_id=handler_context.thread_id,
+            parse_mode=ParseMode.HTML,
+            keyboard=result.keyboard,
+        )
 
     async def send_message(
         self,
@@ -142,10 +135,25 @@ class TelegramBot:
         reply_message_id=None,
         thread_id=None,
         parse_mode=ParseMode.HTML,
+        keyboard=None,
     ) -> None:
-        await context.bot.send_message(
-            chat_id=chat_id,
-            text=text,
-            reply_to_message_id=reply_message_id,
-            parse_mode=parse_mode,
-        )
+        if keyboard:
+            markup = get_paginated_list_keyboard(
+                value_id_to_name=keyboard.modes_dict,
+                callback=keyboard.callback,
+                button_action=keyboard.button_action,
+            )
+            await context.bot.send_message(
+                chat_id=chat_id,
+                text=text,
+                reply_to_message_id=reply_message_id,
+                parse_mode=parse_mode,
+                reply_markup=markup,
+            )
+        else:
+            await context.bot.send_message(
+                chat_id=chat_id,
+                text=text,
+                reply_to_message_id=reply_message_id,
+                parse_mode=parse_mode,
+            )
