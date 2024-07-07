@@ -34,7 +34,7 @@ class DB:
 
     def _init_default_chat_modes(self, context: Context) -> None:
         chat_id = context.chat_id
-        for mode in self.default_chat_modes:
+        for _, mode in self.default_chat_modes.default_chat_modes.items():
             self.chat_modes.update_one(
                 {"chat_id": chat_id, "mode_name": mode.name},
                 {"$setOnInsert": {"mode_description": mode.description}},
@@ -79,7 +79,9 @@ class DB:
         return chat_data.get("conversation_tracker", False)
 
     async def switch_conversation_tracker(self, context: Context) -> bool:
-        old_conversation_tracker_state = await self.get_conversation_tracker_state(context)
+        old_conversation_tracker_state = await self.get_conversation_tracker_state(
+            context
+        )
         new_conversation_tracker_state = not old_conversation_tracker_state
         await self.chat_modes.update_one(
             {"chat_id": context.chat_id},
