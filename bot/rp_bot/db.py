@@ -110,6 +110,13 @@ class DB:
             chat_data["_id"], chat_data["mode_name"], chat_data["mode_description"]
         )
 
+    async def get_mode_name_by_id(self, context: Context, mode_id: UUID) -> str:
+        chat_id = context.chat_id
+        chat_data = await self.chat_modes.find_one(
+            {"chat_id": chat_id, "_id": mode_id}
+        )
+        return chat_data["mode_name"]
+
     async def set_chat_mode(self, context: Context, mode_id: UUID) -> None:
         chat_id = context.chat_id
         await self.chat_modes.update_one(

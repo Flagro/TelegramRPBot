@@ -22,9 +22,9 @@ LocalizerTranslations:
   help_description:
     english: "Help description text"
   mode_set:
-    english: "Mode {mode_id} set"
+    english: "Mode {mode_name} set"
   mode_deleted:
-    english: "Mode {mode_id} deleted"
+    english: "Mode {mode_name} deleted"
   choose_mode:
     english: "Choose mode text"
   mode_added:
