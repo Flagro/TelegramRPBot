@@ -194,31 +194,6 @@ class DB:
             upsert=True,
         )
 
-    async def add_user_input_to_dialog(
-        self,
-        context: Context,
-        person: Person,
-        message: Message,
-        image_description: str,
-        voice_description: str,
-    ) -> None:
-        chat_id = context.chat_id
-        user_handle = person.user_handle
-        message_text = message.message_text
-        await self.dialogs.update_one(
-            {"chat_id": chat_id, "user_handle": user_handle},
-            {
-                "$push": {
-                    "dialog": {
-                        "message": message_text,
-                        "image_description": image_description,
-                        "voice_description": voice_description,
-                    }
-                }
-            },
-            upsert=True,
-        )
-
     async def add_bot_response_to_dialog(
         self, context: Context, bot_response: str, response_image_url: str
     ) -> None:
