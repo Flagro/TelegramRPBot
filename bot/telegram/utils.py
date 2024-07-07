@@ -97,7 +97,7 @@ def bot_mentioned(update: Update, context: ContextTypes.DEFAULT_TYPE) -> bool:
         update.message.reply_to_message is not None
         and update.message.reply_to_message.from_user.id == context.bot.id
     )
-    return not (is_private_chat or bot_in_reply_tree or is_bot_mentioned)
+    return is_private_chat or bot_in_reply_tree or is_bot_mentioned
 
 
 async def get_file_in_memory(
