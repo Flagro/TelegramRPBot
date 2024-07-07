@@ -20,6 +20,7 @@ def is_authenticated(func):
             if not permission()(person, context, self.auth):
                 return CommandResponse("not_authenticated", {})
         await self.db.create_user_if_not_exists(person)
+        await self.db.create_chat_if_not_exists(context)
         return await func(self, person, context, message, args)
 
     return wrapper
