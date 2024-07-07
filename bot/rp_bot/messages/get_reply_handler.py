@@ -17,32 +17,19 @@ class MessageHandler(BaseMessageHandler):
         message: Message,
         args: List[str],
     ) -> Optional[CommandResponse]:
-        image = message.in_file_image
-        voice = message.in_file_audio
-        chat_id = context.chat_id
-        thread_id = context.thread_id
-        user_handle = person.user_handle
-        if await self.db.get_conversation_tracker_state(context) or context.is_bot_mentioned:
-            await self.db.save_thread_message(thread_id, user_handle, message)
-        if not context.is_bot_mentioned:
-            return None
-
-        image_description = None
-        if image:
-            image_description = await self.ai.describe_image(image)
-        voice_description = None
-        if voice:
-            voice_description = await self.ai.transcribe_audio(voice)
-        await self.db.add_user_input_to_dialog(
-            chat_id, user_handle, message, image_description, voice_description
-        )
-        user_input = self.localizer.compose_user_input(
-            message, image_description, voice_description
-        )
-        response_message, response_image_url = await self.ai.get_reply(
-            chat_id, thread_id, user_handle, user_input
-        )
-        await self.db.add_bot_response_to_dialog(
-            context, response_message, response_image_url
-        )
+        if context.is_bot_mentioned:
+            image_description = await self.ai.describe_image(message.in_file_image) if message.in_file_image else None
+            voice_description = await self.ai.transcribe_audio(message.in_file_audio) if message.in_file_audio else None
+            user_input = self.localizer.compose_user_input(
+                message, image_description, voice_description
+            )
+            response_message, response_image_url = await self.ai.get_reply(
+                user_input
+            )
+            await self.db.save_thread_message(context, person, message.message_text)
+            await self.db.add_bot_response_to_dialog(
+                context, response_message, response_image_url
+            )
+        if await self.db.get_conversation_tracker_state(context):
+            await self.db.save_thread_message(context, person, message.message_text)
         return CommandResponse("message_response", {"response_text": response_message})
