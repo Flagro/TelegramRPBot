@@ -22,8 +22,8 @@ class MessageHandler(BaseMessageHandler):
         chat_id = context.chat_id
         thread_id = context.thread_id
         user_handle = person.user_handle
-        if self.db.get_conversation_tracker_state(context) or context.is_bot_mentioned:
-            self.db.save_thread_message(thread_id, user_handle, message)
+        if await self.db.get_conversation_tracker_state(context) or context.is_bot_mentioned:
+            await self.db.save_thread_message(thread_id, user_handle, message)
         if not context.is_bot_mentioned:
             return None
 
@@ -33,7 +33,7 @@ class MessageHandler(BaseMessageHandler):
         voice_description = None
         if voice:
             voice_description = await self.ai.transcribe_audio(voice)
-        self.db.add_user_input_to_dialog(
+        await self.db.add_user_input_to_dialog(
             chat_id, user_handle, message, image_description, voice_description
         )
         user_input = self.localizer.compose_user_input(
@@ -42,7 +42,7 @@ class MessageHandler(BaseMessageHandler):
         response_message, response_image_url = await self.ai.get_reply(
             chat_id, thread_id, user_handle, user_input
         )
-        self.db.add_bot_response_to_dialog(
+        await self.db.add_bot_response_to_dialog(
             context, response_message, response_image_url
         )
         return CommandResponse("message_response", {"response_text": response_message})

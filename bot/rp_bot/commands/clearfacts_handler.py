@@ -15,5 +15,5 @@ class CommandHandler(BaseCommandHandler):
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
         facts_user_handle = args[0]
-        self.db.clear_facts(context, facts_user_handle)
+        await self.db.clear_facts(context, facts_user_handle)
         return CommandResponse("facts_cleared", {"user_handle": facts_user_handle})

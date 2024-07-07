@@ -14,5 +14,5 @@ class CallbackHandler(BaseCallbackHandler):
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
         mode_id = args[0]
-        self.db.set_chat_mode(context, mode_id)
+        await self.db.set_chat_mode(context, mode_id)
         return CommandResponse("mode_set", {"mode_id": mode_id})

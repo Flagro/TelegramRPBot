@@ -17,7 +17,7 @@ class CommandHandler(BaseCommandHandler):
         user_handle = person.user_handle
         introduction = " ".join(args)
         try:
-            self.db.add_introduction(context, user_handle, introduction)
+            await self.db.add_introduction(context, user_handle, introduction)
             return CommandResponse("introduction_added", {"user_handle": user_handle})
         except ValueError as e:
             self.logger.error(f"Error adding introduction: {e}")
