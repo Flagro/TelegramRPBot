@@ -183,7 +183,7 @@ class DB:
             messages.extend(doc.get("messages", []))
         return messages
 
-    async def save_thread_message(
+    async def add_user_message_to_dialog(
         self, context: Context, person: Person, message: str
     ) -> None:
         thread_id = context.thread_id

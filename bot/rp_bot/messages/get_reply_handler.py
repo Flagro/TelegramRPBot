@@ -26,10 +26,10 @@ class MessageHandler(BaseMessageHandler):
             response_message, response_image_url = await self.ai.get_reply(
                 user_input
             )
-            await self.db.save_thread_message(context, person, message.message_text)
+            await self.db.add_user_message_to_dialog(context, person, message.message_text)
             await self.db.add_bot_response_to_dialog(
                 context, response_message, response_image_url
             )
         if await self.db.get_conversation_tracker_state(context):
-            await self.db.save_thread_message(context, person, message.message_text)
+            await self.db.add_user_message_to_dialog(context, person, message.message_text)
         return CommandResponse("message_response", {"response_text": response_message})
