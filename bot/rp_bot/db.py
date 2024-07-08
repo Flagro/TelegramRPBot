@@ -96,7 +96,6 @@ class DB:
         cursor = self.chat_modes.find({"chat_id": chat_id})
         chat_modes = []
         async for doc in cursor:
-            print(doc)
             chat_modes.append(
                 ChatModeResponse(doc["_id"], doc["mode_name"], doc["mode_description"])
             )
