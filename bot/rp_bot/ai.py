@@ -24,21 +24,21 @@ class AI:
         self.db = db
         self.ai_config = ai_config
         
-    def describe_image(self, in_memory_image_stream: io.BytesIO):
-        r = openai.Image.adescribe(in_memory_image_stream)
+    async def describe_image(self, in_memory_image_stream: io.BytesIO):
+        r = await openai.Image.adescribe(in_memory_image_stream)
         return r["description"] or ""
     
-    def transcribe_audio(self, in_memory_audio_stream: io.BytesIO):
-        r = openai.Audio.atranscribe(in_memory_audio_stream)
+    async def transcribe_audio(self, in_memory_audio_stream: io.BytesIO):
+        r = await openai.Audio.atranscribe(in_memory_audio_stream)
         return r["text"] or ""
     
-    def generate_image(self, prompt: str):
-        r = openai.Image.acreate(prompt=prompt, n=1, size="512x512")
+    async def generate_image(self, prompt: str):
+        r = await openai.Image.acreate(prompt=prompt, n=1, size="512x512")
         image_url = r.data[0].url
         return image_url
 
-    def get_reply(self, user_input: str) -> AIResponse:
-        r = openai.Chat.agenerate(
+    async def get_reply(self, user_input: str) -> AIResponse:
+        r = await openai.Chat.agenerate(
             model=self.ai_config.model,
             messages=[
                 {"role": "system", "content": f"User: {user_input}"},
