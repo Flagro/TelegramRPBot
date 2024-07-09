@@ -42,7 +42,7 @@ def main():
 
     ai = AI(openai_api_key=config("OPENAI_API_KEY"), db=db, ai_config=ai_config)
 
-    localizer = Localizer(db=db, translations=translations)
+    localizer = Localizer(translations=translations)
 
     auth = Auth(
         allowed_handles=config("ALLOWED_HANDLES").split(","),

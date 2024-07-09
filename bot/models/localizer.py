@@ -5,8 +5,7 @@ from ..models.handlers_input import Person, Context, Message
 
 
 class Localizer:
-    def __init__(self, db: DB, translations: LocalizerTranslations) -> None:
-        self.db: DB = db
+    def __init__(self, translations: LocalizerTranslations) -> None:
         self.translations: LocalizerTranslations = translations
 
     def compose_user_input(
