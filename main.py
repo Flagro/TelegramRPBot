@@ -56,7 +56,6 @@ def main():
     tg_bot = TelegramBot(
         telegram_token=config("TELEGRAM_BOT_TOKEN"),
         bot=rp_bot,
-        localizer=localizer,
         telegram_bot_config=telegram_bot_config,
     )
     tg_bot.run()
