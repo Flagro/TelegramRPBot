@@ -30,12 +30,10 @@ class TelegramBot:
         self,
         telegram_token: str,
         bot: BaseBot,
-        localizer: Localizer,
         telegram_bot_config: TGConfig,
     ):
         self.telegram_token = telegram_token
         self.telegram_bot_config = telegram_bot_config
-        self.localizer = localizer
         self.commands = bot.get_commands()
         self.messages = bot.get_messages()
         self.callbacks = bot.get_callbacks()
@@ -48,9 +46,7 @@ class TelegramBot:
         bot_commands = [
             BotCommand(
                 command=command.command,
-                description=self.localizer.get_command_response(
-                    f"{command.command}_description", {}
-                ),
+                description=command.get_localized_description(),
             )
             for command in self.commands
         ]
@@ -116,7 +112,7 @@ class TelegramBot:
         )
         if result is None:
             return
-        text_response = self.localizer.get_command_response(result.text, result.kwargs)
+        text_response = result.localized_text
 
         await self.send_message(
             context=context,

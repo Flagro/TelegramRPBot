@@ -8,7 +8,7 @@ from ..rp_bot.ai import AI
 from .localizer import Localizer
 from ..rp_bot.auth import Auth
 from ..models.handlers_input import Person, Context, Message
-from ..models.handlers_response import CommandResponse
+from ..models.handlers_response import CommandResponse, LocalizedCommandResponse
 
 
 def is_authenticated(func):
@@ -29,9 +29,7 @@ def is_authenticated(func):
 class BaseHandler(ABC):
     permissions: list = []
 
-    def __init__(
-        self, db: DB, ai: AI, localizer: Localizer, auth: Auth
-    ):
+    def __init__(self, db: DB, ai: AI, localizer: Localizer, auth: Auth):
         self.db = db
         self.ai = ai
         self.localizer = localizer
@@ -41,7 +39,7 @@ class BaseHandler(ABC):
     @abstractmethod
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> CommandResponse:
+    ) -> LocalizedCommandResponse:
         raise NotImplementedError
 
 
@@ -49,14 +47,22 @@ class BaseCommandHandler(BaseHandler, ABC):
     command: str = None
     list_priority_order: int = 0
 
+    def get_localized_description(self) -> str:
+        return self.localizer.get_command_response(f"{self.command}_description", {})
+
     @is_authenticated
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> CommandResponse:
+    ) -> LocalizedCommandResponse:
         command_response = await self.get_command_response(
             person, context, message, args
         )
-        return command_response
+        localized_text = self.localizer.get_command_response(
+            command_response.text, command_response.kwargs
+        )
+        return LocalizedCommandResponse(
+            localized_text=localized_text, keyboard=command_response.keyboard
+        )
 
     @abstractmethod
     async def get_command_response(
@@ -71,11 +77,16 @@ class BaseCallbackHandler(BaseHandler, ABC):
     @is_authenticated
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> CommandResponse:
+    ) -> LocalizedCommandResponse:
         callback_response = await self.get_callback_response(
             person, context, message, args
         )
-        return callback_response
+        localized_text = self.localizer.get_command_response(
+            callback_response.text, callback_response.kwargs
+        )
+        return LocalizedCommandResponse(
+            localized_text=localized_text, keyboard=callback_response.keyboard
+        )
 
     @abstractmethod
     async def get_callback_response(
@@ -88,9 +99,14 @@ class BaseMessageHandler(BaseHandler, ABC):
     @is_authenticated
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> CommandResponse:
+    ) -> LocalizedCommandResponse:
         message_response = await self.get_reply(person, context, message, args)
-        return message_response
+        localized_text = self.localizer.get_command_response(
+            message_response.text, message_response.kwargs
+        )
+        return LocalizedCommandResponse(
+            localized_text=localized_text, keyboard=message_response.keyboard
+        )
 
     @abstractmethod
     async def get_reply(

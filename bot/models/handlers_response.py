@@ -25,3 +25,13 @@ class CommandResponse:
         self.text = text
         self.kwargs = kwargs
         self.keyboard = keyboard
+
+
+class LocalizedCommandResponse:
+    def __init__(
+        self,
+        localized_text: str,
+        keyboard: Optional[KeyboardResponse] = None,
+    ):
+        self.localized_text = localized_text
+        self.keyboard = keyboard
