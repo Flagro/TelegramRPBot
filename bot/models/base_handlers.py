@@ -8,7 +8,7 @@ from ..rp_bot.ai import AI
 from .localizer import Localizer
 from ..rp_bot.auth import Auth
 from ..models.handlers_input import Person, Context, Message
-from ..models.handlers_response import CommandResponse
+from ..models.handlers_response import CommandResponse, LocalizedCommandResponse
 
 
 def is_authenticated(func):
@@ -39,7 +39,7 @@ class BaseHandler(ABC):
     @abstractmethod
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> CommandResponse:
+    ) -> LocalizedCommandResponse:
         raise NotImplementedError
 
 
@@ -53,7 +53,7 @@ class BaseCommandHandler(BaseHandler, ABC):
     @is_authenticated
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> CommandResponse:
+    ) -> LocalizedCommandResponse:
         command_response = await self.get_command_response(
             person, context, message, args
         )
@@ -72,7 +72,7 @@ class BaseCallbackHandler(BaseHandler, ABC):
     @is_authenticated
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> CommandResponse:
+    ) -> LocalizedCommandResponse:
         callback_response = await self.get_callback_response(
             person, context, message, args
         )
@@ -89,7 +89,7 @@ class BaseMessageHandler(BaseHandler, ABC):
     @is_authenticated
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> CommandResponse:
+    ) -> LocalizedCommandResponse:
         message_response = await self.get_reply(person, context, message, args)
         return message_response
 

@@ -112,7 +112,7 @@ class TelegramBot:
         )
         if result is None:
             return
-        text_response = self.localizer.get_command_response(result.text, result.kwargs)
+        text_response = result.localized_text
 
         await self.send_message(
             context=context,
