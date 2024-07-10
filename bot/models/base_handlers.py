@@ -29,9 +29,7 @@ def is_authenticated(func):
 class BaseHandler(ABC):
     permissions: list = []
 
-    def __init__(
-        self, db: DB, ai: AI, localizer: Localizer, auth: Auth
-    ):
+    def __init__(self, db: DB, ai: AI, localizer: Localizer, auth: Auth):
         self.db = db
         self.ai = ai
         self.localizer = localizer
@@ -48,6 +46,9 @@ class BaseHandler(ABC):
 class BaseCommandHandler(BaseHandler, ABC):
     command: str = None
     list_priority_order: int = 0
+
+    def get_localized_description(self) -> str:
+        return self.localizer.get_command_response(f"{self.command}_description", {})
 
     @is_authenticated
     async def handle(
