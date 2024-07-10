@@ -57,7 +57,12 @@ class BaseCommandHandler(BaseHandler, ABC):
         command_response = await self.get_command_response(
             person, context, message, args
         )
-        return command_response
+        localized_text = self.localizer.get_command_response(
+            command_response.text, command_response.kwargs
+        )
+        return LocalizedCommandResponse(
+            localized_text=localized_text, keyboard=command_response.keyboard
+        )
 
     @abstractmethod
     async def get_command_response(
@@ -76,7 +81,12 @@ class BaseCallbackHandler(BaseHandler, ABC):
         callback_response = await self.get_callback_response(
             person, context, message, args
         )
-        return callback_response
+        localized_text = self.localizer.get_command_response(
+            callback_response.text, callback_response.kwargs
+        )
+        return LocalizedCommandResponse(
+            localized_text=localized_text, keyboard=callback_response.keyboard
+        )
 
     @abstractmethod
     async def get_callback_response(
@@ -91,7 +101,12 @@ class BaseMessageHandler(BaseHandler, ABC):
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> LocalizedCommandResponse:
         message_response = await self.get_reply(person, context, message, args)
-        return message_response
+        localized_text = self.localizer.get_command_response(
+            message_response.text, message_response.kwargs
+        )
+        return LocalizedCommandResponse(
+            localized_text=localized_text, keyboard=message_response.keyboard
+        )
 
     @abstractmethod
     async def get_reply(
