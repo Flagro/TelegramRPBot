@@ -15,6 +15,7 @@ Currently this is the work in progress.
     - Receive back text
     - Receive back puctures
 - Flexible tracking of the AI resources usage
+- This bot is built with the idea of not being constrained by just Telegram bot, it could be adapted for most other platforms as well.
 
 ## Bot commands
 - `/reset` – Reset the dialogue history
