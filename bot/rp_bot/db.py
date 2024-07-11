@@ -123,7 +123,8 @@ class DB:
     async def set_chat_mode(self, context: Context, mode_id: UUID) -> None:
         chat_id = context.chat_id
         await self.chat_modes.update_one(
-            {"chat_id": chat_id, "_id": ObjectId(mode_id)}, {"$set": {"active_mode": True}}
+            {"chat_id": chat_id, "_id": ObjectId(mode_id)},
+            {"$set": {"active_mode": True}},
         )
 
     async def delete_chat_mode(self, context: Context, mode_id: UUID) -> None:
