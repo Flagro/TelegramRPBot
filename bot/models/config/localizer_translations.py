@@ -1,5 +1,5 @@
 from .base_config import BaseYAMLConfigModel
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from typing import Dict
 import yaml
 

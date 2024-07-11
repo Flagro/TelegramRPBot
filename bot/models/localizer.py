@@ -1,7 +1,5 @@
 from typing import Optional, List, Tuple
-from ..rp_bot.db import DB
 from .config.localizer_translations import LocalizerTranslations
-from ..models.handlers_input import Person, Context, Message
 
 
 class Localizer:
