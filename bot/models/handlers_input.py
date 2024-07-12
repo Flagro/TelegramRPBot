@@ -21,10 +21,3 @@ class Message:
         self.message_text = message_text
         self.in_file_image = in_file_image
         self.in_file_audio = in_file_audio
-
-
-class TranscribedMessage:
-    def __init__(self, message_text, image_description, voice_description):
-        self.message_text = message_text
-        self.image_description = image_description
-        self.voice_description = voice_description

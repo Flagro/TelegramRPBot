@@ -2,7 +2,7 @@ from typing import List
 
 from ...models.base_handlers import BaseMessageHandler
 from ...models.handlers_response import CommandResponse
-from ...models.handlers_input import Person, Context, Message, TranscribedMessage
+from ...models.handlers_input import Person, Context, Message
 from ..auth import AllowedUser
 from typing import Optional
 
