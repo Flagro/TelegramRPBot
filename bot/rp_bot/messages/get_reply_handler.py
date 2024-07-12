@@ -2,7 +2,7 @@ from typing import List
 
 from ...models.base_handlers import BaseMessageHandler
 from ...models.handlers_response import CommandResponse
-from ...models.handlers_input import Person, Context, Message
+from ...models.handlers_input import Person, Context, Message, TranscribedMessage
 from ..auth import AllowedUser
 from typing import Optional
 
@@ -26,7 +26,7 @@ class MessageHandler(BaseMessageHandler):
             response_message, response_image_url = await self.ai.get_reply(
                 user_input
             )
-            await self.db.add_user_message_to_dialog(context, person, message.message_text)
+            await self.db.add_user_message_to_dialog(context, person, user_input)
             await self.db.add_bot_response_to_dialog(
                 context, response_message, response_image_url
             )
