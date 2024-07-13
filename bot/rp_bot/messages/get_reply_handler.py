@@ -25,7 +25,7 @@ class MessageHandler(BaseMessageHandler):
         image_description = await self.ai.describe_image(message.in_file_image) if message.in_file_image else None
         voice_description = await self.ai.transcribe_audio(message.in_file_audio) if message.in_file_audio else None
         user_input = self.localizer.compose_user_input(
-            message, image_description, voice_description
+            message.message_text, image_description, voice_description
         )
         await self.db.add_user_message_to_dialog(context, person, user_input)
         if not context.is_bot_mentioned:
