@@ -17,6 +17,10 @@ AIConfig:
           input_token_price: 5
           output_token_price: 10
 
+      gpt-4o:
+        rate:
+          input_token_price: 5
+          output_token_price: 10
 
   ImageProcessing:
     image_size: "512x512"
