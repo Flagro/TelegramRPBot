@@ -1,13 +1,10 @@
 import tiktoken
 import io
-from collections import namedtuple
+from typing import Iterator
 from openai import OpenAI
 
 from .db import DB
 from ..models.config.ai_config import AIConfig
-
-
-AIResponse = namedtuple("AIResponse", ["text", "image_url"])
 
 
 def count_tokens(text: str):
@@ -45,12 +42,25 @@ class AI:
         # return image_url
         return ""
 
-    async def get_reply(self, user_input: str) -> AIResponse:
-        r = self.client.chat.completions.create(
+    async def get_reply(self, user_input: str) -> str:
+        response = self.client.chat.completions.create(
             model=self.ai_config.TextGeneration.Models["gpt-4o"].name,
             messages=[
                 {"role": "system", "content": f"User: {user_input}"},
                 {"role": "user", "content": user_input},
             ],
         )
-        return AIResponse(text=r.choices[0].message.content, image_url=None)
+        return response.choices[0].message.content
+
+    def get_streaming_reply(self, user_input: str) -> Iterator[str]:
+        response = self.client.chat.completions.create(
+            model=self.ai_config.TextGeneration.Models["gpt-4o"].name,
+            messages=[
+                {"role": "system", "content": f"User: {user_input}"},
+                {"role": "user", "content": user_input},
+            ],
+            stream=True
+        )
+        for chunk in response:
+            chunk_text = chunk.choices[0].delta.content
+            yield chunk_text
