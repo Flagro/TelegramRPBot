@@ -9,7 +9,7 @@ class Rate(BaseModel):
 
 
 class Model(BaseModel):
-    model_name: str
+    name: str
     rate: Rate
 
 

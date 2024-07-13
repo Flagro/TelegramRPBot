@@ -8,19 +8,19 @@ AIConfig:
     request_timeout: 60.0
     Models:
       gpt-3.5-turbo-16k:
-        model_name: "gpt-3.5-turbo-16k"
+        name: "gpt-3.5-turbo-16k"
         rate:
           input_token_price: 1
           output_token_price: 2
 
       gpt-4:
-        model_name: "gpt-4"
+        name: "gpt-4"
         rate:
           input_token_price: 5
           output_token_price: 10
 
       gpt-4o:
-        model_name: "gpt-4o"
+        name: "gpt-4o"
         rate:
           input_token_price: 5
           output_token_price: 10
