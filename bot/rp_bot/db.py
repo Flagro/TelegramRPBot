@@ -1,6 +1,7 @@
 from typing import Optional, List, Tuple
 from bson import ObjectId
 from uuid import UUID
+from datetime import datetime
 
 from motor.motor_asyncio import AsyncIOMotorClient
 from collections import namedtuple
@@ -188,7 +189,7 @@ class DB:
         return messages
 
     async def add_user_message_to_dialog(
-        self, context: Context, person: Person, message: str
+        self, context: Context, person: Person, message: str, timestamp: datetime
     ) -> None:
         user_handle = person.user_handle
         await self.dialogs.update_one(
@@ -198,7 +199,7 @@ class DB:
         )
 
     async def add_bot_response_to_dialog(
-        self, context: Context, message: str
+        self, context: Context, message: str, timestamp: datetime
     ) -> None:
         chat_id = context.chat_id
         await self.dialogs.update_one(

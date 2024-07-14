@@ -3,6 +3,7 @@ from ...models.handlers_response import CommandResponse
 from ...models.handlers_input import Person, Context, Message
 from ..auth import AllowedUser, BotAdmin
 from typing import Optional, AsyncIterator, List
+from datetime import datetime
 
 
 class MessageHandler(BaseMessageHandler):
@@ -39,14 +40,14 @@ class MessageHandler(BaseMessageHandler):
         if not conversation_tracker_enabled and not context.is_bot_mentioned:
             return None
         user_input = await self._get_user_input(message)
-        await self.db.add_user_message_to_dialog(context, person, user_input)
+        await self.db.add_user_message_to_dialog(context, person, user_input, message.timestamp)
         if not context.is_bot_mentioned:
             return None
         # Take everything besides the last one since the last one is the current message
         messages_history = self.db.get_messages(context, last_n=15)[0:-1]
         prompt = await self.localizer.compose_prompt(user_input, messages_history)
         response_message = await self.ai.get_reply(prompt)
-        await self.db.add_bot_response_to_dialog(context, response_message, None)
+        await self.db.add_bot_response_to_dialog(context, response_message, datetime.now())
         return CommandResponse("message_response", {"response_text": response_message})
 
     async def stream_get_reply(
@@ -58,7 +59,7 @@ class MessageHandler(BaseMessageHandler):
         if not conversation_tracker_enabled and not context.is_bot_mentioned:
             return
         user_input = await self._get_user_input(message)
-        await self.db.add_user_message_to_dialog(context, person, user_input)
+        await self.db.add_user_message_to_dialog(context, person, user_input, message.timestamp)
         if not context.is_bot_mentioned:
             return
         # Take everything besides the last one since the last one is the current message
@@ -73,4 +74,4 @@ class MessageHandler(BaseMessageHandler):
                 "streaming_message_response",
                 {"response_text": response_message}
             )
-        await self.db.add_bot_response_to_dialog(context, response_message, None)
+        await self.db.add_bot_response_to_dialog(context, response_message, datetime.now())
