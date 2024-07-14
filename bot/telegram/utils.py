@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 import io
-import asyncio
 
-from typing import List, Optional
+from typing import List, Optional, AsyncIterator
 
-from telegram import Update
+from telegram import Update, constants
 from telegram.ext import ContextTypes
 
 from ..models.handlers_input import Person, Context, Message
+from ..models.handlers_response import LocalizedCommandResponse
 
 
 def is_callback(update: Update) -> bool:
@@ -117,3 +117,19 @@ def get_thread_id(update: Update) -> Optional[str]:
     if update.effective_message and update.effective_message.is_topic_message:
         return update.effective_message.message_thread_id
     return None
+
+
+async def buffer_streaming_response(
+    stream: AsyncIterator[LocalizedCommandResponse], buffer_size: int
+) -> AsyncIterator[LocalizedCommandResponse]:
+    current_response = None
+    i = 0
+    async for chunk in stream:
+        current_response = chunk
+        i += 1
+        if i == buffer_size:
+            yield current_response
+            current_response = None
+            i = 0
+    if i:
+        yield current_response

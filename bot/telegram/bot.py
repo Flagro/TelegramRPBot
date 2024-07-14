@@ -17,7 +17,13 @@ import time
 from typing import Literal
 from functools import partial
 
-from .utils import get_context, get_person, get_message, get_args
+from .utils import (
+    get_context,
+    get_person,
+    get_message,
+    get_args,
+    buffer_streaming_response,
+)
 from .keyboards import get_paginated_list_keyboard
 
 
@@ -106,16 +112,20 @@ class TelegramBot:
         handler_args = await get_args(update, context)
 
         if bot_handler.streamable:
-            first_message_sent = False
-            async for result in bot_handler.stream_handle(
-                person=handler_person,
-                context=handler_context,
-                message=handler_message,
-                args=handler_args,
+            first_message_id = None
+            async for result in buffer_streaming_response(
+                bot_handler.stream_handle(
+                    person=handler_person,
+                    context=handler_context,
+                    message=handler_message,
+                    args=handler_args,
+                ),
+                15,
             ):
                 latest_text_response = result.localized_text
-                if not first_message_sent:
-                    await self.send_message(
+                print("Got new version:", latest_text_response)
+                if latest_text_response and first_message_id is None:
+                    message = await self.send_message(
                         context=context,
                         chat_id=update.effective_chat.id,
                         text=latest_text_response,
@@ -124,17 +134,16 @@ class TelegramBot:
                         parse_mode=ParseMode.HTML,
                         keyboard=result.keyboard,
                     )
-                    first_message_sent = True
-                else:
-                    await self.send_message(
-                        context=context,
+                    first_message_id = message.message_id
+                elif latest_text_response and first_message_id is not None:
+                    await context.bot.edit_message_text(
                         chat_id=update.effective_chat.id,
+                        message_id=first_message_id,
                         text=latest_text_response,
-                        thread_id=handler_context.thread_id,
                         parse_mode=ParseMode.HTML,
-                        keyboard=result.keyboard,
+                        reply_markup=result.keyboard,
                     )
-                time.sleep(5)
+                time.sleep(0.5)
         else:
             result = await bot_handler.handle(
                 person=handler_person,
@@ -189,7 +198,7 @@ class TelegramBot:
                 callback=keyboard.callback,
                 button_action=keyboard.button_action,
             )
-            await context.bot.send_message(
+            return await context.bot.send_message(
                 chat_id=chat_id,
                 text=text,
                 reply_to_message_id=reply_message_id,
@@ -197,7 +206,7 @@ class TelegramBot:
                 reply_markup=markup,
             )
         else:
-            await context.bot.send_message(
+            return await context.bot.send_message(
                 chat_id=chat_id,
                 text=text,
                 reply_to_message_id=reply_message_id,

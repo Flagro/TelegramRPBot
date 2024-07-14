@@ -1,12 +1,12 @@
 from ...models.base_handlers import BaseMessageHandler
 from ...models.handlers_response import CommandResponse
 from ...models.handlers_input import Person, Context, Message
-from ..auth import AllowedUser
+from ..auth import AllowedUser, BotAdmin
 from typing import Optional, AsyncIterator, List
 
 
 class MessageHandler(BaseMessageHandler):
-    permissions = [AllowedUser]
+    permissions = [AllowedUser, BotAdmin]
 
     async def _get_user_input(self, message: Message) -> str:
         # Note that here the responsibility to pass NULL images and Audio is on the
@@ -60,6 +60,8 @@ class MessageHandler(BaseMessageHandler):
             return
         response_message = ""
         async for response_message_chunk in self.ai.get_streaming_reply(user_input):
+            if not response_message_chunk:
+                continue
             response_message += response_message_chunk
             yield CommandResponse(
                 "streaming_message_response",
