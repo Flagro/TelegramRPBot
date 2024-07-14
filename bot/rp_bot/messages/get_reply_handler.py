@@ -42,7 +42,10 @@ class MessageHandler(BaseMessageHandler):
         await self.db.add_user_message_to_dialog(context, person, user_input)
         if not context.is_bot_mentioned:
             return None
-        response_message = await self.ai.get_reply(user_input)
+        # Take everything besides the last one since the last one is the current message
+        messages_history = self.db.get_messages(context, last_n=15)[0:-1]
+        prompt = await self.localizer.compose_prompt(user_input, messages_history)
+        response_message = await self.ai.get_reply(prompt)
         await self.db.add_bot_response_to_dialog(context, response_message, None)
         return CommandResponse("message_response", {"response_text": response_message})
 
@@ -58,8 +61,11 @@ class MessageHandler(BaseMessageHandler):
         await self.db.add_user_message_to_dialog(context, person, user_input)
         if not context.is_bot_mentioned:
             return
+        # Take everything besides the last one since the last one is the current message
+        messages_history = self.db.get_messages(context, last_n=15)[0:-1]
+        prompt = await self.localizer.compose_prompt(user_input, messages_history)
         response_message = ""
-        async for response_message_chunk in self.ai.get_streaming_reply(user_input):
+        async for response_message_chunk in self.ai.get_streaming_reply(prompt):
             if not response_message_chunk:
                 continue
             response_message += response_message_chunk
