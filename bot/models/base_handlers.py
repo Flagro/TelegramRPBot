@@ -128,6 +128,8 @@ class BaseCallbackHandler(BaseHandler, ABC):
 
 
 class BaseMessageHandler(BaseHandler, ABC):
+    streamable: bool = True
+
     @is_authenticated
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
@@ -146,10 +148,9 @@ class BaseMessageHandler(BaseHandler, ABC):
     ) -> AsyncIterator[LocalizedCommandResponse]:
         async for chunk in self.stream_get_reply(person, context, message, args):
             localized_text = self.localizer.get_command_response(
-                chunk.text_chunk, chunk.kwargs
+                chunk.text, chunk.kwargs
             )
             yield LocalizedCommandResponse(
-                text_chunk=chunk.text_chunk,
                 localized_text=localized_text,
                 keyboard=chunk.keyboard,
             )
