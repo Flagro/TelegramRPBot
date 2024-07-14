@@ -8,7 +8,6 @@ from telegram.ext import (
     CallbackQueryHandler,
     filters,
     Application,
-    ContextTypes,
 )
 from telegram.constants import ParseMode
 
@@ -124,7 +123,7 @@ class TelegramBot:
                 is_group_chat(update=update),
             ):
                 latest_text_response = result.localized_text
-                print("Got new version:", latest_text_response)
+                await self.push_state(update, context, "sending_text")
                 if latest_text_response and first_message_id is None:
                     message = await self.send_message(
                         context=context,
@@ -156,6 +155,7 @@ class TelegramBot:
                 return
             text_response = result.localized_text
 
+            await self.push_state(update, context, "sending_text")
             await self.send_message(
                 context=context,
                 chat_id=update.effective_chat.id,
