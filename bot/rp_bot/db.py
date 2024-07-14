@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Tuple
 from bson import ObjectId
 from uuid import UUID
 
@@ -6,7 +6,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from collections import namedtuple
 
 from ..models.config import DefaultChatModes
-from ..models.handlers_input import Person, Context, Message
+from ..models.handlers_input import Person, Context
 
 
 UserUsageResponse = namedtuple("UserUsageResponse", ["this_month_usage", "limit"])
@@ -46,7 +46,11 @@ class DB:
         user_handle = person.user_handle
         await self.users.update_one(
             {"handle": user_handle},
-            {"$setOnInsert": {"handle": user_handle}},
+            {"$setOnInsert": {
+                "handle": user_handle,
+                "first_name": person.first_name,
+                "last_name": person.last_name
+            }},
             upsert=True,
         )
 
@@ -172,7 +176,7 @@ class DB:
         chat_id = context.chat_id
         await self.dialogs.delete_many({"chat_id": chat_id})
 
-    async def get_messages(self, context: Context, last_n: int = 10) -> List[str]:
+    async def get_messages(self, context: Context, last_n: int = 10) -> List[Tuple[str, str]]:
         chat_id = context.chat_id
         cursor = self.dialogs.find(
             {"chat_id": chat_id},
@@ -186,26 +190,19 @@ class DB:
     async def add_user_message_to_dialog(
         self, context: Context, person: Person, message: str
     ) -> None:
-        thread_id = context.thread_id
         user_handle = person.user_handle
         await self.dialogs.update_one(
-            {"thread_id": thread_id, "user_handle": user_handle},
+            {"chat_id": context.chat_id, "user_handle": user_handle},
             {"$push": {"messages": message}},
             upsert=True,
         )
 
     async def add_bot_response_to_dialog(
-        self, context: Context, bot_response: str, response_image_url: str
+        self, context: Context, message: str
     ) -> None:
         chat_id = context.chat_id
         await self.dialogs.update_one(
-            {"chat_id": chat_id},
-            {
-                "$push": {
-                    "dialog": {
-                        "bot_response": bot_response,
-                        "response_image_url": response_image_url,
-                    }
-                }
-            },
+            {"chat_id": chat_id, "user_handle": "bot"},
+            {"$push": {"messages": message}},
+            upsert=True,
         )
