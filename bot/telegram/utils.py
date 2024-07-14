@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 import io
-import asyncio
 
-from typing import List, Optional
+from typing import List, Optional, AsyncIterator
 
-from telegram import Update
+from telegram import Update, constants
 from telegram.ext import ContextTypes
 
 from ..models.handlers_input import Person, Context, Message
+from ..models.handlers_response import LocalizedCommandResponse
 
 
 def is_callback(update: Update) -> bool:
@@ -117,3 +117,49 @@ def get_thread_id(update: Update) -> Optional[str]:
     if update.effective_message and update.effective_message.is_topic_message:
         return update.effective_message.message_thread_id
     return None
+
+
+def min_char_diff_for_buffering(content: str, is_group_chat: bool) -> int:
+    """
+    Get the minimum string length difference to trigger new yield in the streaming response
+    """
+    if is_group_chat:
+        return (
+            180
+            if len(content) > 1000
+            else 120 if len(content) > 200 else 90 if len(content) > 50 else 50
+        )
+    return (
+        90
+        if len(content) > 1000
+        else 45 if len(content) > 200 else 25 if len(content) > 50 else 15
+    )
+
+
+def is_group_chat(update: Update) -> bool:
+    if not update.effective_chat:
+        return False
+    return update.effective_chat.type in [
+        constants.ChatType.GROUP,
+        constants.ChatType.SUPERGROUP,
+    ]
+
+
+async def buffer_streaming_response(
+    stream: AsyncIterator[LocalizedCommandResponse], is_group_chat: bool
+) -> AsyncIterator[LocalizedCommandResponse]:
+    last_response_len = 0
+    current_response = None
+    i = 0
+    async for chunk in stream:
+        current_response = chunk
+        i += 1
+        if len(chunk.localized_text) - last_response_len > min_char_diff_for_buffering(
+            chunk.localized_text, is_group_chat
+        ):
+            yield current_response
+            current_response = None
+            i = 0
+            last_response_len = len(chunk.localized_text)
+    if i:
+        yield current_response

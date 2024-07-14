@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from functools import wraps
-from typing import List
+from typing import List, AsyncIterator
 import logging
 
 from ..rp_bot.db import DB
@@ -8,17 +8,23 @@ from ..rp_bot.ai import AI
 from .localizer import Localizer
 from ..rp_bot.auth import Auth
 from ..models.handlers_input import Person, Context, Message
-from ..models.handlers_response import CommandResponse, LocalizedCommandResponse
+from ..models.handlers_response import (
+    CommandResponse,
+    LocalizedCommandResponse,
+)
 
 
 def is_authenticated(func):
     @wraps(func)
     async def wrapper(
         self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> CommandResponse:
+    ) -> LocalizedCommandResponse:
         for permission in self.permissions:
             if not permission()(person, context, self.auth):
-                return CommandResponse("not_authenticated", {})
+                localized_text = self.localizer.get_command_response(
+                    "not_authenticated", {}
+                )
+                return LocalizedCommandResponse(localized_text=localized_text)
         await self.db.create_user_if_not_exists(person)
         await self.db.create_chat_if_not_exists(context)
         return await func(self, person, context, message, args)
@@ -26,8 +32,29 @@ def is_authenticated(func):
     return wrapper
 
 
+def stream_is_authenticated(func):
+    @wraps(func)
+    async def wrapper(
+        self, person: Person, context: Context, message: Message, args: List[str]
+    ) -> AsyncIterator[LocalizedCommandResponse]:
+        for permission in self.permissions:
+            if not permission()(person, context, self.auth):
+                localized_text = self.localizer.get_command_response(
+                    "not_authenticated", {}
+                )
+                yield LocalizedCommandResponse(localized_text=localized_text)
+                return
+        await self.db.create_user_if_not_exists(person)
+        await self.db.create_chat_if_not_exists(context)
+        async for chunk in func(self, person, context, message, args):
+            yield chunk
+
+    return wrapper
+
+
 class BaseHandler(ABC):
     permissions: list = []
+    streamable: bool = False
 
     def __init__(self, db: DB, ai: AI, localizer: Localizer, auth: Auth):
         self.db = db
@@ -40,6 +67,11 @@ class BaseHandler(ABC):
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> LocalizedCommandResponse:
+        raise NotImplementedError
+
+    async def stream_handle(
+        self, person: Person, context: Context, message: Message, args: List[str]
+    ) -> AsyncIterator[LocalizedCommandResponse]:
         raise NotImplementedError
 
 
@@ -96,6 +128,8 @@ class BaseCallbackHandler(BaseHandler, ABC):
 
 
 class BaseMessageHandler(BaseHandler, ABC):
+    streamable: bool = True
+
     @is_authenticated
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
@@ -108,8 +142,27 @@ class BaseMessageHandler(BaseHandler, ABC):
             localized_text=localized_text, keyboard=message_response.keyboard
         )
 
+    @stream_is_authenticated
+    async def stream_handle(
+        self, person: Person, context: Context, message: Message, args: List[str]
+    ) -> AsyncIterator[LocalizedCommandResponse]:
+        async for chunk in self.stream_get_reply(person, context, message, args):
+            localized_text = self.localizer.get_command_response(
+                chunk.text, chunk.kwargs
+            )
+            yield LocalizedCommandResponse(
+                localized_text=localized_text,
+                keyboard=chunk.keyboard,
+            )
+
     @abstractmethod
     async def get_reply(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def stream_get_reply(
+        self, person: Person, context: Context, message: Message, args: List[str]
+    ) -> AsyncIterator[CommandResponse]:
         raise NotImplementedError
