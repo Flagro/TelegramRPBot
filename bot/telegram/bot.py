@@ -13,7 +13,7 @@ from telegram.ext import (
 from telegram.constants import ParseMode
 
 import logging
-import time
+import asyncio
 from typing import Literal
 from functools import partial
 
@@ -23,6 +23,7 @@ from .utils import (
     get_message,
     get_args,
     buffer_streaming_response,
+    is_group_chat,
 )
 from .keyboards import get_paginated_list_keyboard
 
@@ -120,7 +121,7 @@ class TelegramBot:
                     message=handler_message,
                     args=handler_args,
                 ),
-                15,
+                is_group_chat(update=update),
             ):
                 latest_text_response = result.localized_text
                 print("Got new version:", latest_text_response)
@@ -143,7 +144,7 @@ class TelegramBot:
                         parse_mode=ParseMode.HTML,
                         reply_markup=result.keyboard,
                     )
-                time.sleep(0.5)
+                await asyncio.sleep(0.5)
         else:
             result = await bot_handler.handle(
                 person=handler_person,
