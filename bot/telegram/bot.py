@@ -13,6 +13,8 @@ from telegram.ext import (
 from telegram.constants import ParseMode
 
 import logging
+import time
+from typing import Literal
 from functools import partial
 
 from .utils import get_context, get_person, get_message, get_args
@@ -20,7 +22,6 @@ from .keyboards import get_paginated_list_keyboard
 
 
 from ..models.base_bot import BaseBot
-from ..models.localizer import Localizer
 from ..models.config import TGConfig
 from ..models.base_handlers import BaseHandler
 
@@ -104,24 +105,71 @@ class TelegramBot:
         handler_message = await get_message(update, context)
         handler_args = await get_args(update, context)
 
-        result = await bot_handler.handle(
-            person=handler_person,
-            context=handler_context,
-            message=handler_message,
-            args=handler_args,
-        )
-        if result is None:
-            return
-        text_response = result.localized_text
+        if bot_handler.streamable:
+            first_message_sent = False
+            async for result in bot_handler.stream_handle(
+                person=handler_person,
+                context=handler_context,
+                message=handler_message,
+                args=handler_args,
+            ):
+                latest_text_response = result.localized_text
+                if not first_message_sent:
+                    await self.send_message(
+                        context=context,
+                        chat_id=update.effective_chat.id,
+                        text=latest_text_response,
+                        reply_message_id=update.effective_message.message_id,
+                        thread_id=handler_context.thread_id,
+                        parse_mode=ParseMode.HTML,
+                        keyboard=result.keyboard,
+                    )
+                    first_message_sent = True
+                else:
+                    await self.send_message(
+                        context=context,
+                        chat_id=update.effective_chat.id,
+                        text=latest_text_response,
+                        thread_id=handler_context.thread_id,
+                        parse_mode=ParseMode.HTML,
+                        keyboard=result.keyboard,
+                    )
+                time.sleep(5)
+        else:
+            result = await bot_handler.handle(
+                person=handler_person,
+                context=handler_context,
+                message=handler_message,
+                args=handler_args,
+            )
+            if result is None:
+                return
+            text_response = result.localized_text
 
-        await self.send_message(
-            context=context,
+            await self.send_message(
+                context=context,
+                chat_id=update.effective_chat.id,
+                text=text_response,
+                reply_message_id=update.effective_message.message_id,
+                thread_id=handler_context.thread_id,
+                parse_mode=ParseMode.HTML,
+                keyboard=result.keyboard,
+            )
+
+    async def push_state(
+        self,
+        update: Update,
+        context: CallbackContext,
+        state: Literal["sending_text", "sending_image", "sending_audio"],
+    ) -> None:
+        action_map = {
+            "sending_text": "typing",
+            "sending_image": "upload_photo",
+            "sending_audio": "upload_audio",
+        }
+        await context.bot.send_chat_action(
             chat_id=update.effective_chat.id,
-            text=text_response,
-            reply_message_id=update.effective_message.message_id,
-            thread_id=handler_context.thread_id,
-            parse_mode=ParseMode.HTML,
-            keyboard=result.keyboard,
+            action=action_map[state],
         )
 
     async def send_message(

@@ -1,6 +1,6 @@
 import tiktoken
 import io
-from typing import Iterator
+from typing import AsyncIterator
 from openai import OpenAI
 
 from .db import DB
@@ -52,7 +52,7 @@ class AI:
         )
         return response.choices[0].message.content
 
-    def get_streaming_reply(self, user_input: str) -> Iterator[str]:
+    async def get_streaming_reply(self, user_input: str) -> AsyncIterator[str]:
         response = self.client.chat.completions.create(
             model=self.ai_config.TextGeneration.Models["gpt-4o"].name,
             messages=[

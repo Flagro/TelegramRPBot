@@ -42,9 +42,9 @@ class MessageHandler(BaseMessageHandler):
         await self.db.add_user_message_to_dialog(context, person, user_input)
         if not context.is_bot_mentioned:
             return None
-        response_message = self.ai.get_reply(user_input)
+        response_message = await self.ai.get_reply(user_input)
         await self.db.add_bot_response_to_dialog(context, response_message, None)
-        return CommandResponse("message_response", {"response_message": response_message})
+        return CommandResponse("message_response", {"response_text": response_message})
 
     async def stream_get_reply(
         self, person: Person, context: Context, message: Message, args: List[str]
@@ -53,16 +53,16 @@ class MessageHandler(BaseMessageHandler):
             context
         )
         if not conversation_tracker_enabled and not context.is_bot_mentioned:
-            return None
+            return
         user_input = await self._get_user_input(message)
         await self.db.add_user_message_to_dialog(context, person, user_input)
         if not context.is_bot_mentioned:
-            return None
+            return
         response_message = ""
-        for response_message_chunk in self.ai.get_streaming_reply(user_input):
+        async for response_message_chunk in self.ai.get_streaming_reply(user_input):
             response_message += response_message_chunk
             yield CommandResponse(
                 "streaming_message_response",
-                {"response_message": response_message}
+                {"response_text": response_message}
             )
         await self.db.add_bot_response_to_dialog(context, response_message, None)

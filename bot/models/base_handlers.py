@@ -69,7 +69,6 @@ class BaseHandler(ABC):
     ) -> LocalizedCommandResponse:
         raise NotImplementedError
 
-    @abstractmethod
     async def stream_handle(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> AsyncIterator[LocalizedCommandResponse]:
