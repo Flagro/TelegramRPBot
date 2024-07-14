@@ -1,12 +1,8 @@
-from typing import AsyncIterator, List
-
-from bot.models.handlers_response import CommandResponseChunk
-
 from ...models.base_handlers import BaseMessageHandler
-from ...models.handlers_response import CommandResponse, CommandResponseChunk
+from ...models.handlers_response import CommandResponse
 from ...models.handlers_input import Person, Context, Message
 from ..auth import AllowedUser
-from typing import Optional
+from typing import Optional, AsyncIterator, List
 
 
 class MessageHandler(BaseMessageHandler):
@@ -48,11 +44,11 @@ class MessageHandler(BaseMessageHandler):
             return None
         response_message = self.ai.get_reply(user_input)
         await self.db.add_bot_response_to_dialog(context, response_message, None)
-        return CommandResponse("message_response", {})
+        return CommandResponse("message_response", {"response_message": response_message})
 
     async def stream_get_reply(
         self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> AsyncIterator[CommandResponseChunk]:
+    ) -> AsyncIterator[CommandResponse]:
         conversation_tracker_enabled = await self.db.get_conversation_tracker_state(
             context
         )
@@ -64,10 +60,9 @@ class MessageHandler(BaseMessageHandler):
             return None
         response_message = ""
         for response_message_chunk in self.ai.get_streaming_reply(user_input):
-            yield CommandResponseChunk(
-                response_message_chunk,
-                "streaming_message_response",
-                {},
-            )
             response_message += response_message_chunk
+            yield CommandResponse(
+                "streaming_message_response",
+                {"response_message": response_message}
+            )
         await self.db.add_bot_response_to_dialog(context, response_message, None)
