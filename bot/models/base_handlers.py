@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from functools import wraps
-from typing import List, Iterator
+from typing import List, AsyncIterator
 import logging
 
 from ..rp_bot.db import DB
@@ -33,14 +33,15 @@ def is_authenticated(func):
 
 def stream_is_authenticated(func):
     @wraps(func)
-    def wrapper(
+    async def wrapper(
         self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> Iterator[CommandResponseChunk]:
+    ) -> AsyncIterator[CommandResponseChunk]:
         for permission in self.permissions:
             if not permission()(person, context, self.auth):
                 yield CommandResponseChunk("", "not_authenticated", {})
                 return
-        yield from func(self, person, context, message, args)
+        async for chunk in func(self, person, context, message, args):
+            yield chunk
 
     return wrapper
 
@@ -63,9 +64,9 @@ class BaseHandler(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def stream_handle(
+    async def stream_handle(
         self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> Iterator[CommandResponseChunk]:
+    ) -> AsyncIterator[CommandResponseChunk]:
         raise NotImplementedError
 
 
@@ -135,10 +136,10 @@ class BaseMessageHandler(BaseHandler, ABC):
         )
 
     @stream_is_authenticated
-    def stream_handle(
+    async def stream_handle(
         self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> Iterator[CommandResponseChunk]:
-        for chunk in self.stream_get_reply(person, context, message, args):
+    ) -> AsyncIterator[CommandResponseChunk]:
+        async for chunk in self.stream_get_reply(person, context, message, args):
             localized_text = self.localizer.get_command_response(
                 chunk.text_chunk, chunk.kwargs
             )
@@ -155,7 +156,7 @@ class BaseMessageHandler(BaseHandler, ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def stream_get_reply(
+    async def stream_get_reply(
         self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> Iterator[CommandResponseChunk]:
+    ) -> AsyncIterator[CommandResponseChunk]:
         raise NotImplementedError
