@@ -27,6 +27,20 @@ class CommandResponse:
         self.keyboard = keyboard
 
 
+class CommandResponseChunk:
+    def __init__(
+        self,
+        text_chunk,
+        text,
+        kwargs: Optional[dict] = None,
+        keyboard: Optional[KeyboardResponse] = None,
+    ):
+        self.text_chunk = text_chunk
+        self.text = text
+        self.kwargs = kwargs
+        self.keyboard = keyboard
+
+
 class LocalizedCommandResponse:
     def __init__(
         self,
@@ -34,4 +48,16 @@ class LocalizedCommandResponse:
         keyboard: Optional[KeyboardResponse] = None,
     ):
         self.localized_text = localized_text
+        self.keyboard = keyboard
+
+
+class LocalizedCommandResponseChunk:
+    def __init__(
+        self,
+        text_chunk: str,
+        localized_text: str,
+        keyboard: Optional[KeyboardResponse] = None,
+    ):
+        self.localized_text = localized_text
+        self.text_chunk = text_chunk
         self.keyboard = keyboard
