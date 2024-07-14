@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from functools import wraps
-from typing import List
+from typing import List, Iterator
 import logging
 
 from ..rp_bot.db import DB
@@ -8,7 +8,12 @@ from ..rp_bot.ai import AI
 from .localizer import Localizer
 from ..rp_bot.auth import Auth
 from ..models.handlers_input import Person, Context, Message
-from ..models.handlers_response import CommandResponse, LocalizedCommandResponse
+from ..models.handlers_response import (
+    CommandResponse,
+    LocalizedCommandResponse,
+    CommandResponseChunk,
+    LocalizedCommandResponseChunk,
+)
 
 
 def is_authenticated(func):
@@ -26,8 +31,23 @@ def is_authenticated(func):
     return wrapper
 
 
+def stream_is_authenticated(func):
+    @wraps(func)
+    def wrapper(
+        self, person: Person, context: Context, message: Message, args: List[str]
+    ) -> Iterator[CommandResponseChunk]:
+        for permission in self.permissions:
+            if not permission()(person, context, self.auth):
+                yield CommandResponseChunk("", "not_authenticated", {})
+                return
+        yield from func(self, person, context, message, args)
+
+    return wrapper
+
+
 class BaseHandler(ABC):
     permissions: list = []
+    streamable: bool = False
 
     def __init__(self, db: DB, ai: AI, localizer: Localizer, auth: Auth):
         self.db = db
@@ -40,6 +60,12 @@ class BaseHandler(ABC):
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> LocalizedCommandResponse:
+        raise NotImplementedError
+
+    @abstractmethod
+    def stream_handle(
+        self, person: Person, context: Context, message: Message, args: List[str]
+    ) -> Iterator[CommandResponseChunk]:
         raise NotImplementedError
 
 
@@ -108,8 +134,28 @@ class BaseMessageHandler(BaseHandler, ABC):
             localized_text=localized_text, keyboard=message_response.keyboard
         )
 
+    @stream_is_authenticated
+    def stream_handle(
+        self, person: Person, context: Context, message: Message, args: List[str]
+    ) -> Iterator[CommandResponseChunk]:
+        for chunk in self.stream_get_reply(person, context, message, args):
+            localized_text = self.localizer.get_command_response(
+                chunk.text_chunk, chunk.kwargs
+            )
+            yield LocalizedCommandResponseChunk(
+                text_chunk=chunk.text_chunk,
+                localized_text=localized_text,
+                keyboard=chunk.keyboard,
+            )
+
     @abstractmethod
     async def get_reply(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
+        raise NotImplementedError
+
+    @abstractmethod
+    def stream_get_reply(
+        self, person: Person, context: Context, message: Message, args: List[str]
+    ) -> Iterator[CommandResponseChunk]:
         raise NotImplementedError
