@@ -53,6 +53,20 @@ class DB:
     async def create_chat_if_not_exists(self, context: Context) -> None:
         self._init_default_chat_modes(context)
 
+    async def start_chat(self, context: Context) -> None:
+        chat_id = context.chat_id
+        await self.chat_modes.update_one(
+            {"chat_id": chat_id, "mode_name": self.default_chat_modes.default_mode},
+            {"$set": {"active_mode": True}},
+        )
+
+    async def stop_chat(self, context: Context) -> None:
+        chat_id = context.chat_id
+        await self.chat_modes.update_one(
+            {"chat_id": chat_id, "mode_name": self.default_chat_modes.default_mode},
+            {"$set": {"active_mode": False}},
+        )
+
     async def set_language(self, context: Context, language: str) -> None:
         chat_id = context.chat_id
         await self.chat_modes.update_one(
