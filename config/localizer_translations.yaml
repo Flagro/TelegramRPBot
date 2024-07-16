@@ -1,4 +1,8 @@
 LocalizerTranslations:
+  start_description:
+    english: "Start description text"
+  stop_description:
+    english: "Stop description text"
   reset_description:
     english: "Reset description text"
   mode_description:
