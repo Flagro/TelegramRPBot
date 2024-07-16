@@ -37,6 +37,10 @@ LocalizerTranslations:
     english: "Inappropriate mode text"
   choose_mode_to_delete:
     english: "Choose mode to delete text"
+  start_done:
+    english: "Start done!"
+  stop_done:
+    english: "Stop done!"
   introduction_added:
     english: "Introduction {user_handle} added"
   inappropriate_introduction:
