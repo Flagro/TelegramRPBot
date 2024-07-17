@@ -6,7 +6,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from collections import namedtuple
 
 from ..models.config import DefaultChatModes
-from ..models.handlers_input import Person, Context, Message
+from ..models.handlers_input import Person, Context
 
 
 UserUsageResponse = namedtuple("UserUsageResponse", ["this_month_usage", "limit"])
