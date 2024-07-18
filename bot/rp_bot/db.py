@@ -60,6 +60,13 @@ class DB:
             {"$set": {"active_mode": True}},
         )
 
+    async def chat_is_started(self, context: Context) -> bool:
+        chat_id = context.chat_id
+        chat_data = await self.chat_modes.find_one(
+            {"chat_id": chat_id, "mode_name": self.default_chat_modes.default_mode}
+        )
+        return chat_data.get("active_mode", False)
+
     async def stop_chat(self, context: Context) -> None:
         chat_id = context.chat_id
         await self.chat_modes.update_one(
