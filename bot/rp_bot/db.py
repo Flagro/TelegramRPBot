@@ -56,22 +56,23 @@ class DB:
     async def start_chat(self, context: Context) -> None:
         chat_id = context.chat_id
         await self.chat_modes.update_one(
-            {"chat_id": chat_id, "mode_name": self.default_chat_modes.default_mode},
-            {"$set": {"active_mode": True}},
+            {"chat_id": chat_id},
+            {"$set": {"chat_started": True}},
+            upsert=True
         )
 
     async def chat_is_started(self, context: Context) -> bool:
         chat_id = context.chat_id
         chat_data = await self.chat_modes.find_one(
-            {"chat_id": chat_id, "mode_name": self.default_chat_modes.default_mode}
+            {"chat_id": chat_id}
         )
-        return chat_data.get("active_mode", False)
+        return chat_data.get("chat_started", False)
 
     async def stop_chat(self, context: Context) -> None:
         chat_id = context.chat_id
         await self.chat_modes.update_one(
-            {"chat_id": chat_id, "mode_name": self.default_chat_modes.default_mode},
-            {"$set": {"active_mode": False}},
+            {"chat_id": chat_id},
+            {"$set": {"chat_started": False}}
         )
 
     async def set_language(self, context: Context, language: str) -> None:
