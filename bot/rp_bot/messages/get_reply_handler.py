@@ -36,8 +36,11 @@ class MessageHandler(BaseMessageHandler):
         conversation_tracker_enabled = await self.db.get_conversation_tracker_state(
             context
         )
-        if not conversation_tracker_enabled and not context.is_bot_mentioned:
-            return None
+        chat_is_started = await self.db.is_chat_started(context)
+        if not chat_is_started or (
+            not conversation_tracker_enabled and not context.is_bot_mentioned
+        ):
+            return
         user_input = await self._get_user_input(message)
         await self.db.add_user_message_to_dialog(context, person, user_input)
         if not context.is_bot_mentioned:
@@ -52,7 +55,10 @@ class MessageHandler(BaseMessageHandler):
         conversation_tracker_enabled = await self.db.get_conversation_tracker_state(
             context
         )
-        if not conversation_tracker_enabled and not context.is_bot_mentioned:
+        chat_is_started = await self.db.is_chat_started(context)
+        if not chat_is_started or (
+            not conversation_tracker_enabled and not context.is_bot_mentioned
+        ):
             return
         user_input = await self._get_user_input(message)
         await self.db.add_user_message_to_dialog(context, person, user_input)
@@ -64,7 +70,6 @@ class MessageHandler(BaseMessageHandler):
                 continue
             response_message += response_message_chunk
             yield CommandResponse(
-                "streaming_message_response",
-                {"response_text": response_message}
+                "streaming_message_response", {"response_text": response_message}
             )
         await self.db.add_bot_response_to_dialog(context, response_message, None)
