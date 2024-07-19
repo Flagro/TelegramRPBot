@@ -9,7 +9,7 @@ from ..auth import BotAdmin
 class CommandHandler(BaseCommandHandler):
     permissions = [BotAdmin]
     command = "conversationtracker"
-    list_priority_order = 1
+    list_priority_order = 3
 
     async def get_command_response(
         self, person: Person, context: Context, message: Message, args: List[str]

@@ -10,7 +10,7 @@ from ..auth import BotAdmin
 class CommandHandler(BaseCommandHandler):
     permissions = [BotAdmin]
     command = "deletemode"
-    list_priority_order = 1
+    list_priority_order = 2
 
     async def get_command_response(
         self,

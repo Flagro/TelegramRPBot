@@ -9,7 +9,7 @@ from ..auth import AnyUser
 class CommandHandler(BaseCommandHandler):
     permissions = [AnyUser]
     command = "help"
-    list_priority_order = 3
+    list_priority_order = 4
 
     async def get_command_response(
         self, person: Person, context: Context, message: Message, args: List[str]
