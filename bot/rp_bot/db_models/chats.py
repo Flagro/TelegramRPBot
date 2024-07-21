@@ -31,7 +31,9 @@ class Chats(BaseModel):
                 upsert=True,
             )
 
-    async def create_chat_if_not_exists(self, context: Context) -> None:
+    async def create_chat_if_not_exists(
+        self, context: Context, default_language: str
+    ) -> None:
         """Initialize default parameters for a chat if it does not exist
         Including:
         - initialization of default chat modes
@@ -47,7 +49,14 @@ class Chats(BaseModel):
         chat_id = context.chat_id
         await self.chats.update_one(
             {"chat_id": chat_id},
-            {"$setOnInsert": {"chat_id": chat_id}},
+            {
+                "$setOnInsert": {
+                    "chat_id": chat_id,
+                    "language": default_language,
+                    "is_started": False,
+                    "conversation_tracker": False,
+                }
+            },
             upsert=True,
         )
 
