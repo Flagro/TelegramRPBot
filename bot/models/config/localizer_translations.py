@@ -28,5 +28,7 @@ class LocalizerTranslations(BaseYAMLConfigModel):
     def get_command_response(self, text: str, kwargs: dict) -> str:
         language = "english"
         localizer_translation = self.translations[text]
-        response_text = localizer_translation.language_translation[language].format(**kwargs)
+        response_text = localizer_translation.language_translation[language].format(
+            **kwargs
+        )
         return response_text

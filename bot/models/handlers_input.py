@@ -1,5 +1,13 @@
 class Person:
-    def __init__(self, user_id, user_handle, first_name, last_name, is_group_admin, is_group_owner):
+    def __init__(
+        self,
+        user_id,
+        user_handle,
+        first_name,
+        last_name,
+        is_group_admin,
+        is_group_owner,
+    ):
         self.user_id = user_id
         self.user_handle = user_handle
         self.first_name = first_name

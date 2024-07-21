@@ -18,6 +18,8 @@ Currently this is the work in progress.
 - This bot is built with the idea of not being constrained by just Telegram bot, it could be adapted for most other platforms as well.
 
 ## Bot commands
+- `/start` - Start the bot in current chat
+- `/stop` - Stop the bot in current chat
 - `/reset` – Reset the dialogue history
 - `/mode [mode]` – Select chat mode from existing ones
 - `/addmode [mode] [description]` - Add new chat mode

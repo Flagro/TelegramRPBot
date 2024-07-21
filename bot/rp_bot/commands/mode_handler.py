@@ -10,7 +10,7 @@ from ..auth import AllowedUser
 class CommandHandler(BaseCommandHandler):
     permissions = [AllowedUser]
     command = "mode"
-    list_priority_order = 1
+    list_priority_order = 2
 
     async def get_command_response(
         self, person: Person, context: Context, message: Message, args: List[str]
@@ -24,5 +24,5 @@ class CommandHandler(BaseCommandHandler):
                 modes_dict,
                 "show_chat_modes",
                 "set_chat_mode",
-            )
+            ),
         )

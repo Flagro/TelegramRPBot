@@ -7,11 +7,11 @@ class BaseBot(ABC):
     @abstractmethod
     def get_commands(self) -> List[BaseCommandHandler]:
         raise NotImplementedError
-    
+
     @abstractmethod
     def get_callbacks(self) -> List[BaseCallbackHandler]:
         raise NotImplementedError
-    
+
     @abstractmethod
     def get_messages(self) -> List[BaseMessageHandler]:
         raise NotImplementedError

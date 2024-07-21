@@ -7,7 +7,10 @@ class Localizer:
         self.translations: LocalizerTranslations = translations
 
     async def compose_user_input(
-        self, message: str, image_description: Optional[str], voice_description: Optional[str]
+        self,
+        message: str,
+        image_description: Optional[str],
+        voice_description: Optional[str],
     ) -> str:
         # TODO: also add user name and context details
         result = [message]
