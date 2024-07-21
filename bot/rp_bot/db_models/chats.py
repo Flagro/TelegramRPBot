@@ -67,7 +67,6 @@ class Chats(BaseModel):
             {"chat_id": chat_id}, {"_id": 0, "is_started": 1}
         )
         return chat_data.get("is_started", False)
-        
 
     async def stop_chat(self, context: Context) -> None:
         chat_id = context.chat_id

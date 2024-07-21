@@ -12,6 +12,7 @@ from ..models.handlers_response import (
     CommandResponse,
     LocalizedCommandResponse,
 )
+from ..models.config import BotConfig
 
 
 def is_authenticated(func):
@@ -56,11 +57,14 @@ class BaseHandler(ABC):
     permissions: list = []
     streamable: bool = False
 
-    def __init__(self, db: DB, ai: AI, localizer: Localizer, auth: Auth):
+    def __init__(
+        self, db: DB, ai: AI, localizer: Localizer, auth: Auth, bot_config: BotConfig
+    ):
         self.db = db
         self.ai = ai
         self.localizer = localizer
         self.auth = auth
+        self.bot_config = bot_config
         self.logger = logging.getLogger(f"{__name__}.{id(self)}")
 
     @abstractmethod
