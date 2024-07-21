@@ -14,5 +14,5 @@ class CommandHandler(BaseCommandHandler):
     async def get_command_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
-        await self.db.reset(context)
+        await self.db.dialogs.reset(context)
         return CommandResponse("reset_done", {})

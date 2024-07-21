@@ -25,8 +25,8 @@ def is_authenticated(func):
                     "not_authenticated", {}
                 )
                 return LocalizedCommandResponse(localized_text=localized_text)
-        await self.db.create_user_if_not_exists(person)
-        await self.db.create_chat_if_not_exists(context)
+        await self.db.users.create_user_if_not_exists(person)
+        await self.db.chats.create_chat_if_not_exists(context)
         return await func(self, person, context, message, args)
 
     return wrapper
@@ -44,8 +44,8 @@ def stream_is_authenticated(func):
                 )
                 yield LocalizedCommandResponse(localized_text=localized_text)
                 return
-        await self.db.create_user_if_not_exists(person)
-        await self.db.create_chat_if_not_exists(context)
+        await self.db.users.create_user_if_not_exists(person)
+        await self.db.chats.create_chat_if_not_exists(context)
         async for chunk in func(self, person, context, message, args):
             yield chunk
 
