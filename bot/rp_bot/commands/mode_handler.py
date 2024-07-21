@@ -24,5 +24,5 @@ class CommandHandler(BaseCommandHandler):
                 modes_dict,
                 "show_chat_modes",
                 "set_chat_mode",
-            )
+            ),
         )

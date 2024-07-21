@@ -17,24 +17,25 @@ async def is_content_acceptable(text: str):
     # return not all(r.results[0].categories.values())
     return True
 
+
 class AI:
     def __init__(self, openai_api_key: str, db: DB, ai_config: AIConfig):
         self.client = OpenAI(api_key=openai_api_key)
         self.db = db
         self.ai_config = ai_config
-        
+
     async def describe_image(self, in_memory_image_stream: io.BytesIO) -> str:
         # TODO: implement this
         # r = await openai.Image.adescribe(in_memory_image_stream)
         # return r["description"] or ""
         return ""
-    
+
     async def transcribe_audio(self, in_memory_audio_stream: io.BytesIO) -> str:
         # TODO: implement this
         # r = await openai.Audio.atranscribe(in_memory_audio_stream)
         # return r["text"] or ""
         return ""
-    
+
     async def generate_image(self, prompt: str):
         # TODO: implement this
         # r = await openai.Image.acreate(prompt=prompt, n=1, size="512x512")
@@ -59,7 +60,7 @@ class AI:
                 {"role": "system", "content": f"User: {user_input}"},
                 {"role": "user", "content": user_input},
             ],
-            stream=True
+            stream=True,
         )
         for chunk in response:
             chunk_text = chunk.choices[0].delta.content

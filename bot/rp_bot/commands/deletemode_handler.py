@@ -28,5 +28,5 @@ class CommandHandler(BaseCommandHandler):
                 modes_dict,
                 "show_chat_modes",
                 "delete_chat_mode",
-            )
+            ),
         )

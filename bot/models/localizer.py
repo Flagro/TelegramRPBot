@@ -7,7 +7,10 @@ class Localizer:
         self.translations: LocalizerTranslations = translations
 
     def compose_user_input(
-        self, message: str, image_description: Optional[str], voice_description: Optional[str]
+        self,
+        message: str,
+        image_description: Optional[str],
+        voice_description: Optional[str],
     ) -> str:
         # TODO: also add user name and context details
         result = [message]
@@ -16,7 +19,7 @@ class Localizer:
         if voice_description:
             result.append(voice_description)
         return " ".join(result)
-        
+
     async def compose_history_message(self, history: List[Tuple[str, str]]) -> str:
         # TODO: also add the names and context details in history
         return "\n".join([f"{name}: {message}" for name, message in history])

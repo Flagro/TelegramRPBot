@@ -25,5 +25,5 @@ class CallbackHandler(BaseCallbackHandler):
                 modes_dict,
                 "show_chat_modes",
                 old_action,
-            )
+            ),
         )
