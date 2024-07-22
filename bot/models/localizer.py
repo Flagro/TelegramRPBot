@@ -6,7 +6,7 @@ class Localizer:
     def __init__(self, translations: LocalizerTranslations) -> None:
         self.translations: LocalizerTranslations = translations
 
-    def compose_user_input(
+    async def compose_user_input(
         self,
         message: str,
         image_description: Optional[str],
@@ -20,7 +20,9 @@ class Localizer:
             result.append(voice_description)
         return " ".join(result)
 
-    async def compose_history_message(self, history: List[Tuple[str, str]]) -> str:
+    async def compose_prompt(
+        self, user_input: str, history: List[Tuple[str, str]]
+    ) -> str:
         # TODO: also add the names and context details in history
         return "\n".join([f"{name}: {message}" for name, message in history])
 

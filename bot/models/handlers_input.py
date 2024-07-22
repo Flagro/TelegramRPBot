@@ -25,7 +25,8 @@ class Context:
 
 
 class Message:
-    def __init__(self, message_text, in_file_image, in_file_audio):
+    def __init__(self, message_text, timestamp, in_file_image, in_file_audio):
         self.message_text = message_text
+        self.timestamp = timestamp
         self.in_file_image = in_file_image
         self.in_file_audio = in_file_audio

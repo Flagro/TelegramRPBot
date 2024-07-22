@@ -15,7 +15,7 @@ class CallbackHandler(BaseCallbackHandler):
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
         old_action = args[0]
-        available_modes = await self.db.get_chat_modes(context)
+        available_modes = await self.db.chats.get_chat_modes(context)
         modes_dict = OrderedDict({mode.id: mode.name for mode in available_modes})
 
         return CommandResponse(

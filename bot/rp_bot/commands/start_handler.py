@@ -14,5 +14,5 @@ class CommandHandler(BaseCommandHandler):
     async def get_command_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
-        await self.db.start_chat(context)
+        await self.db.chats.start_chat(context)
         return CommandResponse("start_done", {})

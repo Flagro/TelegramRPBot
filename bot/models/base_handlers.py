@@ -12,6 +12,7 @@ from ..models.handlers_response import (
     CommandResponse,
     LocalizedCommandResponse,
 )
+from ..models.config import BotConfig
 
 
 def is_authenticated(func):
@@ -25,8 +26,10 @@ def is_authenticated(func):
                     "not_authenticated", {}
                 )
                 return LocalizedCommandResponse(localized_text=localized_text)
-        await self.db.create_user_if_not_exists(person)
-        await self.db.create_chat_if_not_exists(context)
+        await self.db.users.create_user_if_not_exists(person)
+        await self.db.chats.create_chat_if_not_exists(
+            context, default_language=self.bot_config.default_language
+        )
         return await func(self, person, context, message, args)
 
     return wrapper
@@ -44,8 +47,10 @@ def stream_is_authenticated(func):
                 )
                 yield LocalizedCommandResponse(localized_text=localized_text)
                 return
-        await self.db.create_user_if_not_exists(person)
-        await self.db.create_chat_if_not_exists(context)
+        await self.db.users.create_user_if_not_exists(person)
+        await self.db.chats.create_chat_if_not_exists(
+            context, default_language=self.bot_config.default_language
+        )
         async for chunk in func(self, person, context, message, args):
             yield chunk
 
@@ -56,11 +61,14 @@ class BaseHandler(ABC):
     permissions: list = []
     streamable: bool = False
 
-    def __init__(self, db: DB, ai: AI, localizer: Localizer, auth: Auth):
+    def __init__(
+        self, db: DB, ai: AI, localizer: Localizer, auth: Auth, bot_config: BotConfig
+    ):
         self.db = db
         self.ai = ai
         self.localizer = localizer
         self.auth = auth
+        self.bot_config = bot_config
         self.logger = logging.getLogger(f"{__name__}.{id(self)}")
 
     @abstractmethod

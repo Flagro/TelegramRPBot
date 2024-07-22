@@ -57,6 +57,7 @@ async def get_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Mes
     if is_callback(update):
         return Message(
             message_text=update.callback_query.message.text,
+            timestamp=update.callback_query.message.date,
             in_file_image=None,
             in_file_audio=None,
         )
@@ -72,6 +73,7 @@ async def get_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Mes
         voice = get_file_in_memory(update.message.voice.file_id, context)
     return Message(
         message_text=message,
+        timestamp=update.message.date,
         in_file_image=image,
         in_file_audio=voice,
     )
