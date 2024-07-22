@@ -45,6 +45,7 @@ class Chats(BaseModel):
         Args:
             context (Context): context of the chat
         """
+        # TODO: separate the logic into different models
         self._init_default_chat_modes(context)
         chat_id = context.chat_id
         await self.chats.update_one(
