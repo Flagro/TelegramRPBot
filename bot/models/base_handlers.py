@@ -30,6 +30,7 @@ def is_authenticated(func):
         await self.db.chats.create_chat_if_not_exists(
             context, default_language=self.bot_config.default_language
         )
+        await self.db.chat_models.create_chat_modes_if_not_exist(context)
         return await func(self, person, context, message, args)
 
     return wrapper
@@ -51,6 +52,7 @@ def stream_is_authenticated(func):
         await self.db.chats.create_chat_if_not_exists(
             context, default_language=self.bot_config.default_language
         )
+        await self.db.chat_models.create_chat_modes_if_not_exist(context)
         async for chunk in func(self, person, context, message, args):
             yield chunk
 
