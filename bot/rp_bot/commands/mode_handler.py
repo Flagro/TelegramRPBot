@@ -15,7 +15,7 @@ class CommandHandler(BaseCommandHandler):
     async def get_command_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
-        available_modes = await self.db.chats.get_chat_modes(context)
+        available_modes = await self.db.chat_modes.get_chat_modes(context)
         modes_dict = OrderedDict({mode.id: mode.mode_name for mode in available_modes})
         return CommandResponse(
             "choose_mode",

@@ -19,7 +19,7 @@ class CommandHandler(BaseCommandHandler):
         # TODO: implement NER here
         mode_name = mode_description.split("\n")[0].split(".")[0]
         try:
-            await self.db.chats.add_chat_mode(context, mode_name, mode_description)
+            await self.db.chat_modes.add_chat_mode(context, mode_name, mode_description)
             return CommandResponse("mode_added", {"mode_name": mode_name})
         except ValueError as e:
             self.logger.error(f"Error adding mode: {e}")
