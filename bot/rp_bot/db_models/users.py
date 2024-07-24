@@ -32,3 +32,23 @@ class Users(BaseModel):
             {"handle": user_handle}, {"_id": 0, "usage": 1, "limit": 1}
         )
         return UserUsageResponse(usage_data.get("usage", 0), usage_data.get("limit", 0))
+
+    async def ban_user(
+        self, context: Context, user_handle: str, time_seconds: int
+    ) -> None:
+        # add timestamp to the user's banned field and set the ban duration
+        await self.users.update_one(
+            {"handle": user_handle},
+            {
+                "$set": {
+                    "banned": True,
+                    "banned_until": context.current_time + time_seconds,
+                }
+            },
+        )
+
+    async def unban_user(self, context: Context, user_handle: str) -> None:
+        # remove the banned field from the user
+        await self.users.update_one(
+            {"handle": user_handle}, {"$unset": {"banned": "", "banned_until": ""}}
+        )
