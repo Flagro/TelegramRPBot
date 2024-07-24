@@ -1,13 +1,13 @@
 from ...models.base_handlers import BaseMessageHandler
 from ...models.handlers_response import CommandResponse
 from ...models.handlers_input import Person, Context, Message
-from ..auth import AllowedUser, BotAdmin
+from ..auth import AllowedUser, BotAdmin, NotBanned
 from typing import Optional, AsyncIterator, List
 from datetime import datetime
 
 
 class MessageHandler(BaseMessageHandler):
-    permissions = [AllowedUser, BotAdmin]
+    permissions = [AllowedUser, BotAdmin, NotBanned]
 
     async def _get_user_input(self, message: Message) -> str:
         # Note that here the responsibility to pass NULL images and Audio is on the
