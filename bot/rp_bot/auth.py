@@ -3,15 +3,19 @@ from ..models.handlers_input import Person, Context
 
 
 class Auth:
-    def __init__(self, allowed_handles, admin_handles):
+    def __init__(self, allowed_handles, admin_handles, db):
         self.allowed_handles = allowed_handles
         self.admin_handles = admin_handles
+        self.db = db
 
     def is_allowed(self, user_handle):
         return user_handle in self.allowed_handles
 
     def is_admin(self, user_handle):
         return user_handle in self.admin_handles
+    
+    def is_banned(self, context: Context, user_handle):
+        return self.db.users.is_user_banned(user_handle)
 
 
 class BasePermission(ABC):
