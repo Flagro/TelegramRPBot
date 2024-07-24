@@ -49,6 +49,7 @@ def main():
     auth = Auth(
         allowed_handles=config("ALLOWED_HANDLES").split(","),
         admin_handles=config("ADMIN_HANDLES").split(","),
+        db=db,
     )
 
     rp_bot = RPBot(

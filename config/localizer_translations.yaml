@@ -23,6 +23,10 @@ LocalizerTranslations:
     english: "Language description text"
   conversationtracker_description:
     english: "Conversation tracker description text"
+  ban_description:
+    english: "Ban description text"
+  unban_description:
+    english: "Unban description text"
   help_description:
     english: "Help description text"
   mode_set:
@@ -37,6 +41,10 @@ LocalizerTranslations:
     english: "Inappropriate mode text"
   choose_mode_to_delete:
     english: "Choose mode to delete text"
+  user_banned:
+    english: "User {user_handle} banned for {ban_duration} seconds"
+  user_unbanned:
+    english: "User {user_handle} unbanned"
   start_done:
     english: "Start done!"
   stop_done:
