@@ -16,4 +16,4 @@ class CommandHandler(BaseCommandHandler):
     ) -> CommandResponse:
         user_handle = args[0]
         await self.db.users.unban_user(context, user_handle)
-        return CommandResponse("user_banned", {"user_handle": user_handle})
+        return CommandResponse("user_unbanned", {"user_handle": user_handle})
