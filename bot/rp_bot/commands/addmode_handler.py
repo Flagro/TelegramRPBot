@@ -3,11 +3,11 @@ from typing import List
 from ...models.base_handlers import BaseCommandHandler
 from ...models.handlers_response import CommandResponse
 from ...models.handlers_input import Person, Context, Message
-from ..auth import BotAdmin
+from ..auth import BotAdmin, NotBanned
 
 
 class CommandHandler(BaseCommandHandler):
-    permissions = [BotAdmin]
+    permissions = [BotAdmin, NotBanned]
     command = "addmode"
     list_priority_order = 2
 
