@@ -52,11 +52,6 @@ class BotAdmin(BasePermission):
         return auth.is_admin(person.user_handle)
 
 
-class AnyUser(BasePermission):
-    def check(self, person: Person, context: Context, auth: Auth) -> bool:
-        return True  # Any user can use the command
-
-
 class NotBanned(BasePermission):
     def check(self, person: Person, context: Context, auth: Auth) -> bool:
         return not auth.is_banned(person.user_handle)
