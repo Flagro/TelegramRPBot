@@ -32,11 +32,6 @@ class BasePermission(ABC):
         )
 
 
-class GroupOwner(BasePermission):
-    def check(self, person: Person, context: Context, auth: Auth) -> bool:
-        return person.is_group_owner
-
-
 class GroupAdmin(BasePermission):
     def check(self, person: Person, context: Context, auth: Auth) -> bool:
         return person.is_group_admin
