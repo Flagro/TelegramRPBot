@@ -1,18 +1,25 @@
 from abc import ABC, abstractmethod
+from typing import List, Optional
 from ..models.handlers_input import Person, Context
+from .db import DB
 
 
 class Auth:
-    def __init__(self, allowed_handles, admin_handles, db):
+    def __init__(
+        self,
+        allowed_handles: Optional[List[str]],
+        admin_handles: Optional[List[str]],
+        db: DB,
+    ):
         self.allowed_handles = allowed_handles
         self.admin_handles = admin_handles
         self.db = db
 
     def is_allowed(self, user_handle):
-        return user_handle in self.allowed_handles
+        return self.allowed_handles is None or user_handle in self.allowed_handles
 
     def is_admin(self, user_handle):
-        return user_handle in self.admin_handles
+        return self.admin_handles is not None and user_handle in self.admin_handles
 
     def is_banned(self, user_handle):
         return self.db.users.is_user_banned(user_handle)
