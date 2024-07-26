@@ -4,11 +4,11 @@ from collections import OrderedDict
 from ...models.base_handlers import BaseCommandHandler
 from ...models.handlers_response import KeyboardResponse, CommandResponse
 from ...models.handlers_input import Person, Context, Message
-from ..auth import BotAdmin
+from ..auth import GroupAdmin, AllowedUser, NotBanned
 
 
 class CommandHandler(BaseCommandHandler):
-    permissions = [BotAdmin]
+    permissions = [GroupAdmin, AllowedUser, NotBanned]
     command = "deletemode"
     list_priority_order = 2
 

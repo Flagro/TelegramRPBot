@@ -47,8 +47,8 @@ def main():
     localizer = Localizer(translations=translations)
 
     auth = Auth(
-        allowed_handles=config("ALLOWED_HANDLES").split(","),
-        admin_handles=config("ADMIN_HANDLES").split(","),
+        allowed_handles=config("ALLOWED_HANDLES", "").split(",") or None,
+        admin_handles=config("ADMIN_HANDLES", "").split(",") or None,
         db=db,
     )
 
