@@ -14,9 +14,12 @@ class CommandHandler(BaseCommandHandler):
     async def get_command_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
-        # TODO: ban by replying to a message
-        user_handle = args[0]
-        time_seconds = int(args[1])
+        if context.replied_to_user_handle is None:
+            user_handle = args[0]
+            time_seconds = int(args[1])
+        else:
+            user_handle = context.replied_to_user_handle
+            time_seconds = int(args[1])
         await self.db.users.ban_user(user_handle, time_seconds)
         return CommandResponse(
             "user_banned", {"user_handle": user_handle, "ban_duration": time_seconds}
