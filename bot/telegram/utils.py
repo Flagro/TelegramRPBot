@@ -22,13 +22,20 @@ async def get_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Con
             thread_id=None,
             is_group=True,
             is_bot_mentioned=False,
+            replied_to_user_handle=None,
         )
     else:
+        replied_to_user_handle = (
+            "@" + str(update.message.reply_to_message.from_user.username)
+            if update.message.reply_to_message
+            else None
+        )
         return Context(
             chat_id=update.message.chat_id,
             thread_id=get_thread_id(update),
             is_group=True,
             is_bot_mentioned=bot_mentioned(update, context),
+            replied_to_user_handle=replied_to_user_handle,
         )
 
 
