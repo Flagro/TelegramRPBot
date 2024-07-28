@@ -1,5 +1,5 @@
 from motor.motor_asyncio import AsyncIOMotorDatabase
-from typing import List, Tuple
+from typing import List, Tuple, Union, Literal
 from datetime import datetime
 from .base_models import BaseModel
 from ...models.handlers_input import Person, Context
@@ -18,31 +18,36 @@ class Dialogs(BaseModel):
         self, context: Context, last_n: int = 10
     ) -> List[Tuple[str, str]]:
         chat_id = context.chat_id
-        cursor = self.dialogs.find(
-            {"chat_id": chat_id},
-            {"_id": 0, "messages": {"$slice": -last_n}},
-        )
-        messages = []
-        async for doc in cursor:
-            messages.extend(doc.get("messages", []))
-        return messages
+        cursor = self.dialogs.find({"chat_id": chat_id}).sort("_id", -1).limit(last_n)
+        messages = await cursor.to_list(length=last_n)
+        return [(msg["user_handle"], msg["message"]) for msg in reversed(messages)]
 
-    async def add_user_message_to_dialog(
-        self, context: Context, person: Person, message: str, timestamp: datetime
-    ) -> None:
-        user_handle = person.user_handle
-        await self.dialogs.update_one(
-            {"chat_id": context.chat_id, "user_handle": user_handle},
-            {"$push": {"messages": message}},
-            upsert=True,
-        )
-
-    async def add_bot_response_to_dialog(
-        self, context: Context, message: str, timestamp: datetime
+    async def add_message_to_dialog(
+        self,
+        context: Context,
+        person: Union[Person, Literal["bot"]],
+        message: str,
+        timestamp: datetime,
+        messages_to_store_limit: int,
     ) -> None:
         chat_id = context.chat_id
-        await self.dialogs.update_one(
-            {"chat_id": chat_id, "user_handle": "bot"},
-            {"$push": {"messages": message}},
-            upsert=True,
+        user_handle = "bot" if person == "bot" else person.user_handle
+
+        # Insert the new message
+        await self.dialogs.insert_one(
+            {
+                "chat_id": chat_id,
+                "user_handle": user_handle,
+                "message": message,
+                "timestamp": timestamp,
+            }
         )
+
+        # Check if the stored messages exceed the limit and delete the oldest if necessary
+        current_count = await self.dialogs.count_documents({"chat_id": chat_id})
+        if current_count > messages_to_store_limit:
+            oldest_message = await self.dialogs.find_one(
+                {"chat_id": chat_id}, sort=[("_id", 1)]
+            )
+            if oldest_message:
+                await self.dialogs.delete_one({"_id": oldest_message["_id"]})
