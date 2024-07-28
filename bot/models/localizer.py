@@ -20,6 +20,9 @@ class Localizer:
             result.append(voice_description)
         return " ".join(result)
 
+    async def compose_bot_output(self, response_message: str) -> str:
+        return response_message
+
     async def compose_prompt(
         self, user_input: str, history: List[Tuple[str, str]]
     ) -> str:
