@@ -34,8 +34,8 @@ class MessageHandler(BaseMessageHandler):
         message: Message,
         args: List[str],
     ) -> Optional[CommandResponse]:
-        conversation_tracker_enabled = await self.db.chats.get_conversation_tracker_state(
-            context
+        conversation_tracker_enabled = (
+            await self.db.chats.get_conversation_tracker_state(context)
         )
         chat_is_started = await self.db.chats.chat_is_started(context)
         if not chat_is_started or (
@@ -43,21 +43,33 @@ class MessageHandler(BaseMessageHandler):
         ):
             return
         user_input = await self._get_user_input(message)
-        await self.db.dialogs.add_user_message_to_dialog(context, person, user_input, message.timestamp)
+        await self.db.dialogs.add_message_to_dialog(
+            context,
+            person,
+            user_input,
+            message.timestamp,
+            messages_to_store_limit=self.bot_config.last_n_messages_to_remember,
+        )
         if not context.is_bot_mentioned:
             return None
         # Take everything besides the last one since the last one is the current message
         messages_history = self.db.dialogs.get_messages(context, last_n=15)[0:-1]
         prompt = await self.localizer.compose_prompt(user_input, messages_history)
         response_message = await self.ai.get_reply(prompt)
-        await self.db.dialogs.add_bot_response_to_dialog(context, response_message, datetime.now())
+        await self.db.dialogs.add_message_to_dialog(
+            context,
+            "bot",
+            response_message,
+            datetime.now(),
+            messages_to_store_limit=self.bot_config.last_n_messages_to_remember,
+        )
         return CommandResponse("message_response", {"response_text": response_message})
 
     async def stream_get_reply(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> AsyncIterator[CommandResponse]:
-        conversation_tracker_enabled = await self.db.chats.get_conversation_tracker_state(
-            context
+        conversation_tracker_enabled = (
+            await self.db.chats.get_conversation_tracker_state(context)
         )
         chat_is_started = await self.db.chats.chat_is_started(context)
         if not chat_is_started or (
@@ -65,7 +77,13 @@ class MessageHandler(BaseMessageHandler):
         ):
             return
         user_input = await self._get_user_input(message)
-        await self.db.dialogs.add_user_message_to_dialog(context, person, user_input, message.timestamp)
+        await self.db.dialogs.add_message_to_dialog(
+            context,
+            person,
+            user_input,
+            message.timestamp,
+            messages_to_store_limit=self.bot_config.last_n_messages_to_remember,
+        )
         if not context.is_bot_mentioned:
             return
         # Take everything besides the last one since the last one is the current message
@@ -79,4 +97,10 @@ class MessageHandler(BaseMessageHandler):
             yield CommandResponse(
                 "streaming_message_response", {"response_text": response_message}
             )
-        await self.db.dialogs.add_bot_response_to_dialog(context, response_message, datetime.now())
+        await self.db.dialogs.add_message_to_dialog(
+            context,
+            "bot",
+            response_message,
+            datetime.now(),
+            messages_to_store_limit=self.bot_config.last_n_messages_to_remember,
+        )
