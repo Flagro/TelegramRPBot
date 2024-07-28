@@ -16,11 +16,23 @@ class Dialogs(BaseModel):
 
     async def get_messages(
         self, context: Context, last_n: int = 10
-    ) -> List[Tuple[str, str]]:
+    ) -> List[Tuple[str, bool, str]]:
+        """Get the last N messages from the dialog
+
+        Args:
+            context (Context): context object
+            last_n (int, optional): amount of messages. Defaults to 10.
+
+        Returns:
+            List[Tuple[str, bool, str]]: list of tuples with user_handle, is_bot and message
+        """
         chat_id = context.chat_id
         cursor = self.dialogs.find({"chat_id": chat_id}).sort("_id", -1).limit(last_n)
         messages = await cursor.to_list(length=last_n)
-        return [(msg["user_handle"], msg["message"]) for msg in reversed(messages)]
+        return [
+            (msg["user_handle"], msg["is_bot"], msg["message"])
+            for msg in reversed(messages)
+        ]
 
     async def add_message_to_dialog(
         self,
@@ -38,6 +50,7 @@ class Dialogs(BaseModel):
             {
                 "chat_id": chat_id,
                 "user_handle": user_handle,
+                "is_bot": person == "bot",
                 "message": message,
                 "timestamp": timestamp,
             }
