@@ -27,13 +27,16 @@ class MessageHandler(BaseMessageHandler):
         )
         return user_input
 
-    async def get_reply(
+    async def _get_bot_output(self, response_message: str) -> str:
+        localized_response = self.localizer.compose_bot_output(response_message)
+        return localized_response
+
+    async def prepare_get_reply(
         self,
         person: Person,
         context: Context,
         message: Message,
-        args: List[str],
-    ) -> Optional[CommandResponse]:
+    ) -> Optional[str]:
         conversation_tracker_enabled = (
             await self.db.chats.get_conversation_tracker_state(context)
         )
@@ -41,7 +44,7 @@ class MessageHandler(BaseMessageHandler):
         if not chat_is_started or (
             not conversation_tracker_enabled and not context.is_bot_mentioned
         ):
-            return
+            return None
         user_input = await self._get_user_input(message)
         await self.db.dialogs.add_message_to_dialog(
             context,
@@ -55,40 +58,42 @@ class MessageHandler(BaseMessageHandler):
         # Take everything besides the last one since the last one is the current message
         messages_history = self.db.dialogs.get_messages(context, last_n=15)[0:-1]
         prompt = await self.localizer.compose_prompt(user_input, messages_history)
-        response_message = await self.ai.get_reply(prompt)
+        return prompt
+
+    async def finish_get_reply(
+        self,
+        context: Context,
+        response_message: str,
+    ) -> None:
+        localized_response = await self._get_bot_output(response_message)
         await self.db.dialogs.add_message_to_dialog(
             context,
             "bot",
-            response_message,
+            localized_response,
             datetime.now(),
             messages_to_store_limit=self.bot_config.last_n_messages_to_remember,
         )
+
+    async def get_reply(
+        self,
+        person: Person,
+        context: Context,
+        message: Message,
+        args: List[str],
+    ) -> Optional[CommandResponse]:
+        prompt = await self.prepare_get_reply(person, context, message)
+        if not prompt:
+            return None
+        response_message = await self.ai.get_reply(prompt)
+        await self.finish_get_reply(context, response_message)
         return CommandResponse("message_response", {"response_text": response_message})
 
     async def stream_get_reply(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> AsyncIterator[CommandResponse]:
-        conversation_tracker_enabled = (
-            await self.db.chats.get_conversation_tracker_state(context)
-        )
-        chat_is_started = await self.db.chats.chat_is_started(context)
-        if not chat_is_started or (
-            not conversation_tracker_enabled and not context.is_bot_mentioned
-        ):
+        prompt = await self.prepare_get_reply(person, context, message)
+        if not prompt:
             return
-        user_input = await self._get_user_input(message)
-        await self.db.dialogs.add_message_to_dialog(
-            context,
-            person,
-            user_input,
-            message.timestamp,
-            messages_to_store_limit=self.bot_config.last_n_messages_to_remember,
-        )
-        if not context.is_bot_mentioned:
-            return
-        # Take everything besides the last one since the last one is the current message
-        messages_history = self.db.dialogs.get_messages(context, last_n=15)[0:-1]
-        prompt = await self.localizer.compose_prompt(user_input, messages_history)
         response_message = ""
         async for response_message_chunk in self.ai.get_streaming_reply(prompt):
             if not response_message_chunk:
@@ -97,10 +102,4 @@ class MessageHandler(BaseMessageHandler):
             yield CommandResponse(
                 "streaming_message_response", {"response_text": response_message}
             )
-        await self.db.dialogs.add_message_to_dialog(
-            context,
-            "bot",
-            response_message,
-            datetime.now(),
-            messages_to_store_limit=self.bot_config.last_n_messages_to_remember,
-        )
+        await self.finish_get_reply(context, response_message)
