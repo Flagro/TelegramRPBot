@@ -26,7 +26,9 @@ def is_authenticated(func):
                     "not_authenticated", {}
                 )
                 return LocalizedCommandResponse(localized_text=localized_text)
-        await self.db.users.create_user_if_not_exists(person)
+        await self.db.users.create_user_if_not_exists(
+            person, self.bot_config.usage_limit
+        )
         await self.db.chats.create_chat_if_not_exists(
             context, default_language=self.bot_config.default_language
         )
@@ -48,7 +50,9 @@ def stream_is_authenticated(func):
                 )
                 yield LocalizedCommandResponse(localized_text=localized_text)
                 return
-        await self.db.users.create_user_if_not_exists(person)
+        await self.db.users.create_user_if_not_exists(
+            person, self.bot_config.usage_limit
+        )
         await self.db.chats.create_chat_if_not_exists(
             context, default_language=self.bot_config.default_language
         )

@@ -9,6 +9,11 @@ from datetime import datetime
 class MessageHandler(BaseMessageHandler):
     permissions = [AllowedUser, BotAdmin, NotBanned]
 
+    async def _estimate_reply_usage(self, context: Context, input_message: str) -> int:
+        # Estimate the response based on amount of facts in the group chat,
+        # the length of the message and wether or not it needs an image generation
+        return len(input_message) // 10 + 1000 * ("image" in input_message)
+
     async def _get_user_input(self, message: Message) -> str:
         # Note that here the responsibility to pass NULL images and Audio is on the
         # outer level bot processing (TG bot or other bot)
@@ -46,6 +51,11 @@ class MessageHandler(BaseMessageHandler):
         ):
             return None
         user_input = await self._get_user_input(message)
+        estimated_usage = await self._estimate_reply_usage(context, user_input)
+        user_limit = self.db.users.get_user_usage_limit(person)
+        if estimated_usage > user_limit:
+            self.logger.info(f"User {person.user_handle} exceeded the usage limit")
+            return None
         await self.db.dialogs.add_message_to_dialog(
             context,
             person,
