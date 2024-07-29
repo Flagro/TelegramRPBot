@@ -27,6 +27,12 @@ class Users(BaseModel):
             upsert=True,
         )
 
+    async def add_usage_points(self, person: Person, points: int) -> None:
+        user_handle = person.user_handle
+        await self.users.update_one(
+            {"handle": user_handle}, {"$inc": {"usage": points}}
+        )
+
     async def get_user_usage(self, person: Person) -> UserUsageResponse:
         user_handle = person.user_handle
         usage_data = await self.users.find_one(
