@@ -1,3 +1,4 @@
 TGConfig:
   default_language: en
   last_n_messages_to_remember: 25
+  default_usage_limit: 100
