@@ -111,7 +111,7 @@ class TelegramBot:
         handler_message = await get_message(update, context)
         handler_args = await get_args(update, context)
 
-        if bot_handler.streamable:
+        if bot_handler.streamable and self.telegram_bot_config.enable_message_streaming:
             first_message_id = None
             async for result in buffer_streaming_response(
                 bot_handler.stream_handle(
