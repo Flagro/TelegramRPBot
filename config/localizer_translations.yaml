@@ -29,6 +29,8 @@ LocalizerTranslations:
     english: "Unban description text"
   help_description:
     english: "Help description text"
+  default_command_description:
+    english: "Default command description text"
   mode_set:
     english: "Mode {mode_name} set"
   mode_deleted:

@@ -29,5 +29,5 @@ class Localizer:
         # TODO: also add the names and context details in history
         return "\n".join([f"{name}: {message}" for name, _, message in history])
 
-    def get_command_response(self, text: str, kwargs: dict) -> str:
+    def get_command_response(self, text: str, kwargs: dict) -> Optional[str]:
         return self.translations.get_command_response(text, kwargs)

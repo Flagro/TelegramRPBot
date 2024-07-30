@@ -1,6 +1,6 @@
 from .base_config import BaseYAMLConfigModel
 from pydantic import BaseModel
-from typing import Dict
+from typing import Dict, Optional
 import yaml
 
 
@@ -25,8 +25,10 @@ class LocalizerTranslations(BaseYAMLConfigModel):
             else:
                 raise KeyError(f"LocalizerTranslations not found in {file_path}")
 
-    def get_command_response(self, text: str, kwargs: dict) -> str:
+    def get_command_response(self, text: str, kwargs: dict) -> Optional[str]:
         language = "english"
+        if text not in self.translations:
+            return None
         localizer_translation = self.translations[text]
         response_text = localizer_translation.language_translation[language].format(
             **kwargs

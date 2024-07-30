@@ -94,7 +94,10 @@ class BaseCommandHandler(BaseHandler, ABC):
     list_priority_order: int = 0
 
     def get_localized_description(self) -> str:
-        return self.localizer.get_command_response(f"{self.command}_description", {})
+        result = self.localizer.get_command_response(f"{self.command}_description", {})
+        if result is None:
+            return self.localizer.get_command_response("default_command_description", {})
+        return result
 
     @is_authenticated
     async def handle(
