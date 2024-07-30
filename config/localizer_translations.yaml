@@ -104,4 +104,6 @@ LocalizerTranslations:
       • <em>/conversationtracker</em> - Turn on/off conversation tracker
       • <em>/usage</em> - Show usage limits for your user
       • <em>/language</em> - Set bot preferred language
+      • <em>/ban [@tg_handle]</em> (Admin only) - Ban the user (could work by replying to user's message as well)
+      • <em>/unban [@tg_handle]</em> (Admin only) - Unban the user
       • <em>/help</em> - Show help
