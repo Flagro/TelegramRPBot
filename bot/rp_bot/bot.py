@@ -8,6 +8,10 @@ from ..models.base_bot import BaseBot
 from .commands import handlers as command_handlers
 from .callbacks import handlers as callback_handlers
 from .messages import handlers as message_handlers
+from .ai import AI
+from .db import DB
+from .auth import Auth
+from ..models.localizer import Localizer
 
 
 class RPBot(BaseBot):
@@ -15,9 +19,47 @@ class RPBot(BaseBot):
     commands = command_handlers
     messages = message_handlers
 
-    def __init__(self, ai, db, localizer, auth, bot_config, logger):
+    def __init__(
+        self,
+        db_user,
+        db_password,
+        db_host,
+        db_port,
+        db_name,
+        openai_api_key,
+        translations,
+        default_chat_modes,
+        ai_config,
+        bot_config,
+        allowed_handles,
+        admin_handles,
+        logger,
+    ):
         # TODO: init here the handlers with parameters
         # and store them in a class attribute
+        db = DB(
+            db_user=db_user,
+            db_password=db_password,
+            db_host=db_host,
+            db_port=db_port,
+            db_name=db_name,
+            default_language=bot_config.default_language,
+            default_chat_modes=default_chat_modes,
+            last_n_messages_to_remember=bot_config.last_n_messages_to_remember,
+            default_usage_limit=bot_config.default_usage_limit,
+        )
+
+        ai = AI(openai_api_key=openai_api_key, db=db, ai_config=ai_config)
+
+        localizer = Localizer(
+            translations=translations, default_language=bot_config.default_language
+        )
+
+        auth = Auth(
+            allowed_handles=allowed_handles,
+            admin_handles=admin_handles,
+            db=db,
+        )
         self.ai = ai
         self.db = db
         self.localizer = localizer

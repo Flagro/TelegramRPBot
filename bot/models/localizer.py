@@ -3,8 +3,9 @@ from .config.localizer_translations import LocalizerTranslations
 
 
 class Localizer:
-    def __init__(self, translations: LocalizerTranslations) -> None:
+    def __init__(self, translations: LocalizerTranslations, default_language: str) -> None:
         self.translations: LocalizerTranslations = translations
+        self.default_language: str = default_language
 
     async def compose_user_input(
         self,
@@ -30,4 +31,5 @@ class Localizer:
         return "\n".join([f"{name}: {message}" for name, _, message in history])
 
     def get_command_response(self, text: str, kwargs: dict) -> Optional[str]:
+        # TODO: pass the language from the context
         return self.translations.get_command_response(text, kwargs)

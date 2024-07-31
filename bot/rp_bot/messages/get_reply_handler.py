@@ -61,7 +61,6 @@ class MessageHandler(BaseMessageHandler):
             person,
             user_input,
             message.timestamp,
-            messages_to_store_limit=self.bot_config.last_n_messages_to_remember,
         )
         if not context.is_bot_mentioned:
             return None
@@ -81,7 +80,6 @@ class MessageHandler(BaseMessageHandler):
             "bot",
             localized_response,
             datetime.now(),
-            messages_to_store_limit=self.bot_config.last_n_messages_to_remember,
         )
 
     async def get_reply(

@@ -6,9 +6,10 @@ from ...models.handlers_input import Person, Context
 
 
 class Dialogs(BaseModel):
-    def __init__(self, db: AsyncIOMotorDatabase) -> None:
+    def __init__(self, db: AsyncIOMotorDatabase, last_n_messages_to_remember: int) -> None:
         super().__init__(db)
         self.dialogs = db.dialogs
+        self.last_n_messages_to_remember = last_n_messages_to_remember
 
     async def reset(self, context: Context) -> None:
         chat_id = context.chat_id
@@ -40,7 +41,6 @@ class Dialogs(BaseModel):
         person: Union[Person, Literal["bot"]],
         message: str,
         timestamp: datetime,
-        messages_to_store_limit: int,
     ) -> None:
         chat_id = context.chat_id
         user_handle = "bot" if person == "bot" else person.user_handle
@@ -58,7 +58,7 @@ class Dialogs(BaseModel):
 
         # Check if the stored messages exceed the limit and delete the oldest if necessary
         current_count = await self.dialogs.count_documents({"chat_id": chat_id})
-        if current_count > messages_to_store_limit:
+        if current_count > self.last_n_messages_to_remember:
             oldest_message = await self.dialogs.find_one(
                 {"chat_id": chat_id}, sort=[("_id", 1)]
             )

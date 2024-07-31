@@ -9,11 +9,12 @@ UserUsageResponse = namedtuple("UserUsageResponse", ["this_month_usage", "limit"
 
 
 class Users(BaseModel):
-    def __init__(self, db: AsyncIOMotorDatabase) -> None:
+    def __init__(self, db: AsyncIOMotorDatabase, default_usage_limit: int) -> None:
         super().__init__(db)
         self.users = db.users
+        self.default_usage_limit = default_usage_limit
 
-    async def create_user_if_not_exists(self, person: Person, usage_limit: int) -> None:
+    async def create_user_if_not_exists(self, person: Person) -> None:
         user_handle = person.user_handle
         await self.users.update_one(
             {"handle": user_handle},
@@ -23,7 +24,7 @@ class Users(BaseModel):
                     "first_name": person.first_name,
                     "last_name": person.last_name,
                     "usage": 0,
-                    "limit": usage_limit,
+                    "limit": self.default_usage_limit,
                 }
             },
             upsert=True,
