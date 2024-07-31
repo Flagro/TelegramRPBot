@@ -5,12 +5,13 @@ from ...models.handlers_input import Person, Context
 
 
 class Chats(BaseModel):
-    def __init__(self, db: AsyncIOMotorDatabase) -> None:
+    def __init__(self, db: AsyncIOMotorDatabase, default_language: str) -> None:
         super().__init__(db)
         self.chats = db.chats
+        self.default_language = default_language
 
     async def create_chat_if_not_exists(
-        self, context: Context, default_language: str
+        self, context: Context
     ) -> None:
         chat_id = context.chat_id
         await self.chats.update_one(
@@ -18,7 +19,7 @@ class Chats(BaseModel):
             {
                 "$setOnInsert": {
                     "chat_id": chat_id,
-                    "language": default_language,
+                    "language": self.default_language,
                     "is_started": False,
                     "conversation_tracker": False,
                 }

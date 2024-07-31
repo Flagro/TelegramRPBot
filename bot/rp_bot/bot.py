@@ -43,12 +43,17 @@ class RPBot(BaseBot):
             db_host=db_host,
             db_port=db_port,
             db_name=db_name,
+            default_language=bot_config.default_language,
             default_chat_modes=default_chat_modes,
+            last_n_messages_to_remember=bot_config.last_n_messages_to_remember,
+            default_usage_limit=bot_config.default_usage_limit,
         )
 
         ai = AI(openai_api_key=openai_api_key, db=db, ai_config=ai_config)
 
-        localizer = Localizer(translations=translations)
+        localizer = Localizer(
+            translations=translations, default_language=bot_config.default_language
+        )
 
         auth = Auth(
             allowed_handles=allowed_handles,

@@ -16,14 +16,17 @@ class DB:
         db_host: str,
         db_port: str,
         db_name: str,
+        default_language: str,
         default_chat_modes: DefaultChatModes,
+        last_n_messages_to_remember: int,
+        default_usage_limit: int,
     ):
         uri = f"mongodb://{db_user}:{db_password}@{db_host}:{db_port}"
         client = AsyncIOMotorClient(uri)
         db = client[db_name]
-        self.users = Users(db)
-        self.chats = Chats(db)
+        self.users = Users(db, default_usage_limit)
+        self.chats = Chats(db, default_language)
         self.user_facts = UserFacts(db)
         self.user_introductions = UserIntroductions(db)
         self.chat_modes = ChatModes(db, default_chat_modes)
-        self.dialogs = Dialogs(db)
+        self.dialogs = Dialogs(db, last_n_messages_to_remember)
