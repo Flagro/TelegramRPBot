@@ -15,6 +15,7 @@ Currently this is the work in progress.
     - Receive back text
     - Receive back puctures
 - Flexible tracking of the AI resources usage
+- Flexible permissions and limits
 - This bot is built with the idea of not being constrained by just Telegram bot, it could be adapted for most other platforms as well.
 
 ## Bot commands
@@ -30,8 +31,8 @@ Currently this is the work in progress.
 - `/usage` – Show usage limits for your user
 - `/language` - Set bot preferred language
 - `/conversationtracker` - Turn on/off the conversation tracker for current chat
-- [Bot admin only] `/ban [@tg_handle]` - Ban the user (could work by replying to user's message as well)
-- [Bot admin only] `/unban [@tg_handle]` - Unban the user
+- `/ban [@tg_handle]` - Ban the user (could work by replying to user's message as well)
+- `/unban [@tg_handle]` - Unban the user
 - `/help` – Show help
 
 ## Setup
