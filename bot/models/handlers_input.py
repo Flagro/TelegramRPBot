@@ -1,33 +1,26 @@
-class Person:
-    def __init__(
-        self,
-        user_id,
-        user_handle,
-        first_name,
-        last_name,
-        is_group_admin,
-        is_group_owner,
-    ):
-        self.user_id = user_id
-        self.user_handle = user_handle
-        self.first_name = first_name
-        self.last_name = last_name
-        self.is_group_admin = is_group_admin
-        self.is_group_owner = is_group_owner
+from pydantic import BaseModel
+from typing import Optional
 
 
-class Context:
-    def __init__(self, chat_id, thread_id, is_group, is_bot_mentioned, replied_to_user_handle):
-        self.chat_id = chat_id
-        self.thread_id = thread_id
-        self.is_group = is_group
-        self.is_bot_mentioned = is_bot_mentioned
-        self.replied_to_user_handle = replied_to_user_handle
+class Person(BaseModel):
+    user_id: int
+    user_handle: str
+    first_name: str
+    last_name: str
+    is_group_admin: bool
+    is_group_owner: bool
 
 
-class Message:
-    def __init__(self, message_text, timestamp, in_file_image, in_file_audio):
-        self.message_text = message_text
-        self.timestamp = timestamp
-        self.in_file_image = in_file_image
-        self.in_file_audio = in_file_audio
+class Context(BaseModel):
+    chat_id: int
+    thread_id: int
+    is_group: bool
+    is_bot_mentioned: bool
+    replied_to_user_handle: Optional[str] = None
+
+
+class Message(BaseModel):
+    message_text: str
+    timestamp: str
+    in_file_image: Optional[str] = None
+    in_file_audio: Optional[str] = None
