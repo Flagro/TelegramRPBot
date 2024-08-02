@@ -32,4 +32,11 @@ class Localizer:
 
     def get_command_response(self, text: str, kwargs: dict) -> Optional[str]:
         # TODO: pass the language from the context
-        return self.translations.get_command_response(text, kwargs)
+        language = "english"
+        if text not in self.translations.translations:
+            return None
+        localizer_translation = self.translations.translations[text]
+        response_text = localizer_translation.language_translation[language].format(
+            **kwargs
+        )
+        return response_text
