@@ -22,7 +22,7 @@ def is_authenticated(func):
     ) -> LocalizedCommandResponse:
         for permission in self.permissions:
             if not permission()(person, context, self.auth):
-                localized_text = self.localizer.get_command_response(
+                localized_text = await self.localizer.get_command_response(
                     "not_authenticated", {}
                 )
                 return LocalizedCommandResponse(localized_text=localized_text)
@@ -45,7 +45,7 @@ def stream_is_authenticated(func):
     ) -> AsyncIterator[LocalizedCommandResponse]:
         for permission in self.permissions:
             if not permission()(person, context, self.auth):
-                localized_text = self.localizer.get_command_response(
+                localized_text = await self.localizer.get_command_response(
                     "not_authenticated", {}
                 )
                 yield LocalizedCommandResponse(localized_text=localized_text)
@@ -93,10 +93,10 @@ class BaseCommandHandler(BaseHandler, ABC):
     command: str = None
     list_priority_order: int = 0
 
-    def get_localized_description(self) -> str:
-        result = self.localizer.get_command_response(f"{self.command}_description", {})
+    async def get_localized_description(self) -> str:
+        result = await self.localizer.get_command_response(f"{self.command}_description", {})
         if result is None:
-            return self.localizer.get_command_response("default_command_description", {})
+            return await self.localizer.get_command_response("default_command_description", {})
         return result
 
     @is_authenticated
@@ -130,7 +130,7 @@ class BaseCallbackHandler(BaseHandler, ABC):
         callback_response = await self.get_callback_response(
             person, context, message, args
         )
-        localized_text = self.localizer.get_command_response(
+        localized_text = await self.localizer.get_command_response(
             callback_response.text, callback_response.kwargs
         )
         return LocalizedCommandResponse(
@@ -152,7 +152,7 @@ class BaseMessageHandler(BaseHandler, ABC):
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> LocalizedCommandResponse:
         message_response = await self.get_reply(person, context, message, args)
-        localized_text = self.localizer.get_command_response(
+        localized_text = await self.localizer.get_command_response(
             message_response.text, message_response.kwargs
         )
         return LocalizedCommandResponse(
@@ -164,7 +164,7 @@ class BaseMessageHandler(BaseHandler, ABC):
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> AsyncIterator[LocalizedCommandResponse]:
         async for chunk in self.stream_get_reply(person, context, message, args):
-            localized_text = self.localizer.get_command_response(
+            localized_text = await self.localizer.get_command_response(
                 chunk.text, chunk.kwargs
             )
             yield LocalizedCommandResponse(

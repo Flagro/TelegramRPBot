@@ -32,7 +32,7 @@ class Localizer:
         # TODO: also add the names and context details in history
         return "\n".join([f"{name}: {message}" for name, _, message in history])
 
-    def get_command_response(
+    async def get_command_response(
         self,
         text: str,
         kwargs: Optional[dict] = None,
@@ -50,7 +50,7 @@ class Localizer:
         )
         return response_text
 
-    def get_supported_languages(self) -> List[str]:
+    async def get_supported_languages(self) -> List[str]:
         supported_languages = set()
         for _, localizer_translation in self.translations.translations.items():
             supported_languages.update(
