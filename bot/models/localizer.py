@@ -3,7 +3,9 @@ from .config.localizer_translations import LocalizerTranslations
 
 
 class Localizer:
-    def __init__(self, translations: LocalizerTranslations, default_language: str) -> None:
+    def __init__(
+        self, translations: LocalizerTranslations, default_language: str
+    ) -> None:
         self.translations: LocalizerTranslations = translations
         self.default_language: str = default_language
 
@@ -30,9 +32,12 @@ class Localizer:
         # TODO: also add the names and context details in history
         return "\n".join([f"{name}: {message}" for name, _, message in history])
 
-    def get_command_response(self, text: str, kwargs: dict) -> Optional[str]:
-        # TODO: pass the language from the context
-        language = "english"
+    def get_command_response(
+        self,
+        text: str,
+        kwargs: Optional[dict] = None,
+        language: Optional[str] = "english",
+    ) -> Optional[str]:
         if text not in self.translations.translations:
             return None
         localizer_translation = self.translations.translations[text]
