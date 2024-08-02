@@ -53,7 +53,7 @@ class TelegramBot:
         bot_commands = [
             BotCommand(
                 command=command.command,
-                description=command.get_localized_description(),
+                description=await command.get_localized_description(),
             )
             for command in self.commands
         ]

@@ -9,21 +9,20 @@ from ...models.handlers_input import Person, Context, Message
 
 class CallbackHandler(BaseCallbackHandler):
     permissions = CommandHandler.permissions
-    callback_action = "show_chat_modes"
+    callback_action = "show_chat_languages"
 
     async def get_callback_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
         old_action = args[0]
-        available_modes = await self.db.chat_modes.get_chat_modes(context)
-        modes_dict = OrderedDict({mode.id: mode.name for mode in available_modes})
-
+        available_languages = await self.localizer.get_supported_languages()
+        languages_dict = OrderedDict({language: language for language in available_languages})
         return CommandResponse(
-            "choose_mode",
+            "choose_language",
             {},
             KeyboardResponse(
-                modes_dict,
-                "show_chat_modes",
+                languages_dict,
+                "show_chat_languages",
                 old_action,
             ),
         )

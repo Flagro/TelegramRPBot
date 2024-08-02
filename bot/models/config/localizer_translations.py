@@ -24,13 +24,3 @@ class LocalizerTranslations(BaseYAMLConfigModel):
                 return cls(translations=translations)
             else:
                 raise KeyError(f"LocalizerTranslations not found in {file_path}")
-
-    def get_command_response(self, text: str, kwargs: dict) -> Optional[str]:
-        language = "english"
-        if text not in self.translations:
-            return None
-        localizer_translation = self.translations[text]
-        response_text = localizer_translation.language_translation[language].format(
-            **kwargs
-        )
-        return response_text

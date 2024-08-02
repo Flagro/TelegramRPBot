@@ -1,7 +1,8 @@
 from typing import List
+from collections import OrderedDict
 
 from ...models.base_handlers import BaseCommandHandler
-from ...models.handlers_response import CommandResponse
+from ...models.handlers_response import CommandResponse, KeyboardResponse
 from ...models.handlers_input import Person, Context, Message
 from ..auth import GroupAdmin, AllowedUser, NotBanned
 
@@ -14,12 +15,14 @@ class CommandHandler(BaseCommandHandler):
     async def get_command_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
-        if len(args) == 0:
-            return CommandResponse("specify_language", {})
-        language = args[0]
-        try:
-            await self.db.chats.set_language(context, language)
-            return CommandResponse("language_set", {"language": language})
-        except ValueError as e:
-            self.logger.error(f"Error setting language: {e}")
-            return CommandResponse("language_set_error", {"language": language})
+        available_languages = await self.localizer.get_supported_languages()
+        languages_dict = OrderedDict({language: language for language in available_languages})
+        return CommandResponse(
+            "choose_language",
+            {},
+            KeyboardResponse(
+                languages_dict,
+                "show_chat_languages",
+                "set_chat_language",
+            ),
+        )
