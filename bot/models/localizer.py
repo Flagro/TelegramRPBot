@@ -49,3 +49,11 @@ class Localizer:
             **kwargs
         )
         return response_text
+
+    def get_supported_languages(self) -> List[str]:
+        supported_languages = set()
+        for _, localizer_translation in self.translations.translations.items():
+            supported_languages.update(
+                localizer_translation.language_translation.keys()
+            )
+        return list(supported_languages)
