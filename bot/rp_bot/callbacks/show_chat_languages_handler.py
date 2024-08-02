@@ -1,20 +1,20 @@
 from typing import List
 from collections import OrderedDict
 
-from ...models.base_handlers import BaseCommandHandler
-from ...models.handlers_response import CommandResponse, KeyboardResponse
+from ...models.base_handlers import BaseCallbackHandler
+from ...models.handlers_response import KeyboardResponse, CommandResponse
+from ..commands.mode_handler import CommandHandler
 from ...models.handlers_input import Person, Context, Message
-from ..auth import GroupAdmin, AllowedUser, NotBanned
 
 
-class CommandHandler(BaseCommandHandler):
-    permissions = [GroupAdmin, AllowedUser, NotBanned]
-    command = "language"
-    list_priority_order = 3
+class CallbackHandler(BaseCallbackHandler):
+    permissions = CommandHandler.permissions
+    callback_action = "show_chat_languages"
 
-    async def get_command_response(
+    async def get_callback_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
+        old_action = args[0]
         available_languages = await self.localizer.get_supported_languages()
         languages_dict = OrderedDict({language: language for language in available_languages})
         return CommandResponse(
@@ -23,6 +23,6 @@ class CommandHandler(BaseCommandHandler):
             KeyboardResponse(
                 languages_dict,
                 "show_chat_languages",
-                "set_chat_language",
+                old_action,
             ),
         )
