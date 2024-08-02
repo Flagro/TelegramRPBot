@@ -41,8 +41,6 @@ LocalizerTranslations:
     english: "Mode {mode_name} added"
   inappropriate_mode:
     english: "Inappropriate mode text"
-  choose_mode_to_delete:
-    english: "Choose mode to delete text"
   user_banned:
     english: "User {user_handle} banned for {ban_duration} seconds"
   user_unbanned:

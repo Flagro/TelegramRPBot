@@ -19,7 +19,7 @@ class CallbackHandler(BaseCallbackHandler):
         modes_dict = OrderedDict({mode.id: mode.name for mode in available_modes})
 
         return CommandResponse(
-            "choose_mode_to_delete",
+            "choose_mode",
             {},
             KeyboardResponse(
                 modes_dict,
