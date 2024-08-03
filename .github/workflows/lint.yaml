@@ -38,7 +38,7 @@ jobs:
 
       - name: Lint with pylint
         run: |
-          pylint . --exit-zero
+          pylint ./bot --exit-zero
 
       - name: Lint YAML files
         run: |
