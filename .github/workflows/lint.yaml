@@ -24,10 +24,10 @@ jobs:
           pip install flake8
           pip install pylint
           pip install yamllint
-          pipenv install --dev
 
       - name: Install project dependencies
         run: |
+          pip install poetry
           poetry install
 
       - name: Lint with flake8
