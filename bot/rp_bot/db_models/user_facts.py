@@ -4,9 +4,7 @@ from ...models.handlers_input import Person, Context
 
 
 class UserFacts(BaseModel):
-    def __init__(
-        self, db: AsyncIOMotorDatabase
-    ) -> None:
+    def __init__(self, db: AsyncIOMotorDatabase) -> None:
         super().__init__(db)
         self.user_facts = db.user_facts
 

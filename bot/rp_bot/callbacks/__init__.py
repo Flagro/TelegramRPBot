@@ -9,8 +9,8 @@ for filename in os.listdir(directory):
     if filename.endswith("handler.py"):
         module_name = filename[:-3]
         module_path = f".{module_name}"
-        module = importlib.import_module(module_path, package='bot.rp_bot.callbacks')
-        
-        handler_class = getattr(module, 'CallbackHandler', None)
+        module = importlib.import_module(module_path, package="bot.rp_bot.callbacks")
+
+        handler_class = getattr(module, "CallbackHandler", None)
         if handler_class:
             handlers.append(handler_class)
