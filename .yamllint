@@ -1,0 +1,14 @@
+extends: default
+
+ignore: |
+  helm/templates/**/*.yaml
+
+rules:
+  line-length:
+    max: 127
+    allow-non-breakable-inline-mappings: true
+  document-start:
+    present: false
+  braces:
+    max-spaces-inside: 1
+    level: warning
