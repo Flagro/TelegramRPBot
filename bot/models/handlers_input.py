@@ -9,7 +9,6 @@ class Person(BaseModel):
     first_name: str
     last_name: str
     is_group_admin: bool
-    is_group_owner: bool
 
 
 class Context(BaseModel):

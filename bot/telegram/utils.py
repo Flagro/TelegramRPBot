@@ -15,6 +15,19 @@ def is_callback(update: Update) -> bool:
     return update.callback_query is not None
 
 
+async def is_group_admin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> bool:
+    chat_id = update.effective_chat.id
+    user_id = update.effective_user.id
+
+    chat_administrators = await context.bot.get_chat_administrators(chat_id)
+
+    for admin in chat_administrators:
+        if admin.user.id == user_id:
+            return True
+
+    return False
+
+
 async def get_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Context:
     if is_callback(update):
         return Context(
@@ -46,8 +59,7 @@ async def get_person(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Pers
             user_handle="@" + update.callback_query.from_user.username,
             first_name=update.callback_query.from_user.first_name,
             last_name=update.callback_query.from_user.last_name,
-            is_group_admin=False,  # TODO: check this properly
-            is_group_owner=False,  # TODO: check this properly
+            is_group_admin=await is_group_admin(update, context),
         )
     else:
         return Person(
@@ -55,8 +67,7 @@ async def get_person(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Pers
             user_handle="@" + update.message.from_user.username,
             first_name=update.message.from_user.first_name,
             last_name=update.message.from_user.last_name,
-            is_group_admin=False,  # TODO: check this properly
-            is_group_owner=False,  # TODO: check this properly
+            is_group_admin=await is_group_admin(update, context),
         )
 
 
