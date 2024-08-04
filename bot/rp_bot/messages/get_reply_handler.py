@@ -36,7 +36,7 @@ class MessageHandler(BaseMessageHandler):
         return user_input
 
     async def _get_bot_output(self, response_message: str) -> str:
-        localized_response = self.localizer.compose_bot_output(response_message)
+        localized_response = await self.localizer.compose_bot_output(response_message)
         return localized_response
 
     async def prepare_get_reply(
@@ -71,7 +71,9 @@ class MessageHandler(BaseMessageHandler):
         if not context.is_bot_mentioned:
             return None
         # Take everything besides the last one since the last one is the current message
-        messages_history = self.db.dialogs.get_messages(context, last_n=15)[0:-1]
+        messages_history = (await self.db.dialogs.get_messages(context, last_n=15))[
+            0:-1
+        ]
         prompt = await self.localizer.compose_prompt(user_input, messages_history)
         return prompt
 

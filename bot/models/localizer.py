@@ -30,7 +30,11 @@ class Localizer:
         self, user_input: str, history: List[Tuple[str, bool, str]]
     ) -> str:
         # TODO: also add the names and context details in history
-        return "\n".join([f"{name}: {message}" for name, _, message in history])
+        return (
+            "The conversation so far:\n"
+            + "\n".join([f"{name}: {message}" for name, _, message in history])
+            + f"\n\nAnd the user just asked: {user_input}"
+        )
 
     async def get_command_response(
         self,
