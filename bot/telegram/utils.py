@@ -119,7 +119,7 @@ async def get_file_in_memory(
     return file_stream
 
 
-def get_thread_id(update: Update) -> Optional[str]:
+def get_thread_id(update: Update) -> Optional[int]:
     """
     Gets the message thread id for the update, if any
     """
