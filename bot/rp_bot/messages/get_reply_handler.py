@@ -61,10 +61,7 @@ class MessageHandler(BaseMessageHandler):
             self.logger.info(
                 f"User {person.user_handle} exceeded the usage limit of {user_limit}"
             )
-            return CommandResponse(
-                text="usage_limit_exceeded",
-                kwargs={"user_handle": person.user_handle, "user_limit": user_limit},
-            )
+            return None
         await self.db.dialogs.add_message_to_dialog(
             context,
             person,
