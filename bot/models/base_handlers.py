@@ -40,7 +40,7 @@ def stream_is_authenticated(func):
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> AsyncIterator[LocalizedCommandResponse]:
         for permission in self.permissions:
-            if not permission()(person, context, self.auth):
+            if not await permission().check(person, context, self.auth):
                 localized_text = await self.localizer.get_command_response(
                     "not_authenticated", {}
                 )
