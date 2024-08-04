@@ -23,8 +23,8 @@ class CommandHandler(BaseCommandHandler):
             text="choose_language",
             kwargs={},
             keyboard=KeyboardResponse(
-                languages_dict,
-                "show_chat_languages",
-                "set_chat_language",
+                modes_dict=languages_dict,
+                callback="show_chat_languages",
+                button_action="set_chat_language",
             ),
         )

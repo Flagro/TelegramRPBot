@@ -25,8 +25,8 @@ class CommandHandler(BaseCommandHandler):
             text="choose_mode_to_delete",
             kwargs={},
             keyboard=KeyboardResponse(
-                modes_dict,
-                "show_chat_modes",
-                "delete_chat_mode",
+                modes_dict=modes_dict,
+                callback="show_chat_modes",
+                button_action="delete_chat_mode",
             ),
         )

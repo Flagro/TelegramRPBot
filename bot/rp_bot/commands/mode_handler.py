@@ -21,8 +21,8 @@ class CommandHandler(BaseCommandHandler):
             text="choose_mode",
             kwargs={},
             keyboard=KeyboardResponse(
-                modes_dict,
-                "show_chat_modes",
-                "set_chat_mode",
+                modes_dict=modes_dict,
+                callback="show_chat_modes",
+                button_action="set_chat_mode",
             ),
         )

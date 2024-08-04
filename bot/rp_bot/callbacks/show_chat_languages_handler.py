@@ -23,8 +23,8 @@ class CallbackHandler(BaseCallbackHandler):
             text="choose_language",
             kwargs={},
             keyboard=KeyboardResponse(
-                languages_dict,
-                "show_chat_languages",
-                old_action,
+                modes_dict=languages_dict,
+                callback="show_chat_languages",
+                button_action=old_action,
             ),
         )

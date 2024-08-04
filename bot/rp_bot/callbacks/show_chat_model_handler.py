@@ -22,8 +22,8 @@ class CallbackHandler(BaseCallbackHandler):
             text="choose_mode",
             kwargs={},
             keyboard=KeyboardResponse(
-                modes_dict,
-                "show_chat_modes",
-                old_action,
+                modes_dict=modes_dict,
+                callback="show_chat_modes",
+                button_action=old_action,
             ),
         )
