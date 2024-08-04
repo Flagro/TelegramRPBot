@@ -20,7 +20,7 @@ class CommandHandler(BaseCommandHandler):
         mode_name = mode_description.split("\n")[0].split(".")[0]
         try:
             await self.db.chat_modes.add_chat_mode(context, mode_name, mode_description)
-            return CommandResponse("mode_added", {"mode_name": mode_name})
+            return CommandResponse(text="mode_added", kwargs={"mode_name": mode_name})
         except ValueError as e:
             self.logger.error(f"Error adding mode: {e}")
-            return CommandResponse("inappropriate_mode", {})
+            return CommandResponse(text="inappropriate_mode", kwargs={})

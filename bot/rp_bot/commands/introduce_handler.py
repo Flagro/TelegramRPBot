@@ -20,7 +20,9 @@ class CommandHandler(BaseCommandHandler):
             await self.db.user_introductions.add_introduction(
                 context, user_handle, introduction
             )
-            return CommandResponse("introduction_added", {"user_handle": user_handle})
+            return CommandResponse(
+                text="introduction_added", kwargs={"user_handle": user_handle}
+            )
         except ValueError as e:
             self.logger.error(f"Error adding introduction: {e}")
-            return CommandResponse("inappropriate_introduction", {})
+            return CommandResponse(text="inappropriate_introduction", kwargs={})

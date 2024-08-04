@@ -26,13 +26,9 @@ def is_authenticated(func):
                     "not_authenticated", {}
                 )
                 return LocalizedCommandResponse(localized_text=localized_text)
-        await self.db.users.create_user_if_not_exists(
-            person
-        )
-        await self.db.chats.create_chat_if_not_exists(
-            context
-        )
-        await self.db.chat_models.create_chat_modes_if_not_exist(context)
+        await self.db.users.create_user_if_not_exists(person)
+        await self.db.chats.create_chat_if_not_exists(context)
+        await self.db.chat_modes.create_chat_modes_if_not_exist(context)
         return await func(self, person, context, message, args)
 
     return wrapper
@@ -50,13 +46,9 @@ def stream_is_authenticated(func):
                 )
                 yield LocalizedCommandResponse(localized_text=localized_text)
                 return
-        await self.db.users.create_user_if_not_exists(
-            person
-        )
-        await self.db.chats.create_chat_if_not_exists(
-            context
-        )
-        await self.db.chat_models.create_chat_modes_if_not_exist(context)
+        await self.db.users.create_user_if_not_exists(person)
+        await self.db.chats.create_chat_if_not_exists(context)
+        await self.db.chat_modes.create_chat_modes_if_not_exist(context)
         async for chunk in func(self, person, context, message, args):
             yield chunk
 
@@ -94,9 +86,13 @@ class BaseCommandHandler(BaseHandler, ABC):
     list_priority_order: int = 0
 
     async def get_localized_description(self) -> str:
-        result = await self.localizer.get_command_response(f"{self.command}_description", {})
+        result = await self.localizer.get_command_response(
+            f"{self.command}_description", {}
+        )
         if result is None:
-            return await self.localizer.get_command_response("default_command_description", {})
+            return await self.localizer.get_command_response(
+                "default_command_description", {}
+            )
         return result
 
     @is_authenticated

@@ -22,5 +22,6 @@ class CommandHandler(BaseCommandHandler):
             time_seconds = int(args[1])
         await self.db.users.ban_user(user_handle, time_seconds)
         return CommandResponse(
-            "user_banned", {"user_handle": user_handle, "ban_duration": time_seconds}
+            text="user_banned",
+            kwargs={"user_handle": user_handle, "ban_duration": time_seconds},
         )

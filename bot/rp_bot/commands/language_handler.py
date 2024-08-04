@@ -16,11 +16,13 @@ class CommandHandler(BaseCommandHandler):
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
         available_languages = await self.localizer.get_supported_languages()
-        languages_dict = OrderedDict({language: language for language in available_languages})
+        languages_dict = OrderedDict(
+            {language: language for language in available_languages}
+        )
         return CommandResponse(
-            "choose_language",
-            {},
-            KeyboardResponse(
+            text="choose_language",
+            kwargs={},
+            keyboard=KeyboardResponse(
                 languages_dict,
                 "show_chat_languages",
                 "set_chat_language",

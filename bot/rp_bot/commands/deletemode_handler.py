@@ -22,9 +22,9 @@ class CommandHandler(BaseCommandHandler):
         available_modes = await self.db.chat_modes.get_chat_modes(context)
         modes_dict = OrderedDict({mode.id: mode.name for mode in available_modes})
         return CommandResponse(
-            "choose_mode_to_delete",
-            {},
-            KeyboardResponse(
+            text="choose_mode_to_delete",
+            kwargs={},
+            keyboard=KeyboardResponse(
                 modes_dict,
                 "show_chat_modes",
                 "delete_chat_mode",

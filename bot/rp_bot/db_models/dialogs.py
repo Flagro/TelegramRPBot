@@ -6,7 +6,9 @@ from ...models.handlers_input import Person, Context
 
 
 class Dialogs(BaseModel):
-    def __init__(self, db: AsyncIOMotorDatabase, last_n_messages_to_remember: int) -> None:
+    def __init__(
+        self, db: AsyncIOMotorDatabase, last_n_messages_to_remember: int
+    ) -> None:
         super().__init__(db)
         self.dialogs = db.dialogs
         self.last_n_messages_to_remember = last_n_messages_to_remember

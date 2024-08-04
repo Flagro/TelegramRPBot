@@ -94,7 +94,9 @@ class MessageHandler(BaseMessageHandler):
             return None
         response_message = await self.ai.get_reply(prompt)
         await self.finish_get_reply(context, response_message)
-        return CommandResponse("message_response", {"response_text": response_message})
+        return CommandResponse(
+            text="message_response", kwargs={"response_text": response_message}
+        )
 
     async def stream_get_reply(
         self, person: Person, context: Context, message: Message, args: List[str]
@@ -108,6 +110,7 @@ class MessageHandler(BaseMessageHandler):
                 continue
             response_message += response_message_chunk
             yield CommandResponse(
-                "streaming_message_response", {"response_text": response_message}
+                text="streaming_message_response",
+                kwargs={"response_text": response_message},
             )
         await self.finish_get_reply(context, response_message)

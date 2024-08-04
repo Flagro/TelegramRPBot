@@ -16,10 +16,10 @@ class CommandHandler(BaseCommandHandler):
     ) -> CommandResponse:
         new_value = await self.db.chats.switch_conversation_tracker(context)
         return CommandResponse(
-            (
+            text=(
                 "conversation_tracker_turned_on"
                 if new_value
                 else "conversation_tracker_turned_off"
             ),
-            {},
+            kwargs={},
         )

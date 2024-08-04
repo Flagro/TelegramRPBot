@@ -18,7 +18,9 @@ class CommandHandler(BaseCommandHandler):
         facts = " ".join(args[1:])
         try:
             await self.db.user_facts.add_fact(context, facts_user_handle, facts)
-            return CommandResponse("fact_added", {"user_handle": facts_user_handle})
+            return CommandResponse(
+                text="fact_added", kwargs={"user_handle": facts_user_handle}
+            )
         except ValueError as e:
             self.logger.error(f"Error adding fact: {e}")
-            return CommandResponse("inappropriate_fact", {})
+            return CommandResponse(text="inappropriate_fact", kwargs={})

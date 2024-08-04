@@ -18,9 +18,9 @@ class CommandHandler(BaseCommandHandler):
         available_modes = await self.db.chat_modes.get_chat_modes(context)
         modes_dict = OrderedDict({mode.id: mode.mode_name for mode in available_modes})
         return CommandResponse(
-            "choose_mode",
-            {},
-            KeyboardResponse(
+            text="choose_mode",
+            kwargs={},
+            keyboard=KeyboardResponse(
                 modes_dict,
                 "show_chat_modes",
                 "set_chat_mode",

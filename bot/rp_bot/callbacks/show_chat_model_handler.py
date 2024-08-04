@@ -19,9 +19,9 @@ class CallbackHandler(BaseCallbackHandler):
         modes_dict = OrderedDict({mode.id: mode.name for mode in available_modes})
 
         return CommandResponse(
-            "choose_mode",
-            {},
-            KeyboardResponse(
+            text="choose_mode",
+            kwargs={},
+            keyboard=KeyboardResponse(
                 modes_dict,
                 "show_chat_modes",
                 old_action,

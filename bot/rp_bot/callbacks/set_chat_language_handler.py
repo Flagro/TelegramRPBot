@@ -15,4 +15,4 @@ class CallbackHandler(BaseCallbackHandler):
     ) -> CommandResponse:
         language = args[0]
         await self.db.chats.set_language(context, language)
-        return CommandResponse("language_set", {"language": language})
+        return CommandResponse(text="language_set", kwargs={"language": language})

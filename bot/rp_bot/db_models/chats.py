@@ -10,9 +10,7 @@ class Chats(BaseModel):
         self.chats = db.chats
         self.default_language = default_language
 
-    async def create_chat_if_not_exists(
-        self, context: Context
-    ) -> None:
+    async def create_chat_if_not_exists(self, context: Context) -> None:
         chat_id = context.chat_id
         await self.chats.update_one(
             {"chat_id": chat_id},

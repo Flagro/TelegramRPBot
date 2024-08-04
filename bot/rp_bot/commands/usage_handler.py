@@ -15,4 +15,4 @@ class CommandHandler(BaseCommandHandler):
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
         user_usage = await self.db.users.get_user_usage(person)
-        return CommandResponse("usage_text", user_usage._asdict())
+        return CommandResponse(text="usage_text", kwargs=user_usage._asdict())
