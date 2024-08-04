@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 
 class KeyboardResponse(BaseModel):
-    modes_dict: OrderedDict[UUID, str]
+    modes_dict: OrderedDict[str, str]
     callback: str
     button_action: str
 

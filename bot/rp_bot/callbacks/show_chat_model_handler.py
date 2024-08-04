@@ -16,7 +16,9 @@ class CallbackHandler(BaseCallbackHandler):
     ) -> CommandResponse:
         old_action = args[0]
         available_modes = await self.db.chat_modes.get_chat_modes(context)
-        modes_dict = OrderedDict({mode.id: mode.name for mode in available_modes})
+        modes_dict = OrderedDict(
+            {str(mode.id): str(mode.mode_name) for mode in available_modes}
+        )
 
         return CommandResponse(
             text="choose_mode",

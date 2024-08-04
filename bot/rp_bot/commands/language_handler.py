@@ -17,7 +17,7 @@ class CommandHandler(BaseCommandHandler):
     ) -> CommandResponse:
         available_languages = await self.localizer.get_supported_languages()
         languages_dict = OrderedDict(
-            {language: language for language in available_languages}
+            {str(language): str(language) for language in available_languages}
         )
         return CommandResponse(
             text="choose_language",
