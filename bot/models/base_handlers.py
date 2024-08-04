@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from functools import wraps
-from typing import List, AsyncIterator
+from typing import List, AsyncIterator, Optional
 import logging
 
 from ..rp_bot.db import DB
@@ -98,13 +98,15 @@ class BaseCommandHandler(BaseHandler, ABC):
     @is_authenticated
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> LocalizedCommandResponse:
+    ) -> Optional[LocalizedCommandResponse]:
         command_response = await self.get_command_response(
             person, context, message, args
         )
-        localized_text = self.localizer.get_command_response(
+        localized_text = await self.localizer.get_command_response(
             command_response.text, command_response.kwargs
         )
+        if localized_text is None:
+            return None
         return LocalizedCommandResponse(
             localized_text=localized_text, keyboard=command_response.keyboard
         )
@@ -122,13 +124,15 @@ class BaseCallbackHandler(BaseHandler, ABC):
     @is_authenticated
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> LocalizedCommandResponse:
+    ) -> Optional[LocalizedCommandResponse]:
         callback_response = await self.get_callback_response(
             person, context, message, args
         )
         localized_text = await self.localizer.get_command_response(
             callback_response.text, callback_response.kwargs
         )
+        if localized_text is None:
+            return None
         return LocalizedCommandResponse(
             localized_text=localized_text, keyboard=callback_response.keyboard
         )
@@ -146,11 +150,15 @@ class BaseMessageHandler(BaseHandler, ABC):
     @is_authenticated
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> LocalizedCommandResponse:
+    ) -> Optional[LocalizedCommandResponse]:
         message_response = await self.get_reply(person, context, message, args)
+        if message_response is None:
+            return None
         localized_text = await self.localizer.get_command_response(
             message_response.text, message_response.kwargs
         )
+        if localized_text is None:
+            return None
         return LocalizedCommandResponse(
             localized_text=localized_text, keyboard=message_response.keyboard
         )
@@ -160,9 +168,13 @@ class BaseMessageHandler(BaseHandler, ABC):
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> AsyncIterator[LocalizedCommandResponse]:
         async for chunk in self.stream_get_reply(person, context, message, args):
+            if chunk is None:
+                continue
             localized_text = await self.localizer.get_command_response(
                 chunk.text, chunk.kwargs
             )
+            if localized_text is None:
+                continue
             yield LocalizedCommandResponse(
                 localized_text=localized_text,
                 keyboard=chunk.keyboard,
