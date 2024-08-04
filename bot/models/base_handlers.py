@@ -20,15 +20,15 @@ def is_authenticated(func):
     async def wrapper(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> LocalizedCommandResponse:
+        await self.db.users.create_user_if_not_exists(person)
+        await self.db.chats.create_chat_if_not_exists(context)
+        await self.db.chat_modes.create_chat_modes_if_not_exist(context)
         for permission in self.permissions:
             if not await permission().check(person, context, self.auth):
                 localized_text = await self.localizer.get_command_response(
                     "not_authenticated", {}
                 )
                 return LocalizedCommandResponse(localized_text=localized_text)
-        await self.db.users.create_user_if_not_exists(person)
-        await self.db.chats.create_chat_if_not_exists(context)
-        await self.db.chat_modes.create_chat_modes_if_not_exist(context)
         return await func(self, person, context, message, args)
 
     return wrapper
@@ -39,6 +39,9 @@ def stream_is_authenticated(func):
     async def wrapper(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> AsyncIterator[LocalizedCommandResponse]:
+        await self.db.users.create_user_if_not_exists(person)
+        await self.db.chats.create_chat_if_not_exists(context)
+        await self.db.chat_modes.create_chat_modes_if_not_exist(context)
         for permission in self.permissions:
             if not await permission().check(person, context, self.auth):
                 localized_text = await self.localizer.get_command_response(
@@ -46,9 +49,6 @@ def stream_is_authenticated(func):
                 )
                 yield LocalizedCommandResponse(localized_text=localized_text)
                 return
-        await self.db.users.create_user_if_not_exists(person)
-        await self.db.chats.create_chat_if_not_exists(context)
-        await self.db.chat_modes.create_chat_modes_if_not_exist(context)
         async for chunk in func(self, person, context, message, args):
             yield chunk
 
