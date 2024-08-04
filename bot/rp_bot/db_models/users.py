@@ -36,7 +36,14 @@ class Users(BaseModel):
             {"handle": user_handle}, {"$inc": {"usage": points}}
         )
 
-    async def get_user_usage(self, person: Person) -> UserUsageResponse:
+    async def get_user_usage(self, person: Person) -> int:
+        user_handle = person.user_handle
+        usage_data = await self.users.find_one(
+            {"handle": user_handle}, {"_id": 0, "usage": 1}
+        )
+        return usage_data.get("usage", 0)
+
+    async def get_user_usage_report(self, person: Person) -> UserUsageResponse:
         user_handle = person.user_handle
         usage_data = await self.users.find_one(
             {"handle": user_handle}, {"_id": 0, "usage": 1, "limit": 1}

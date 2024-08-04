@@ -14,5 +14,5 @@ class CommandHandler(BaseCommandHandler):
     async def get_command_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
-        user_usage = await self.db.users.get_user_usage(person)
+        user_usage = await self.db.users.get_user_usage_report(person)
         return CommandResponse(text="usage_text", kwargs=user_usage._asdict())
