@@ -15,4 +15,4 @@ class CommandHandler(BaseCommandHandler):
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
         await self.db.dialogs.reset(context)
-        return CommandResponse(text="reset_done", kwargs={})
+        return CommandResponse(text="reset_done")

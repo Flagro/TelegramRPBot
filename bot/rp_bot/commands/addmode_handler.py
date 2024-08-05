@@ -23,4 +23,4 @@ class CommandHandler(BaseCommandHandler):
             return CommandResponse(text="mode_added", kwargs={"mode_name": mode_name})
         except ValueError as e:
             self.logger.error(f"Error adding mode: {e}")
-            return CommandResponse(text="inappropriate_mode", kwargs={})
+            return CommandResponse(text="inappropriate_mode")

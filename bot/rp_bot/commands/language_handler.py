@@ -21,7 +21,6 @@ class CommandHandler(BaseCommandHandler):
         )
         return CommandResponse(
             text="choose_language",
-            kwargs={},
             keyboard=KeyboardResponse(
                 modes_dict=languages_dict,
                 callback="show_chat_languages",

@@ -22,7 +22,6 @@ class CallbackHandler(BaseCallbackHandler):
 
         return CommandResponse(
             text="choose_mode",
-            kwargs={},
             keyboard=KeyboardResponse(
                 modes_dict=modes_dict,
                 callback="show_chat_modes",

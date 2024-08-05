@@ -13,4 +13,4 @@ class CommandHandler(BaseCommandHandler):
     async def get_command_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
-        return CommandResponse(text="help_text", kwargs={})
+        return CommandResponse(text="help_text")

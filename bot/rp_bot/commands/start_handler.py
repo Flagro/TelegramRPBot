@@ -15,4 +15,4 @@ class CommandHandler(BaseCommandHandler):
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
         await self.db.chats.start_chat(context)
-        return CommandResponse(text="start_done", kwargs={})
+        return CommandResponse(text="start_done")

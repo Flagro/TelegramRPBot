@@ -25,4 +25,4 @@ class CommandHandler(BaseCommandHandler):
             )
         except ValueError as e:
             self.logger.error(f"Error adding introduction: {e}")
-            return CommandResponse(text="inappropriate_introduction", kwargs={})
+            return CommandResponse(text="inappropriate_introduction")

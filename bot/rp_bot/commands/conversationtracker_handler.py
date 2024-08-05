@@ -21,5 +21,4 @@ class CommandHandler(BaseCommandHandler):
                 if new_value
                 else "conversation_tracker_turned_off"
             ),
-            kwargs={},
         )

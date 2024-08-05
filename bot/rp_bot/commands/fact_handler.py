@@ -23,4 +23,4 @@ class CommandHandler(BaseCommandHandler):
             )
         except ValueError as e:
             self.logger.error(f"Error adding fact: {e}")
-            return CommandResponse(text="inappropriate_fact", kwargs={})
+            return CommandResponse(text="inappropriate_fact")
