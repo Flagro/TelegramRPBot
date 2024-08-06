@@ -9,7 +9,7 @@ from ..auth import GroupAdmin, AllowedUser, NotBanned
 class CommandHandler(BaseCommandHandler):
     permissions = [GroupAdmin, AllowedUser, NotBanned]
     command = "start"
-    list_priority_order = CommandPriority.TOP
+    list_priority_order = CommandPriority.FIRST
 
     async def get_command_response(
         self, person: Person, context: Context, message: Message, args: List[str]

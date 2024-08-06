@@ -57,7 +57,7 @@ def stream_is_authenticated(func):
 
 
 class CommandPriority(enum.IntEnum):
-    TOP = 0
+    FIRST = 0
     DEFAULT = 1
     LAST = 2
 
