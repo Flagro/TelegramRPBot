@@ -60,7 +60,7 @@ LocalizerTranslations:
   facts_cleared:
     english: "Facts {user_handle} cleared"
   usage_text:
-    english: "Usage {user_usage} text"
+    english: "Usage {this_month_usage} text"
   language_set:
     english: "Language {language} set"
   reset_done:
