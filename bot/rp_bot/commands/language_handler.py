@@ -1,7 +1,7 @@
 from typing import List
 from collections import OrderedDict
 
-from ...models.base_handlers import BaseCommandHandler
+from ...models.base_handlers import BaseCommandHandler, CommandPriority
 from ...models.handlers_response import CommandResponse, KeyboardResponse
 from ...models.handlers_input import Person, Context, Message
 from ..auth import GroupAdmin, AllowedUser, NotBanned
@@ -10,7 +10,7 @@ from ..auth import GroupAdmin, AllowedUser, NotBanned
 class CommandHandler(BaseCommandHandler):
     permissions = [GroupAdmin, AllowedUser, NotBanned]
     command = "language"
-    list_priority_order = 3
+    list_priority_order = CommandPriority.DEFAULT
 
     async def get_command_response(
         self, person: Person, context: Context, message: Message, args: List[str]
