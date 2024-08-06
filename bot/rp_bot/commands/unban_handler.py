@@ -9,7 +9,7 @@ from ..auth import BotAdmin
 class CommandHandler(BaseCommandHandler):
     permissions = [BotAdmin]
     command = "unban"
-    list_priority_order = CommandPriority.DEFAULT
+    list_priority_order = CommandPriority.ADMIN
 
     async def get_command_response(
         self, person: Person, context: Context, message: Message, args: List[str]
