@@ -1,6 +1,6 @@
 from typing import List
 
-from ...models.base_handlers import BaseCommandHandler
+from ...models.base_handlers import BaseCommandHandler, CommandPriority
 from ...models.handlers_response import CommandResponse
 from ...models.handlers_input import Person, Context, Message
 
@@ -8,7 +8,7 @@ from ...models.handlers_input import Person, Context, Message
 class CommandHandler(BaseCommandHandler):
     permissions = []
     command = "help"
-    list_priority_order = 4
+    list_priority_order = CommandPriority.LAST
 
     async def get_command_response(
         self, person: Person, context: Context, message: Message, args: List[str]

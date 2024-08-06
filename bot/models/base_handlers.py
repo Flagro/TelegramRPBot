@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from functools import wraps
 from typing import List, AsyncIterator, Optional
 import logging
+import enum
 
 from ..rp_bot.db import DB
 from ..rp_bot.ai import AI
@@ -55,6 +56,13 @@ def stream_is_authenticated(func):
     return wrapper
 
 
+class CommandPriority(enum.IntEnum):
+    FIRST = 0
+    DEFAULT = 1
+    ADMIN = 2
+    LAST = 3
+
+
 class BaseHandler(ABC):
     permissions: list = []
     streamable: bool = False
@@ -83,7 +91,7 @@ class BaseHandler(ABC):
 
 class BaseCommandHandler(BaseHandler, ABC):
     command: str = None
-    list_priority_order: int = 0
+    list_priority_order: CommandPriority = CommandPriority.DEFAULT
 
     async def get_localized_description(self) -> str:
         result = await self.localizer.get_command_response(
