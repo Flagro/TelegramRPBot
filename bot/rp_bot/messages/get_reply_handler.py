@@ -61,6 +61,7 @@ class MessageHandler(BaseMessageHandler):
             self.logger.info(
                 f"User {person.user_handle} exceeded the usage limit of {user_limit}"
             )
+            # TODO: somehow return a special response from here
             return None
         await self.db.dialogs.add_message_to_dialog(
             context,
@@ -104,10 +105,11 @@ class MessageHandler(BaseMessageHandler):
         if not prompt:
             return None
         response_message = await self.ai.get_reply(prompt)
-        await self.finish_get_reply(person, context, response_message)
-        return CommandResponse(
+        result = CommandResponse(
             text="message_response", kwargs={"response_text": response_message}
         )
+        await self.finish_get_reply(person, context, response_message)
+        return result
 
     async def stream_get_reply(
         self, person: Person, context: Context, message: Message, args: List[str]
