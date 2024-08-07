@@ -24,10 +24,11 @@ def is_authenticated(func):
         await self.db.create_if_not_exists(person, context)
         for permission in self.permissions:
             if not await permission().check(person, context, self.auth):
-                localized_text = await self.localizer.get_command_response(
-                    "not_authenticated", {}
+                return LocalizedCommandResponse(
+                    localized_text=await self.localizer.get_command_response(
+                        "not_authenticated"
+                    )
                 )
-                return LocalizedCommandResponse(localized_text=localized_text)
         return await func(self, person, context, message, args)
 
     return wrapper
@@ -41,10 +42,11 @@ def stream_is_authenticated(func):
         await self.db.create_if_not_exists(person, context)
         for permission in self.permissions:
             if not await permission().check(person, context, self.auth):
-                localized_text = await self.localizer.get_command_response(
-                    "not_authenticated", {}
+                yield LocalizedCommandResponse(
+                    localized_text=await self.localizer.get_command_response(
+                        "not_authenticated"
+                    )
                 )
-                yield LocalizedCommandResponse(localized_text=localized_text)
                 return
         async for chunk in func(self, person, context, message, args):
             yield chunk
