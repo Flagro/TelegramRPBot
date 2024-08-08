@@ -104,34 +104,10 @@ class BaseCommandHandler(BaseHandler, ABC):
             )
         return result
 
-    @abstractmethod
-    async def get_response(
-        self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> CommandResponse:
-        raise NotImplementedError
-
 
 class BaseCallbackHandler(BaseHandler, ABC):
     callback_action: str = None
 
-    @abstractmethod
-    async def get_response(
-        self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> CommandResponse:
-        raise NotImplementedError
-
 
 class BaseMessageHandler(BaseHandler, ABC):
     streamable: bool = True
-
-    @abstractmethod
-    async def get_response(
-        self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> CommandResponse:
-        raise NotImplementedError
-
-    @abstractmethod
-    async def stream_get_response(
-        self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> AsyncIterator[CommandResponse]:
-        raise NotImplementedError
