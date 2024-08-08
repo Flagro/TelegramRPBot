@@ -111,3 +111,9 @@ class BaseCallbackHandler(BaseHandler, ABC):
 
 class BaseMessageHandler(BaseHandler, ABC):
     streamable: bool = True
+
+    @abstractmethod
+    async def stream_get_response(
+        self, person: Person, context: Context, message: Message, args: List[str]
+    ) -> AsyncIterator[CommandResponse]:
+        raise NotImplementedError
