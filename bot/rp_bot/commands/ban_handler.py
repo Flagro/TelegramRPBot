@@ -11,7 +11,7 @@ class CommandHandler(BaseCommandHandler):
     command = "ban"
     list_priority_order = CommandPriority.ADMIN
 
-    async def get_command_response(
+    async def get_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
         if context.replied_to_user_handle is None:

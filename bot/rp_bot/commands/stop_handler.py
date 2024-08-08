@@ -11,7 +11,7 @@ class CommandHandler(BaseCommandHandler):
     command = "stop"
     list_priority_order = CommandPriority.FIRST
 
-    async def get_command_response(
+    async def get_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
         await self.db.chats.stop_chat(context)

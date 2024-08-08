@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from functools import wraps
 from typing import List, AsyncIterator, Optional
 import logging
 import enum
@@ -14,44 +13,6 @@ from ..models.handlers_response import (
     LocalizedCommandResponse,
 )
 from ..models.config import BotConfig
-
-
-def is_authenticated(func):
-    @wraps(func)
-    async def wrapper(
-        self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> LocalizedCommandResponse:
-        await self.db.create_if_not_exists(person, context)
-        for permission in self.permissions:
-            if not await permission().check(person, context, self.auth):
-                return LocalizedCommandResponse(
-                    localized_text=await self.localizer.get_command_response(
-                        "not_authenticated"
-                    )
-                )
-        return await func(self, person, context, message, args)
-
-    return wrapper
-
-
-def stream_is_authenticated(func):
-    @wraps(func)
-    async def wrapper(
-        self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> AsyncIterator[LocalizedCommandResponse]:
-        await self.db.create_if_not_exists(person, context)
-        for permission in self.permissions:
-            if not await permission().check(person, context, self.auth):
-                yield LocalizedCommandResponse(
-                    localized_text=await self.localizer.get_command_response(
-                        "not_authenticated"
-                    )
-                )
-                return
-        async for chunk in func(self, person, context, message, args):
-            yield chunk
-
-    return wrapper
 
 
 class CommandPriority(enum.IntEnum):
@@ -75,15 +36,65 @@ class BaseHandler(ABC):
         self.bot_config = bot_config
         self.logger = logging.getLogger(f"{__name__}.{id(self)}")
 
-    @abstractmethod
+    async def is_authenticated(self, person: Person, context: Context) -> bool:
+        for permission in self.permissions:
+            if not await permission().check(person, context, self.auth):
+                return False
+        return True
+
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> LocalizedCommandResponse:
-        raise NotImplementedError
+        await self.db.create_if_not_exists(person, context)
+        if not await self.is_authenticated(person, context):
+            response = CommandResponse(text="not_authenticated")
+        else:
+            response = await self.get_response(person, context, message, args)
+        if response is None:
+            return None
+        localized_text = await self.localizer.get_command_response(
+            response.text, response.kwargs
+        )
+        if localized_text is None:
+            return None
+        return LocalizedCommandResponse(
+            localized_text=localized_text, keyboard=response.keyboard
+        )
 
     async def stream_handle(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> AsyncIterator[LocalizedCommandResponse]:
+        await self.db.create_if_not_exists(person, context)
+        if not await self.is_authenticated(person, context):
+            yield LocalizedCommandResponse(
+                localized_text=await self.localizer.get_command_response(
+                    "not_authenticated"
+                ),
+                keyboard=None,
+            )
+            return
+        async for chunk in self.stream_get_response(person, context, message, args):
+            if chunk is None:
+                continue
+            localized_text = await self.localizer.get_command_response(
+                chunk.text, chunk.kwargs
+            )
+            if localized_text is None:
+                continue
+            yield LocalizedCommandResponse(
+                localized_text=localized_text,
+                keyboard=chunk.keyboard,
+            )
+
+    @abstractmethod
+    async def get_response(
+        self, person: Person, context: Context, message: Message, args: List[str]
+    ) -> Optional[CommandResponse]:
+        raise NotImplementedError
+
+    async def stream_get_response(
+        self, person: Person, context: Context, message: Message, args: List[str]
+    ) -> AsyncIterator[CommandResponse]:
         raise NotImplementedError
 
 
@@ -101,99 +112,16 @@ class BaseCommandHandler(BaseHandler, ABC):
             )
         return result
 
-    @is_authenticated
-    async def handle(
-        self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> Optional[LocalizedCommandResponse]:
-        command_response = await self.get_command_response(
-            person, context, message, args
-        )
-        localized_text = await self.localizer.get_command_response(
-            command_response.text, command_response.kwargs
-        )
-        if localized_text is None:
-            return None
-        return LocalizedCommandResponse(
-            localized_text=localized_text, keyboard=command_response.keyboard
-        )
-
-    @abstractmethod
-    async def get_command_response(
-        self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> CommandResponse:
-        raise NotImplementedError
-
 
 class BaseCallbackHandler(BaseHandler, ABC):
     callback_action: str = None
-
-    @is_authenticated
-    async def handle(
-        self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> Optional[LocalizedCommandResponse]:
-        callback_response = await self.get_callback_response(
-            person, context, message, args
-        )
-        localized_text = await self.localizer.get_command_response(
-            callback_response.text, callback_response.kwargs
-        )
-        if localized_text is None:
-            return None
-        return LocalizedCommandResponse(
-            localized_text=localized_text, keyboard=callback_response.keyboard
-        )
-
-    @abstractmethod
-    async def get_callback_response(
-        self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> CommandResponse:
-        raise NotImplementedError
 
 
 class BaseMessageHandler(BaseHandler, ABC):
     streamable: bool = True
 
-    @is_authenticated
-    async def handle(
-        self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> Optional[LocalizedCommandResponse]:
-        message_response = await self.get_reply(person, context, message, args)
-        if message_response is None:
-            return None
-        localized_text = await self.localizer.get_command_response(
-            message_response.text, message_response.kwargs
-        )
-        if localized_text is None:
-            return None
-        return LocalizedCommandResponse(
-            localized_text=localized_text, keyboard=message_response.keyboard
-        )
-
-    @stream_is_authenticated
-    async def stream_handle(
-        self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> AsyncIterator[LocalizedCommandResponse]:
-        async for chunk in self.stream_get_reply(person, context, message, args):
-            if chunk is None:
-                continue
-            localized_text = await self.localizer.get_command_response(
-                chunk.text, chunk.kwargs
-            )
-            if localized_text is None:
-                continue
-            yield LocalizedCommandResponse(
-                localized_text=localized_text,
-                keyboard=chunk.keyboard,
-            )
-
     @abstractmethod
-    async def get_reply(
-        self, person: Person, context: Context, message: Message, args: List[str]
-    ) -> CommandResponse:
-        raise NotImplementedError
-
-    @abstractmethod
-    async def stream_get_reply(
+    async def stream_get_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> AsyncIterator[CommandResponse]:
         raise NotImplementedError

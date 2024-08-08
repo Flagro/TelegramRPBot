@@ -11,7 +11,7 @@ class CommandHandler(BaseCommandHandler):
     command = "usage"
     list_priority_order = CommandPriority.LAST
 
-    async def get_command_response(
+    async def get_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
         user_usage = await self.db.users.get_user_usage_report(person)

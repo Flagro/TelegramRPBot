@@ -12,7 +12,7 @@ class CommandHandler(BaseCommandHandler):
     command = "deletemode"
     list_priority_order = CommandPriority.DEFAULT
 
-    async def get_command_response(
+    async def get_response(
         self,
         person: Person,
         context: Context,
