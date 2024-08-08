@@ -10,7 +10,7 @@ class CallbackHandler(BaseCallbackHandler):
     permissions = CommandHandler.permissions
     callback_action = "set_chat_mode"
 
-    async def get_callback_response(
+    async def get_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
         mode_id = args[0]

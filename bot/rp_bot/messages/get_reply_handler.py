@@ -94,7 +94,7 @@ class MessageHandler(BaseMessageHandler):
             datetime.now(),
         )
 
-    async def get_reply(
+    async def get_response(
         self,
         person: Person,
         context: Context,
@@ -111,7 +111,7 @@ class MessageHandler(BaseMessageHandler):
         await self.finish_get_reply(person, context, response_message)
         return result
 
-    async def stream_get_reply(
+    async def stream_get_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> AsyncIterator[CommandResponse]:
         prompt = await self.prepare_get_reply(person, context, message)

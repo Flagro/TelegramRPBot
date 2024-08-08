@@ -12,7 +12,7 @@ class CommandHandler(BaseCommandHandler):
     command = "mode"
     list_priority_order = CommandPriority.DEFAULT
 
-    async def get_command_response(
+    async def get_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
         available_modes = await self.db.chat_modes.get_chat_modes(context)

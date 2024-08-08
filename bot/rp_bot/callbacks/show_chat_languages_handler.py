@@ -11,7 +11,7 @@ class CallbackHandler(BaseCallbackHandler):
     permissions = CommandHandler.permissions
     callback_action = "show_chat_languages"
 
-    async def get_callback_response(
+    async def get_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
         old_action = args[0]
