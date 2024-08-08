@@ -90,6 +90,7 @@ LocalizerTranslations:
         - Receive back text 📩
         - Receive back pictures 🖼
       • <b>Flexible tracking of the AI resources usage</b> 📊
+      • <b>Fully open-sourced</b> check out the code on <a href="https://github.com/Flagro/TelegramRPBot">GitHub</a>
 
       <strong>Bot commands 🔧</strong>
       • <em>/start</em> - Start the dialogue
