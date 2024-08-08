@@ -1,6 +1,6 @@
 from .base_config import BaseYAMLConfigModel
 from pydantic import BaseModel
-from typing import Dict, Optional
+from typing import Dict
 import yaml
 
 
