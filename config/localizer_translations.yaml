@@ -92,6 +92,8 @@ LocalizerTranslations:
       • <b>Flexible tracking of the AI resources usage</b> 📊
 
       <strong>Bot commands 🔧</strong>
+      • <em>/start</em> - Start the dialogue
+      • <em>/stop</em> - Stop the dialogue
       • <em>/reset</em> - Reset the dialogue history
       • <em>/mode [mode]</em> - Select chat mode from existing ones
       • <em>/addmode [mode] [description]</em> - Add new chat mode
