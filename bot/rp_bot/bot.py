@@ -1,4 +1,5 @@
 from typing import List
+from logging import Logger
 from bot.models.base_handlers import (
     BaseCallbackHandler,
     BaseCommandHandler,
@@ -12,6 +13,12 @@ from .ai import AI
 from .db import DB
 from .auth import Auth
 from ..models.localizer import Localizer
+from ..models.config import (
+    BotConfig,
+    DefaultChatModes,
+    LocalizerTranslations,
+    AIConfig,
+)
 
 
 class RPBot(BaseBot):
@@ -21,41 +28,32 @@ class RPBot(BaseBot):
 
     def __init__(
         self,
-        db_uri,
-        openai_api_key,
-        translations,
-        default_chat_modes,
-        ai_config,
-        bot_config,
-        allowed_handles,
-        admin_handles,
-        logger,
+        db_uri: str,
+        openai_api_key: str,
+        translations: LocalizerTranslations,
+        default_chat_modes: DefaultChatModes,
+        ai_config: AIConfig,
+        bot_config: BotConfig,
+        allowed_handles: List[str],
+        admin_handles: List[str],
+        logger: Logger,
     ):
-        # TODO: init here the handlers with parameters
-        # and store them in a class attribute
-        db = DB(
+        self.db = DB(
             db_uri=db_uri,
             default_language=bot_config.default_language,
             default_chat_modes=default_chat_modes,
             last_n_messages_to_remember=bot_config.last_n_messages_to_remember,
             default_usage_limit=bot_config.default_usage_limit,
         )
-
-        ai = AI(openai_api_key=openai_api_key, db=db, ai_config=ai_config)
-
-        localizer = Localizer(
+        self.ai = AI(openai_api_key=openai_api_key, db=self.db, ai_config=ai_config)
+        self.localizer = Localizer(
             translations=translations, default_language=bot_config.default_language
         )
-
-        auth = Auth(
+        self.auth = Auth(
             allowed_handles=allowed_handles,
             admin_handles=admin_handles,
-            db=db,
+            db=self.db,
         )
-        self.ai = ai
-        self.db = db
-        self.localizer = localizer
-        self.auth = auth  # TODO: init permissions
         self.bot_config = bot_config
         self.logger = logger
 
