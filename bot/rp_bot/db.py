@@ -12,19 +12,14 @@ from .db_models.users import Users
 class DB:
     def __init__(
         self,
-        db_user: str,
-        db_password: str,
-        db_host: str,
-        db_port: str,
-        db_name: str,
+        db_uri: str,
         default_language: str,
         default_chat_modes: DefaultChatModes,
         last_n_messages_to_remember: int,
         default_usage_limit: int,
     ):
-        uri = f"mongodb://{db_user}:{db_password}@{db_host}:{db_port}"
-        client = AsyncIOMotorClient(uri)
-        db = client[db_name]
+        client = AsyncIOMotorClient(db_uri)
+        db = client.get_default_database()
         self.users = Users(db, default_usage_limit)
         self.chats = Chats(db, default_language)
         self.user_facts = UserFacts(db)

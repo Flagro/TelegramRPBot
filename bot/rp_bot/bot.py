@@ -21,11 +21,7 @@ class RPBot(BaseBot):
 
     def __init__(
         self,
-        db_user,
-        db_password,
-        db_host,
-        db_port,
-        db_name,
+        db_uri,
         openai_api_key,
         translations,
         default_chat_modes,
@@ -38,11 +34,7 @@ class RPBot(BaseBot):
         # TODO: init here the handlers with parameters
         # and store them in a class attribute
         db = DB(
-            db_user=db_user,
-            db_password=db_password,
-            db_host=db_host,
-            db_port=db_port,
-            db_name=db_name,
+            db_uri=db_uri,
             default_language=bot_config.default_language,
             default_chat_modes=default_chat_modes,
             last_n_messages_to_remember=bot_config.last_n_messages_to_remember,
