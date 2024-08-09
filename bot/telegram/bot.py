@@ -41,9 +41,9 @@ class TelegramBot:
     ):
         self.telegram_token = telegram_token
         self.telegram_bot_config = telegram_bot_config
-        self.commands = bot.get_commands()
-        self.messages = bot.get_messages()
-        self.callbacks = bot.get_callbacks()
+        self.commands = bot.commands
+        self.messages = bot.messages
+        self.callbacks = bot.callbacks
         self.logger = logging.getLogger("TelegramBot")
 
     async def post_init(self, application: Application) -> None:

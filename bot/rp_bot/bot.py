@@ -22,10 +22,6 @@ from ..models.config import (
 
 
 class RPBot(BaseBot):
-    callbacks = callback_handlers
-    commands = command_handlers
-    messages = message_handlers
-
     def __init__(
         self,
         db_uri: str,
@@ -66,11 +62,14 @@ class RPBot(BaseBot):
             bot_config=self.bot_config,
         )
 
-    def get_commands(self) -> List[BaseCommandHandler]:
-        return [self._init_handler(handler) for handler in self.commands]
+    @property
+    def commands(self) -> List[BaseCommandHandler]:
+        return [self._init_handler(handler) for handler in command_handlers]
 
-    def get_callbacks(self) -> List[BaseCallbackHandler]:
-        return [self._init_handler(handler) for handler in self.callbacks]
+    @property
+    def callbacks(self) -> List[BaseCallbackHandler]:
+        return [self._init_handler(handler) for handler in callback_handlers]
 
-    def get_messages(self) -> List[BaseMessageHandler]:
-        return [self._init_handler(handler) for handler in self.messages]
+    @property
+    def messages(self) -> List[BaseMessageHandler]:
+        return [self._init_handler(handler) for handler in message_handlers]

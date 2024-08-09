@@ -4,14 +4,17 @@ from typing import List
 
 
 class BaseBot(ABC):
+    @property
     @abstractmethod
-    def get_commands(self) -> List[BaseCommandHandler]:
+    def commands(self) -> List[BaseCommandHandler]:
         raise NotImplementedError
 
+    @property
     @abstractmethod
-    def get_callbacks(self) -> List[BaseCallbackHandler]:
+    def callbacks(self) -> List[BaseCallbackHandler]:
         raise NotImplementedError
 
+    @property
     @abstractmethod
-    def get_messages(self) -> List[BaseMessageHandler]:
+    def messages(self) -> List[BaseMessageHandler]:
         raise NotImplementedError
