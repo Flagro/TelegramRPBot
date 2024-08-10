@@ -1,6 +1,6 @@
 from typing import Optional, Dict
 from collections import OrderedDict
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class KeyboardResponse(BaseModel):
@@ -10,11 +10,11 @@ class KeyboardResponse(BaseModel):
 
 
 class CommandResponse(BaseModel):
-    text: str
-    kwargs: Dict = Field(default_factory=dict)
+    text: Optional[str] = None
+    kwargs: Optional[Dict[str, str]] = None
     keyboard: Optional[KeyboardResponse] = None
 
 
 class LocalizedCommandResponse(BaseModel):
-    localized_text: str
+    localized_text: Optional[str] = None
     keyboard: Optional[KeyboardResponse] = None
