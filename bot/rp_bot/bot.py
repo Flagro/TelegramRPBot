@@ -39,6 +39,7 @@ class RPBot(BaseBot):
             default_language=bot_config.default_language,
             default_chat_modes=default_chat_modes,
             last_n_messages_to_remember=bot_config.last_n_messages_to_remember,
+            last_n_messages_to_store=bot_config.last_n_messages_to_store,
             default_usage_limit=bot_config.default_usage_limit,
         )
         self.ai = AI(openai_api_key=openai_api_key, db=self.db, ai_config=ai_config)

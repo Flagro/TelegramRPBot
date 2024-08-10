@@ -1,4 +1,5 @@
 from motor.motor_asyncio import AsyncIOMotorClient
+from typing import Optional
 from ..models.config import DefaultChatModes
 from ..models.handlers_input import Person, Context
 from .db_models.chats import Chats
@@ -16,6 +17,7 @@ class DB:
         default_language: str,
         default_chat_modes: DefaultChatModes,
         last_n_messages_to_remember: int,
+        last_n_messages_to_store: Optional[int],
         default_usage_limit: int,
     ):
         client = AsyncIOMotorClient(db_uri)
@@ -25,7 +27,9 @@ class DB:
         self.user_facts = UserFacts(db)
         self.user_introductions = UserIntroductions(db)
         self.chat_modes = ChatModes(db, default_chat_modes)
-        self.dialogs = Dialogs(db, last_n_messages_to_remember)
+        self.dialogs = Dialogs(
+            db, last_n_messages_to_remember, last_n_messages_to_store
+        )
 
     async def create_if_not_exists(self, person: Person, context: Context) -> None:
         await self.users.create_user_if_not_exists(person)
