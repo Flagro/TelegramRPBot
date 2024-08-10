@@ -72,7 +72,7 @@ class MessageHandler(BaseMessageHandler):
         if not context.is_bot_mentioned:
             return None
         # Take everything besides the last one since the last one is the current message
-        messages_history = (await self.db.dialogs.get_messages(context, last_n=15))[
+        messages_history = (await self.db.dialogs.get_messages(context))[
             0:-1
         ]
         prompt = await self.localizer.compose_prompt(user_input, messages_history)
