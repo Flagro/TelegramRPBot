@@ -19,12 +19,11 @@ class CallbackHandler(BaseCallbackHandler):
         modes_dict = OrderedDict(
             {str(mode.id): str(mode.mode_name) for mode in available_modes}
         )
-
         return CommandResponse(
             text="choose_mode",
             keyboard=KeyboardResponse(
                 modes_dict=modes_dict,
-                callback="show_chat_modes",
+                callback=self.callback_action,
                 button_action=old_action,
             ),
         )
