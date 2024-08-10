@@ -15,13 +15,6 @@ from ..models.handlers_response import (
 from ..models.config import BotConfig
 
 
-class CommandPriority(enum.IntEnum):
-    FIRST = 0
-    DEFAULT = 1
-    ADMIN = 2
-    LAST = 3
-
-
 class BaseHandler(ABC):
     permissions: list = []
     streamable: bool = False
@@ -98,17 +91,24 @@ class BaseHandler(ABC):
         raise NotImplementedError
 
 
+class CommandPriority(enum.IntEnum):
+    FIRST = 0
+    DEFAULT = 1
+    ADMIN = 2
+    LAST = 3
+
+
 class BaseCommandHandler(BaseHandler, ABC):
     command: str = None
     list_priority_order: CommandPriority = CommandPriority.DEFAULT
 
     async def get_localized_description(self) -> str:
         result = await self.localizer.get_command_response(
-            f"{self.command}_description", {}
+            f"{self.command}_description"
         )
         if result is None:
             return await self.localizer.get_command_response(
-                "default_command_description", {}
+                "default_command_description"
             )
         return result
 
