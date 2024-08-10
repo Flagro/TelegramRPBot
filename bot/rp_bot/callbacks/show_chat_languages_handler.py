@@ -3,12 +3,12 @@ from collections import OrderedDict
 
 from ...models.base_handlers import BaseCallbackHandler
 from ...models.handlers_response import KeyboardResponse, CommandResponse
-from ..commands.mode_handler import CommandHandler
 from ...models.handlers_input import Person, Context, Message
+from ..auth import AllowedUser, NotBanned
 
 
 class CallbackHandler(BaseCallbackHandler):
-    permissions = CommandHandler.permissions
+    permissions = [AllowedUser, NotBanned]
     callback_action = "show_chat_languages"
 
     async def get_response(

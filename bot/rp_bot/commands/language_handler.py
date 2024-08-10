@@ -4,11 +4,11 @@ from collections import OrderedDict
 from ...models.base_handlers import BaseCommandHandler, CommandPriority
 from ...models.handlers_response import CommandResponse, KeyboardResponse
 from ...models.handlers_input import Person, Context, Message
-from ..auth import GroupAdmin, AllowedUser, NotBanned
+from ..callbacks.show_chat_languages_handler import CallbackHandler
 
 
 class CommandHandler(BaseCommandHandler):
-    permissions = [GroupAdmin, AllowedUser, NotBanned]
+    permissions = CallbackHandler.permissions
     command = "language"
     list_priority_order = CommandPriority.DEFAULT
 

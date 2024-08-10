@@ -4,11 +4,11 @@ from collections import OrderedDict
 from ...models.base_handlers import BaseCommandHandler, CommandPriority
 from ...models.handlers_response import KeyboardResponse, CommandResponse
 from ...models.handlers_input import Person, Context, Message
-from ..auth import GroupAdmin, AllowedUser, NotBanned
+from ..callbacks.delete_chat_mode_handler import CallbackHandler
 
 
 class CommandHandler(BaseCommandHandler):
-    permissions = [GroupAdmin, AllowedUser, NotBanned]
+    permissions = CallbackHandler.permissions
     command = "deletemode"
     list_priority_order = CommandPriority.DEFAULT
 

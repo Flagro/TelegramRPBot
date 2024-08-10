@@ -2,12 +2,12 @@ from typing import List
 
 from ...models.base_handlers import BaseCallbackHandler
 from ...models.handlers_response import CommandResponse
-from ..commands.mode_handler import CommandHandler
 from ...models.handlers_input import Person, Context, Message
+from ..auth import GroupAdmin, AllowedUser, NotBanned
 
 
 class CallbackHandler(BaseCallbackHandler):
-    permissions = CommandHandler.permissions
+    permissions = [GroupAdmin, AllowedUser, NotBanned]
     callback_action = "set_chat_mode"
 
     async def get_response(
