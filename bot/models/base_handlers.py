@@ -45,11 +45,13 @@ class BaseHandler(ABC):
             response = await self.get_response(person, context, message, args)
         if response is None:
             return None
-        localized_text = await self.localizer.get_command_response(
-            response.text, response.kwargs
+        localized_text = (
+            None
+            if response.text is None
+            else await self.localizer.get_command_response(
+                response.text, response.kwargs
+            )
         )
-        if localized_text is None:
-            return None
         return LocalizedCommandResponse(
             localized_text=localized_text, keyboard=response.keyboard
         )
@@ -69,11 +71,11 @@ class BaseHandler(ABC):
         async for chunk in self.stream_get_response(person, context, message, args):
             if chunk is None:
                 continue
-            localized_text = await self.localizer.get_command_response(
-                chunk.text, chunk.kwargs
+            localized_text = (
+                None
+                if chunk.text is None
+                else await self.localizer.get_command_response(chunk.text, chunk.kwargs)
             )
-            if localized_text is None:
-                continue
             yield LocalizedCommandResponse(
                 localized_text=localized_text,
                 keyboard=chunk.keyboard,
