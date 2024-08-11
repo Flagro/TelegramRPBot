@@ -1,13 +1,13 @@
 from typing import List
-from collections import OrderedDict
 
 from ...models.base_handlers import BaseCommandHandler, CommandPriority
-from ...models.handlers_response import CommandResponse, KeyboardResponse
+from ...models.handlers_response import CommandResponse
 from ...models.handlers_input import Person, Context, Message
-from ..callbacks.show_chat_languages_handler import CallbackHandler
+from ..callbacks.set_chat_language_handler import CallbackHandler
+from ..callbacks.show_chat_languages_handler import ShowChatLanguagesMixin
 
 
-class CommandHandler(BaseCommandHandler):
+class CommandHandler(BaseCommandHandler, ShowChatLanguagesMixin):
     permissions = CallbackHandler.permissions
     command = "language"
     list_priority_order = CommandPriority.DEFAULT
@@ -15,15 +15,11 @@ class CommandHandler(BaseCommandHandler):
     async def get_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
-        available_languages = await self.localizer.get_supported_languages()
-        languages_dict = OrderedDict(
-            {str(language): str(language) for language in available_languages}
-        )
         return CommandResponse(
             text="choose_language",
-            keyboard=KeyboardResponse(
-                modes_dict=languages_dict,
-                callback="show_chat_languages",
-                button_action="set_chat_language",
+            keyboard=self._get_chat_languages_keyboard(
+                db=self.db,
+                context=context,
+                callback_action=CallbackHandler.callback_action,
             ),
         )
