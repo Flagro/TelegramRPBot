@@ -1,13 +1,13 @@
 from typing import List
-from collections import OrderedDict
 
 from ...models.base_handlers import BaseCommandHandler, CommandPriority
-from ...models.handlers_response import KeyboardResponse, CommandResponse
+from ...models.handlers_response import CommandResponse
 from ...models.handlers_input import Person, Context, Message
 from ..callbacks.set_chat_mode_handler import CallbackHandler
+from ..callbacks.show_chat_modes_handler import ShowChatModesHandler
 
 
-class CommandHandler(BaseCommandHandler):
+class CommandHandler(BaseCommandHandler, ShowChatModesHandler):
     permissions = CallbackHandler.permissions
     command = "mode"
     list_priority_order = CommandPriority.DEFAULT
@@ -15,15 +15,10 @@ class CommandHandler(BaseCommandHandler):
     async def get_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
-        available_modes = await self.db.chat_modes.get_chat_modes(context)
-        modes_dict = OrderedDict(
-            {str(mode.id): str(mode.mode_name) for mode in available_modes}
-        )
         return CommandResponse(
             text="choose_mode",
-            keyboard=KeyboardResponse(
-                modes_dict=modes_dict,
-                callback="show_chat_modes",
-                button_action="set_chat_mode",
+            keyboard=self._get_chat_modes_keyboard(
+                context=context,
+                callback_action=CallbackHandler.callback_action,
             ),
         )
