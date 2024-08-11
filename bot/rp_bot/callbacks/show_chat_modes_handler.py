@@ -8,10 +8,10 @@ from ..db import DB
 from ..auth import AllowedUser, NotBanned
 
 
-class ShowChatLanguagesMixin:
-    _show_chat_languages_callback = "show_chat_languages"
+class ShowChatModesMixin:
+    _show_chat_modes_callback = "show_chat_modes"
 
-    async def _get_chat_languages_keyboard(
+    async def _get_chat_modes_keyboard(
         self, db: DB, context: Context, callback_action: str
     ) -> KeyboardResponse:
         available_modes = await db.chat_modes.get_chat_modes(context)
@@ -20,20 +20,20 @@ class ShowChatLanguagesMixin:
         )
         return KeyboardResponse(
             modes_dict=modes_dict,
-            callback=self._show_chat_languages_callback,
+            callback=self._show_chat_modes_callback,
             button_action=callback_action,
         )
 
 
-class CallbackHandler(BaseCallbackHandler, ShowChatLanguagesMixin):
+class CallbackHandler(BaseCallbackHandler, ShowChatModesMixin):
     permissions = [AllowedUser, NotBanned]
-    callback_action = ShowChatLanguagesMixin._show_chat_languages_callback
+    callback_action = ShowChatModesMixin._show_chat_modes_callback
 
     async def get_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
         return CommandResponse(
-            keyboard=self._get_chat_languages_keyboard(
+            keyboard=self._get_chat_modes_keyboard(
                 db=self.db,
                 context=context,
                 callback_action=args[0],

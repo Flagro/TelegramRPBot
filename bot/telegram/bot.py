@@ -13,7 +13,7 @@ from telegram.constants import ParseMode
 
 import logging
 import asyncio
-from typing import Literal
+from typing import Literal, Optional
 from functools import partial
 
 from .utils import (
@@ -26,10 +26,10 @@ from .utils import (
 )
 from .keyboards import get_paginated_list_keyboard
 
-
 from ..models.base_bot import BaseBot
 from ..models.config import TGConfig
 from ..models.base_handlers import BaseHandler
+from ..models.handlers_response import KeyboardResponse
 
 
 class TelegramBot:
@@ -143,6 +143,16 @@ class TelegramBot:
                         parse_mode=ParseMode.HTML,
                         reply_markup=result.keyboard,
                     )
+                elif latest_text_response is None and result.keyboard is not None:
+                    await self.send_message(
+                        context=context,
+                        chat_id=update.effective_chat.id,
+                        text=latest_text_response,
+                        reply_message_id=first_message_id,
+                        thread_id=handler_context.thread_id,
+                        parse_mode=ParseMode.HTML,
+                        keyboard=result.keyboard,
+                    )
                 await asyncio.sleep(0.5)
         else:
             result = await bot_handler.handle(
@@ -184,14 +194,14 @@ class TelegramBot:
 
     async def send_message(
         self,
-        context,
-        chat_id,
-        text,
-        image_url=None,
-        reply_message_id=None,
-        thread_id=None,
-        parse_mode=ParseMode.HTML,
-        keyboard=None,
+        context: CallbackContext,
+        chat_id: int,
+        text: Optional[str] = None,
+        image_url: Optional[str] = None,
+        reply_message_id: Optional[int] = None,
+        thread_id: Optional[int] = None,
+        parse_mode: Optional[ParseMode] = ParseMode.HTML,
+        keyboard: Optional[KeyboardResponse] = None,
     ) -> None:
         if keyboard:
             markup = get_paginated_list_keyboard(
