@@ -194,12 +194,12 @@ class TelegramBot:
 
     async def send_message(
         self,
-        context,
-        chat_id,
+        context: CallbackContext,
+        chat_id: int,
         text: Optional[str] = None,
         image_url: Optional[str] = None,
-        reply_message_id: Optional[str] = None,
-        thread_id: Optional[str] = None,
+        reply_message_id: Optional[int] = None,
+        thread_id: Optional[int] = None,
         parse_mode: Optional[ParseMode] = ParseMode.HTML,
         keyboard: Optional[KeyboardResponse] = None,
     ) -> None:
