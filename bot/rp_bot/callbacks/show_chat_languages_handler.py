@@ -25,7 +25,7 @@ class ShowChatLanguagesMixin:
         )
 
 
-class CallbackHandler(BaseCallbackHandler, ShowChatLanguagesMixin):
+class CallbackHandler(ShowChatLanguagesMixin, BaseCallbackHandler):
     permissions = [AllowedUser, NotBanned]
     callback_action = ShowChatLanguagesMixin._show_chat_languages_callback
 

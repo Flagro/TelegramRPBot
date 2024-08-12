@@ -25,7 +25,7 @@ class ShowChatModesMixin:
         )
 
 
-class CallbackHandler(BaseCallbackHandler, ShowChatModesMixin):
+class CallbackHandler(ShowChatModesMixin, BaseCallbackHandler):
     permissions = [AllowedUser, NotBanned]
     callback_action = ShowChatModesMixin._show_chat_modes_callback
 
