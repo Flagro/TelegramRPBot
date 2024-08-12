@@ -1,5 +1,11 @@
 from typing import Optional, List, Tuple
+from datetime import datetime
 from .config.localizer_translations import LocalizerTranslations
+
+
+def get_current_date_prompt() -> str:
+    date_prompt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return f"Today's date and time is: {date_prompt}. "
 
 
 class Localizer:
@@ -30,9 +36,11 @@ class Localizer:
         self, user_input: str, history: List[Tuple[str, bool, str]]
     ) -> str:
         # TODO: also add the names and context details in history
+        current_date_prompt = get_current_date_prompt()
         return (
             "The conversation so far:\n"
             + "\n".join([f"{name}: {message}" for name, _, message in history])
+            + f"\n\n{current_date_prompt}"
             + f"\n\nAnd the user just asked: {user_input}"
         )
 
