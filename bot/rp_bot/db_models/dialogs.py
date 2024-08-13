@@ -65,10 +65,9 @@ class Dialogs(BaseModel):
         )
 
         # Check if the stored messages exceed the limit and delete the oldest if necessary
-        current_count = await self.dialogs.count_documents({"chat_id": chat_id})
-        if (
+        while (
             self.last_n_messages_to_store is not None
-            and current_count > self.last_n_messages_to_store
+            and await self.dialogs.count_documents({"chat_id": chat_id}) > self.last_n_messages_to_store
         ):
             oldest_message = await self.dialogs.find_one(
                 {"chat_id": chat_id}, sort=[("_id", 1)]
