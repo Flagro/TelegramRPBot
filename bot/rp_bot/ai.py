@@ -50,6 +50,7 @@ class AI:
                 {"role": "system", "content": f"User: {user_input}"},
                 {"role": "user", "content": user_input},
             ],
+            temperature=self.ai_config.TextGeneration.temperature,
         )
         return response.choices[0].message.content
 
@@ -61,6 +62,7 @@ class AI:
                 {"role": "user", "content": user_input},
             ],
             stream=True,
+            temperature=self.ai_config.TextGeneration.temperature,
         )
         for chunk in response:
             chunk_text = chunk.choices[0].delta.content
