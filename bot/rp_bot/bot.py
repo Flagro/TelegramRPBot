@@ -12,6 +12,7 @@ from .messages import handlers as message_handlers
 from .ai import AI
 from .db import DB
 from .auth import Auth
+from .prompt_manager import PromptManager
 from ..models.localizer import Localizer
 from ..models.config import (
     BotConfig,
@@ -34,6 +35,8 @@ class RPBot(BaseBot):
         admin_handles: List[str],
         logger: Logger,
     ):
+        # TODO: this must be done in a separate function
+        # in order to implement a better dependency injection
         self.db = DB(
             db_uri=db_uri,
             default_language=bot_config.default_language,
@@ -46,6 +49,7 @@ class RPBot(BaseBot):
         self.localizer = Localizer(
             translations=translations, default_language=bot_config.default_language
         )
+        self.prompt_manager = PromptManager()
         self.auth = Auth(
             allowed_handles=allowed_handles,
             admin_handles=admin_handles,
@@ -59,6 +63,7 @@ class RPBot(BaseBot):
             db=self.db,
             ai=self.ai,
             localizer=self.localizer,
+            prompt_manager=self.prompt_manager,
             auth=self.auth,
             bot_config=self.bot_config,
         )

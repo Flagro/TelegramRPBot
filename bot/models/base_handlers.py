@@ -5,6 +5,7 @@ import enum
 
 from ..rp_bot.db import DB
 from ..rp_bot.ai import AI
+from ..rp_bot.prompt_manager import PromptManager
 from .localizer import Localizer
 from ..rp_bot.auth import Auth
 from ..models.handlers_input import Person, Context, Message
@@ -20,11 +21,18 @@ class BaseHandler(ABC):
     streamable: bool = False
 
     def __init__(
-        self, db: DB, ai: AI, localizer: Localizer, auth: Auth, bot_config: BotConfig
+        self,
+        db: DB,
+        ai: AI,
+        localizer: Localizer,
+        prompt_manager: PromptManager,
+        auth: Auth,
+        bot_config: BotConfig,
     ):
         self.db = db
         self.ai = ai
         self.localizer = localizer
+        self.prompt_manager = prompt_manager
         self.auth = auth
         self.bot_config = bot_config
         self.logger = logging.getLogger(f"{__name__}.{id(self)}")
