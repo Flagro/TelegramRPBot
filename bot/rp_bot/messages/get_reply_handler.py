@@ -30,13 +30,13 @@ class MessageHandler(BaseMessageHandler):
             if message.in_file_audio
             else None
         )
-        user_input = await self.localizer.compose_user_input(
+        user_input = await self.prompt_manager.compose_user_input(
             message.message_text, image_description, voice_description
         )
         return user_input
 
     async def _get_bot_output(self, response_message: str) -> str:
-        localized_response = await self.localizer.compose_bot_output(response_message)
+        localized_response = await self.prompt_manager.compose_bot_output(response_message)
         return localized_response
 
     async def prepare_get_reply(
@@ -75,7 +75,7 @@ class MessageHandler(BaseMessageHandler):
         messages_history = (await self.db.dialogs.get_messages(context))[
             0:-1
         ]
-        prompt = await self.localizer.compose_prompt(user_input, messages_history)
+        prompt = await self.prompt_manager.compose_prompt(user_input, messages_history)
         return prompt
 
     async def finish_get_reply(
