@@ -24,6 +24,15 @@ class AI:
         self.db = db
         self.ai_config = ai_config
 
+    async def _get_default_text_model_name(self) -> str:
+        first_model = None
+        for model in self.ai_config.TextGeneration.Models.values():
+            if model.is_default:
+                return model.name
+            if first_model is None:
+                first_model = model.name
+        return first_model
+
     async def describe_image(self, in_memory_image_stream: io.BytesIO) -> str:
         # TODO: implement this
         # r = await openai.Image.adescribe(in_memory_image_stream)
@@ -45,7 +54,7 @@ class AI:
 
     async def get_reply(self, user_input: str) -> str:
         response = self.client.chat.completions.create(
-            model=self.ai_config.TextGeneration.Models["gpt-4o"].name,
+            model=self._get_default_text_model_name(),
             messages=[
                 {"role": "system", "content": f"User: {user_input}"},
                 {"role": "user", "content": user_input},
@@ -56,7 +65,7 @@ class AI:
 
     async def get_streaming_reply(self, user_input: str) -> AsyncIterator[str]:
         response = self.client.chat.completions.create(
-            model=self.ai_config.TextGeneration.Models["gpt-4o"].name,
+            model=self._get_default_text_model_name(),
             messages=[
                 {"role": "system", "content": f"User: {user_input}"},
                 {"role": "user", "content": user_input},

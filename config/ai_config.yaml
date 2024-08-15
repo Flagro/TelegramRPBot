@@ -21,6 +21,7 @@ AIConfig:
 
       gpt-4o:
         name: "gpt-4o"
+        default: true
         rate:
           input_token_price: 5
           output_token_price: 10

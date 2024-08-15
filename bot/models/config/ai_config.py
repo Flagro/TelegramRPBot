@@ -1,6 +1,6 @@
 from .base_config import BaseYAMLConfigModel
 from pydantic import BaseModel
-from typing import Dict
+from typing import Dict, Optional
 
 
 class Rate(BaseModel):
@@ -10,6 +10,7 @@ class Rate(BaseModel):
 
 class Model(BaseModel):
     name: str
+    is_default: Optional[bool] = False
     rate: Rate
 
 
