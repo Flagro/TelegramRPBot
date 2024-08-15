@@ -26,28 +26,31 @@ class Auth:
 
 
 class BasePermission(ABC):
+    def __init__(self, auth: Auth):
+        self.auth = auth
+
     @abstractmethod
-    async def check(self, person: Person, context: Context, auth: Auth) -> bool:
+    async def check(self, person: Person, context: Context) -> bool:
         raise NotImplementedError(
             "Permission check method must be implemented by subclasses."
         )
 
 
 class GroupAdmin(BasePermission):
-    async def check(self, person: Person, context: Context, auth: Auth) -> bool:
+    async def check(self, person: Person, context: Context) -> bool:
         return person.is_group_admin
 
 
 class AllowedUser(BasePermission):
-    async def check(self, person: Person, context: Context, auth: Auth) -> bool:
-        return await auth.is_allowed(person.user_handle)
+    async def check(self, person: Person, context: Context) -> bool:
+        return await self.auth.is_allowed(person.user_handle)
 
 
 class BotAdmin(BasePermission):
-    async def check(self, person: Person, context: Context, auth: Auth) -> bool:
-        return await auth.is_admin(person.user_handle)
+    async def check(self, person: Person, context: Context) -> bool:
+        return await self.auth.is_admin(person.user_handle)
 
 
 class NotBanned(BasePermission):
-    async def check(self, person: Person, context: Context, auth: Auth) -> bool:
-        return not await auth.is_banned(person.user_handle)
+    async def check(self, person: Person, context: Context) -> bool:
+        return not await self.auth.is_banned(person.user_handle)

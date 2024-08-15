@@ -3,21 +3,23 @@ from typing import List, AsyncIterator, Optional
 import logging
 import enum
 
+# TODO: base handlers should be moved to the bot package
 from ..rp_bot.db import DB
 from ..rp_bot.ai import AI
 from ..rp_bot.prompt_manager import PromptManager
+from ..rp_bot.auth import Auth, BasePermission
+
 from .localizer import Localizer
-from ..rp_bot.auth import Auth
-from ..models.handlers_input import Person, Context, Message
-from ..models.handlers_response import (
+from .handlers_input import Person, Context, Message
+from .handlers_response import (
     CommandResponse,
     LocalizedCommandResponse,
 )
-from ..models.config import BotConfig
+from .config import BotConfig
 
 
 class BaseHandler(ABC):
-    permissions: list = []
+    permissions: List[BasePermission] = []
     streamable: bool = False
 
     def __init__(
@@ -39,7 +41,8 @@ class BaseHandler(ABC):
 
     async def is_authenticated(self, person: Person, context: Context) -> bool:
         for permission in self.permissions:
-            if not await permission().check(person, context, self.auth):
+            initialized_permission = permission(self.auth)
+            if not await initialized_permission.check(person, context):
                 return False
         return True
 
