@@ -26,7 +26,7 @@ class ShowChatLanguagesMixin:
 
 
 class CallbackHandler(ShowChatLanguagesMixin, BaseCallbackHandler):
-    permissions = [AllowedUser, NotBanned]
+    permission_classes = [AllowedUser, NotBanned]
     callback_action = ShowChatLanguagesMixin._show_chat_languages_callback
 
     async def get_response(

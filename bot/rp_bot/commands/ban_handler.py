@@ -7,7 +7,7 @@ from ..auth import BotAdmin
 
 
 class CommandHandler(BaseCommandHandler):
-    permissions = [BotAdmin]
+    permission_classes = [BotAdmin]
     command = "ban"
     list_priority_order = CommandPriority.ADMIN
 

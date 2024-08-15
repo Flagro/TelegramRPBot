@@ -8,7 +8,7 @@ from ..callbacks.show_chat_languages_handler import ShowChatLanguagesMixin
 
 
 class CommandHandler(ShowChatLanguagesMixin, BaseCommandHandler):
-    permissions = CallbackHandler.permissions
+    permission_classes = CallbackHandler.permission_classes
     command = "language"
     list_priority_order = CommandPriority.DEFAULT
 

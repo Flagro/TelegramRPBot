@@ -7,7 +7,7 @@ from ..auth import AllowedUser, NotBanned
 
 
 class CommandHandler(BaseCommandHandler):
-    permissions = [AllowedUser, NotBanned]
+    permission_classes = [AllowedUser, NotBanned]
     command = "usage"
     list_priority_order = CommandPriority.LAST
 

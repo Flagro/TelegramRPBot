@@ -8,7 +8,7 @@ from ..callbacks.show_chat_modes_handler import ShowChatModesMixin
 
 
 class CommandHandler(ShowChatModesMixin, BaseCommandHandler):
-    permissions = CallbackHandler.permissions
+    permission_classes = CallbackHandler.permission_classes
     command = "mode"
     list_priority_order = CommandPriority.DEFAULT
 

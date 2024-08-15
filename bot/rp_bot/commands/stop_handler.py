@@ -7,7 +7,7 @@ from ..auth import GroupAdmin, AllowedUser, NotBanned
 
 
 class CommandHandler(BaseCommandHandler):
-    permissions = [GroupAdmin, AllowedUser, NotBanned]
+    permission_classes = [GroupAdmin, AllowedUser, NotBanned]
     command = "stop"
     list_priority_order = CommandPriority.FIRST
 

@@ -7,7 +7,7 @@ from ..auth import GroupAdmin, AllowedUser, NotBanned
 
 
 class CallbackHandler(BaseCallbackHandler):
-    permissions = [GroupAdmin, AllowedUser, NotBanned]
+    permission_classes = [GroupAdmin, AllowedUser, NotBanned]
     callback_action = "delete_chat_mode"
 
     async def get_response(

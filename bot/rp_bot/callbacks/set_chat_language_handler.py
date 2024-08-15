@@ -7,7 +7,7 @@ from ..auth import GroupAdmin, AllowedUser, NotBanned
 
 
 class CallbackHandler(BaseCallbackHandler):
-    permissions = [GroupAdmin, AllowedUser, NotBanned]
+    permission_classes = [GroupAdmin, AllowedUser, NotBanned]
     callback_action = "set_chat_language"
 
     async def get_response(
