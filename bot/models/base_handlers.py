@@ -42,7 +42,7 @@ class BaseHandler(ABC):
         self.logger = logging.getLogger(f"{__name__}.{id(self)}")
 
     @property
-    def permissions(self) -> Tuple[BasePermission]:
+    def permissions(self) -> List[BasePermission]:
         return self._initialized_permissions
 
     async def is_authenticated(self, person: Person, context: Context) -> bool:
