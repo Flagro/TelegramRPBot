@@ -7,7 +7,7 @@ from ..auth import AllowedUser, GroupAdmin, NotBanned
 
 
 class CommandHandler(BaseCommandHandler):
-    permission_classes = [AllowedUser, GroupAdmin, NotBanned]
+    permission_classes = (AllowedUser, GroupAdmin, NotBanned)
     command = "addmode"
     list_priority_order = CommandPriority.DEFAULT
 

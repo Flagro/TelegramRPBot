@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, AsyncIterator, Optional, Type
+from typing import Tuple, List, AsyncIterator, Optional, Type
 import logging
 import enum
 
@@ -19,9 +19,8 @@ from .config import BotConfig
 
 
 class BaseHandler(ABC):
-    permission_classes: List[Type[BasePermission]] = []
+    permission_classes: Tuple[Type[BasePermission], ...] = ()
     streamable: bool = False
-    _initialized_permissions: List[BasePermission] = []
 
     def __init__(
         self,
@@ -36,13 +35,14 @@ class BaseHandler(ABC):
         self.ai = ai
         self.localizer = localizer
         self.prompt_manager = prompt_manager
+        self._initialized_permissions = []
         for permission_class in self.permission_classes:
             self._initialized_permissions.append(permission_class(auth))
         self.bot_config = bot_config
         self.logger = logging.getLogger(f"{__name__}.{id(self)}")
 
     @property
-    def permissions(self) -> List[BasePermission]:
+    def permissions(self) -> Tuple[BasePermission]:
         return self._initialized_permissions
 
     async def is_authenticated(self, person: Person, context: Context) -> bool:

@@ -7,7 +7,7 @@ from datetime import datetime
 
 
 class MessageHandler(BaseMessageHandler):
-    permission_classes = [AllowedUser, BotAdmin, NotBanned]
+    permission_classes = (AllowedUser, BotAdmin, NotBanned)
 
     async def _estimate_reply_usage(self, context: Context, input_message: str) -> int:
         # Estimate the response based on amount of facts in the group chat,

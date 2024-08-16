@@ -6,7 +6,7 @@ from ...models.handlers_input import Person, Context, Message
 
 
 class CommandHandler(BaseCommandHandler):
-    permission_classes = []
+    permission_classes = ()
     command = "help"
     list_priority_order = CommandPriority.LAST
 

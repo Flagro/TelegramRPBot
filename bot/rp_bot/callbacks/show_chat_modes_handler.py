@@ -26,7 +26,7 @@ class ShowChatModesMixin:
 
 
 class CallbackHandler(ShowChatModesMixin, BaseCallbackHandler):
-    permission_classes = [AllowedUser, NotBanned]
+    permission_classes = (AllowedUser, NotBanned)
     callback_action = ShowChatModesMixin._show_chat_modes_callback
 
     async def get_response(
