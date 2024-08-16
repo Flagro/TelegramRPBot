@@ -51,6 +51,20 @@ class BaseHandler(ABC):
                 return False
         return True
 
+    async def get_localized_response(
+        self, command_response: CommandResponse
+    ) -> LocalizedCommandResponse:
+        localized_text = (
+            None
+            if command_response.text is None
+            else await self.localizer.get_command_response(
+                command_response.text, command_response.kwargs
+            )
+        )
+        return LocalizedCommandResponse(
+            localized_text=localized_text, keyboard=command_response.keyboard
+        )
+
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> LocalizedCommandResponse:
@@ -61,16 +75,7 @@ class BaseHandler(ABC):
             response = await self.get_response(person, context, message, args)
         if response is None:
             return None
-        localized_text = (
-            None
-            if response.text is None
-            else await self.localizer.get_command_response(
-                response.text, response.kwargs
-            )
-        )
-        return LocalizedCommandResponse(
-            localized_text=localized_text, keyboard=response.keyboard
-        )
+        return await self.get_localized_response(response)
 
     async def stream_handle(
         self, person: Person, context: Context, message: Message, args: List[str]
@@ -87,15 +92,7 @@ class BaseHandler(ABC):
         async for chunk in self.stream_get_response(person, context, message, args):
             if chunk is None:
                 continue
-            localized_text = (
-                None
-                if chunk.text is None
-                else await self.localizer.get_command_response(chunk.text, chunk.kwargs)
-            )
-            yield LocalizedCommandResponse(
-                localized_text=localized_text,
-                keyboard=chunk.keyboard,
-            )
+            yield await self.get_localized_response(chunk)
 
     @abstractmethod
     async def get_response(
