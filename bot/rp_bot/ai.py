@@ -52,22 +52,22 @@ class AI:
         # return image_url
         return ""
 
-    async def get_reply(self, user_input: str) -> str:
+    async def get_reply(self, user_input: str, system_prompt: str) -> str:
         response = self.client.chat.completions.create(
             model=self._get_default_text_model_name(),
             messages=[
-                {"role": "system", "content": f"User: {user_input}"},
+                {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_input},
             ],
             temperature=self.ai_config.TextGeneration.temperature,
         )
         return response.choices[0].message.content
 
-    async def get_streaming_reply(self, user_input: str) -> AsyncIterator[str]:
+    async def get_streaming_reply(self, user_input: str, system_prompt: str) -> AsyncIterator[str]:
         response = self.client.chat.completions.create(
             model=self._get_default_text_model_name(),
             messages=[
-                {"role": "system", "content": f"User: {user_input}"},
+                {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_input},
             ],
             stream=True,

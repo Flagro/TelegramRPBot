@@ -104,7 +104,8 @@ class MessageHandler(BaseMessageHandler):
         prompt = await self.prepare_get_reply(person, context, message)
         if not prompt:
             return None
-        response_message = await self.ai.get_reply(prompt)
+        system_prompt = self.prompt_manager.get_reply_system_prompt()
+        response_message = await self.ai.get_reply(prompt, system_prompt)
         result = CommandResponse(
             text="message_response", kwargs={"response_text": response_message}
         )
@@ -118,7 +119,8 @@ class MessageHandler(BaseMessageHandler):
         if not prompt:
             return
         response_message = ""
-        async for response_message_chunk in self.ai.get_streaming_reply(prompt):
+        system_prompt = self.prompt_manager.get_reply_system_prompt()
+        async for response_message_chunk in self.ai.get_streaming_reply(prompt, system_prompt):
             if not response_message_chunk:
                 continue
             response_message += response_message_chunk
