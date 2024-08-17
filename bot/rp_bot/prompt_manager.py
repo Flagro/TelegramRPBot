@@ -36,3 +36,6 @@ class PromptManager:
             + f"\n\n{current_date_prompt}"
             + f"\n\nAnd the user just asked: {user_input}"
         )
+
+    async def get_reply_system_prompt(self) -> str:
+        return "You are a helpful assistant. Please provide a response to the user's query."
