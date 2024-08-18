@@ -1,8 +1,7 @@
-from typing import Optional, List, Tuple
 from datetime import datetime
 
 from .db import DB
-from ..models.handlers_input import Context, TranscribedMessage
+from ..models.handlers_input import Person, Context, TranscribedMessage
 
 
 def get_current_date_prompt() -> str:
@@ -30,6 +29,17 @@ class PromptManager:
         chat_mode = await self.db.chat_modes.get_chat_mode(context)
         return f"The current chat mode is: {chat_mode.mode_name}. {chat_mode.mode_description}"
 
+    async def _compose_chat_facts_prompt(self, context: Context) -> str:
+        chat_facts = await self.db.user_facts.get_chat_facts(context)
+        return (
+            "The following facts are known about the users in this chat:\n"
+            + "\n".join([f"{user}: {fact}" for user, fact in chat_facts])
+        )
+
+    async def _compose_user_facts_prompt(self, context: Context, person: Person) -> str:
+        user_facts = await self.db.user_facts.get_user_facts(context, person)
+        return "The following facts are known about you:\n" + "\n".join(user_facts)
+
     async def _compose_chat_history_prompt(self, user_input, context: Context) -> str:
         # TODO: also add the names and context details in history
 
@@ -42,7 +52,10 @@ class PromptManager:
         )
 
     async def compose_prompt(
-        self, user_transcribed_message: TranscribedMessage, context: Context
+        self,
+        initiator: Person,
+        context: Context,
+        user_transcribed_message: TranscribedMessage,
     ) -> str:
         current_date_prompt = get_current_date_prompt()
         chat_mode_prompt = await self._compose_chat_mode_prompt(context)
@@ -52,7 +65,16 @@ class PromptManager:
         chat_history_prompt = await self._compose_chat_history_prompt(
             user_input_prompt, context
         )
-        return f"{current_date_prompt} {chat_mode_prompt} {chat_history_prompt}"
+        chat_facts_prompt = await self._compose_chat_facts_prompt(context)
+        user_facts_prompt = await self._compose_user_facts_prompt(context, initiator)
+        return (
+            f"{current_date_prompt}\n"
+            f"{chat_mode_prompt}\n"
+            f"{user_input_prompt}\n"
+            f"{chat_history_prompt}\n"
+            f"{chat_facts_prompt}\n"
+            f"{user_facts_prompt}\n"
+        )
 
     async def get_reply_system_prompt(self) -> str:
         return "You are a helpful assistant. Please provide a response to the user's query."
