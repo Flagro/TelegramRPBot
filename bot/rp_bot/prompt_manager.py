@@ -35,17 +35,24 @@ class PromptManager:
         chat_mode = await self.db.chat_modes.get_chat_mode(context)
         return f"The current chat mode is: {chat_mode.mode_name}. {chat_mode.mode_description}"
 
-    async def compose_prompt(
-        self, user_input: str, history: List[Tuple[str, bool, str]]
-    ) -> str:
+    async def _compose_chat_history_prompt(self, user_input, context: Context) -> str:
         # TODO: also add the names and context details in history
-        current_date_prompt = get_current_date_prompt()
+
+        # Take everything besides the last one since the last one is the current message
+        messages_history = (await self.db.dialogs.get_messages(context))[0:-1]
         return (
             "The conversation so far:\n"
-            + "\n".join([f"{name}: {message}" for name, _, message in history])
-            + f"\n\n{current_date_prompt}"
+            + "\n".join([f"{name}: {message}" for name, _, message in messages_history])
             + f"\n\nAnd the user just asked: {user_input}"
         )
+
+    async def compose_prompt(self, user_input: str, context: Context) -> str:
+        current_date_prompt = get_current_date_prompt()
+        chat_mode_prompt = await self._compose_chat_mode_prompt(context)
+        chat_history_prompt = await self._compose_chat_history_prompt(
+            user_input, context
+        )
+        return f"{current_date_prompt} {chat_mode_prompt} {chat_history_prompt}"
 
     async def get_reply_system_prompt(self) -> str:
         return "You are a helpful assistant. Please provide a response to the user's query."
