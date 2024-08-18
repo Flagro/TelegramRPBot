@@ -1,6 +1,8 @@
 from typing import Optional, List, Tuple
 from datetime import datetime
 
+from .db import DB
+
 
 def get_current_date_prompt() -> str:
     date_prompt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -8,6 +10,9 @@ def get_current_date_prompt() -> str:
 
 
 class PromptManager:
+    def __init__(self, db: DB) -> None:
+        self.db = db
+
     async def compose_user_input(
         self,
         message: str,

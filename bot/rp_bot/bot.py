@@ -49,7 +49,7 @@ class RPBot(BaseBot):
         self.localizer = Localizer(
             translations=translations, default_language=bot_config.default_language
         )
-        self.prompt_manager = PromptManager()
+        self.prompt_manager = PromptManager(db=self.db)
         self.auth = Auth(
             allowed_handles=allowed_handles,
             admin_handles=admin_handles,
