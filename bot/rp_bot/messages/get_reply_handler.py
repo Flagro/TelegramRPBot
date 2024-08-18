@@ -1,23 +1,28 @@
-from ...models.base_handlers import BaseMessageHandler
-from ...models.handlers_response import CommandResponse
-from ...models.handlers_input import Person, Context, Message
-from ..auth import AllowedUser, BotAdmin, NotBanned
 from typing import Optional, AsyncIterator, List
 from datetime import datetime
+
+from ...models.base_handlers import BaseMessageHandler
+from ...models.handlers_response import CommandResponse
+from ...models.handlers_input import Person, Context, Message, TranscribedMessage
+from ..auth import AllowedUser, BotAdmin, NotBanned
 
 
 class MessageHandler(BaseMessageHandler):
     permission_classes = (AllowedUser, BotAdmin, NotBanned)
 
-    async def _estimate_reply_usage(self, context: Context, input_message: str) -> int:
+    async def _estimate_reply_usage(
+        self, context: Context, transcribed_message: TranscribedMessage
+    ) -> int:
         # Estimate the response based on amount of facts in the group chat,
         # the length of the message and wether or not it needs an image generation
-        return len(input_message) // 10 + 1000 * ("image" in input_message)
+        return len(transcribed_message.message_text) // 10 + 1000 * (
+            "image" in transcribed_message.message_text
+        )
 
     async def _get_user_usage(self, generated_message: str) -> int:
         return len(generated_message) // 10
 
-    async def _get_user_input(self, message: Message) -> str:
+    async def _get_transcribed_message(self, message: Message) -> TranscribedMessage:
         # Note that here the responsibility to pass NULL images and Audio is on the
         # outer level bot processing (TG bot or other bot)
         image_description = (
@@ -30,17 +35,12 @@ class MessageHandler(BaseMessageHandler):
             if message.in_file_audio
             else None
         )
-        # TODO: this is not a responsibility of a prompt manager,
-        # message text, and image and voice descriptions should be
-        # stored as is in the database
-        user_input = await self.prompt_manager.compose_user_input(
-            message.message_text, image_description, voice_description
+        return TranscribedMessage(
+            message_text=message.message_text,
+            timestamp=message.timestamp,
+            image_description=image_description,
+            voice_description=voice_description,
         )
-        return user_input
-
-    async def _get_bot_output(self, response_message: str) -> str:
-        localized_response = await self.prompt_manager.compose_bot_output(response_message)
-        return localized_response
 
     async def prepare_get_reply(
         self,
@@ -56,8 +56,10 @@ class MessageHandler(BaseMessageHandler):
             not conversation_tracker_enabled and not context.is_bot_mentioned
         ):
             return None
-        user_input = await self._get_user_input(message)
-        estimated_usage = await self._estimate_reply_usage(context, user_input)
+        user_transcribed_message = await self._get_transcribed_message(message)
+        estimated_usage = await self._estimate_reply_usage(
+            context, user_transcribed_message
+        )
         user_usage = await self.db.users.get_user_usage(person)
         user_limit = await self.db.users.get_user_usage_limit(person)
         if user_usage + estimated_usage > user_limit:
@@ -67,14 +69,15 @@ class MessageHandler(BaseMessageHandler):
             # TODO: somehow return a special response from here
             return None
         await self.db.dialogs.add_message_to_dialog(
-            context,
-            person,
-            user_input,
-            message.timestamp,
+            context=context,
+            person=person,
+            transcribed_message=user_transcribed_message,
         )
         if not context.is_bot_mentioned:
             return None
-        prompt = await self.prompt_manager.compose_prompt(user_input, context)
+        prompt = await self.prompt_manager.compose_prompt(
+            user_transcribed_message, context
+        )
         return prompt
 
     async def finish_get_reply(
@@ -85,12 +88,13 @@ class MessageHandler(BaseMessageHandler):
     ) -> None:
         user_usage = await self._get_user_usage(response_message)
         await self.db.users.add_usage_points(person, user_usage)
-        localized_response = await self._get_bot_output(response_message)
         await self.db.dialogs.add_message_to_dialog(
             context,
             "bot",
-            localized_response,
-            datetime.now(),
+            TranscribedMessage(
+                message_text=response_message,
+                timestamp=datetime.now(),
+            ),
         )
 
     async def get_response(
@@ -119,7 +123,9 @@ class MessageHandler(BaseMessageHandler):
             return
         response_message = ""
         system_prompt = self.prompt_manager.get_reply_system_prompt()
-        async for response_message_chunk in self.ai.get_streaming_reply(prompt, system_prompt):
+        async for response_message_chunk in self.ai.get_streaming_reply(
+            prompt, system_prompt
+        ):
             if not response_message_chunk:
                 continue
             response_message += response_message_chunk

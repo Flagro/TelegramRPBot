@@ -2,7 +2,7 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import List, Tuple, Union, Literal, Optional
 from datetime import datetime
 from .base_models import BaseModel
-from ...models.handlers_input import Person, Context
+from ...models.handlers_input import Person, Context, TranscribedMessage
 
 
 class Dialogs(BaseModel):
@@ -21,7 +21,9 @@ class Dialogs(BaseModel):
         chat_id = context.chat_id
         await self.dialogs.delete_many({"chat_id": chat_id})
 
-    async def get_messages(self, context: Context) -> List[Tuple[str, bool, str]]:
+    async def get_messages(
+        self, context: Context
+    ) -> List[Tuple[str, bool, datetime, TranscribedMessage]]:
         """Get the last N messages from the dialog
 
         Args:
@@ -29,7 +31,7 @@ class Dialogs(BaseModel):
             last_n (int, optional): amount of messages. Defaults to 10.
 
         Returns:
-            List[Tuple[str, bool, str]]: list of tuples with user_handle, is_bot and message
+            List[Tuple[str, bool, datetime, TranscribedMessage]]: list of tuples with user_handle, is_bot and message
         """
         chat_id = context.chat_id
         cursor = (
@@ -39,7 +41,16 @@ class Dialogs(BaseModel):
         )
         messages = await cursor.to_list(length=self.last_n_messages_to_remember)
         return [
-            (msg["user_handle"], msg["is_bot"], msg["message"])
+            (
+                msg["user_handle"],
+                msg["is_bot"],
+                TranscribedMessage(
+                    message_text=msg["message_text"],
+                    timestamp=msg["timestamp"],
+                    image_description=msg["image_description"],
+                    voice_description=msg["voice_description"],
+                ),
+            )
             for msg in reversed(messages)
         ]
 
@@ -47,8 +58,7 @@ class Dialogs(BaseModel):
         self,
         context: Context,
         person: Union[Person, Literal["bot"]],
-        message: str,
-        timestamp: datetime,
+        transcribed_message: TranscribedMessage,
     ) -> None:
         chat_id = context.chat_id
         user_handle = "bot" if person == "bot" else person.user_handle
@@ -59,15 +69,18 @@ class Dialogs(BaseModel):
                 "chat_id": chat_id,
                 "user_handle": user_handle,
                 "is_bot": person == "bot",
-                "message": message,
-                "timestamp": timestamp,
+                "message_text": transcribed_message.message_text,
+                "image_description": transcribed_message.image_description,
+                "voice_description": transcribed_message.voice_description,
+                "timestamp": transcribed_message.timestamp,
             }
         )
 
         # Check if the stored messages exceed the limit and delete the oldest if necessary
         while (
             self.last_n_messages_to_store is not None
-            and await self.dialogs.count_documents({"chat_id": chat_id}) > self.last_n_messages_to_store
+            and await self.dialogs.count_documents({"chat_id": chat_id})
+            > self.last_n_messages_to_store
         ):
             oldest_message = await self.dialogs.find_one(
                 {"chat_id": chat_id}, sort=[("_id", 1)]
