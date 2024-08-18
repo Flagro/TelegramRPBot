@@ -1,5 +1,7 @@
-from typing import Optional, List, Tuple
 from datetime import datetime
+
+from .db import DB
+from ..models.handlers_input import Person, Context, TranscribedMessage
 
 
 def get_current_date_prompt() -> str:
@@ -8,33 +10,82 @@ def get_current_date_prompt() -> str:
 
 
 class PromptManager:
-    async def compose_user_input(
+    def __init__(self, db: DB) -> None:
+        self.db = db
+
+    async def _compose_user_input_prompt(
         self,
-        message: str,
-        image_description: Optional[str],
-        voice_description: Optional[str],
+        transcribed_message: TranscribedMessage,
     ) -> str:
         # TODO: also add user name and context details
-        result = [message]
-        if image_description:
-            result.append(image_description)
-        if voice_description:
-            result.append(voice_description)
+        result = [transcribed_message.message_text]
+        if transcribed_message.image_description:
+            result.append(transcribed_message.image_description)
+        if transcribed_message.voice_description:
+            result.append(transcribed_message.voice_description)
         return " ".join(result)
 
-    async def compose_bot_output(self, response_message: str) -> str:
-        return response_message
+    async def _compose_chat_mode_prompt(self, context: Context) -> str:
+        chat_mode = await self.db.chat_modes.get_chat_mode(context)
+        return f"The current chat mode is: {chat_mode.mode_name}. {chat_mode.mode_description}"
 
-    async def compose_prompt(
-        self, user_input: str, history: List[Tuple[str, bool, str]]
+    async def _compose_chat_facts_prompt(self, context: Context) -> str:
+        chat_facts = await self.db.user_facts.get_chat_facts(context)
+        return (
+            "The following facts are known about the users in this chat:\n"
+            + "\n".join([f"{user}: {fact}" for user, fact in chat_facts])
+        )
+
+    async def _compose_user_facts_prompt(self, person: Person, context: Context) -> str:
+        user_facts = await self.db.user_facts.get_user_facts(context, person)
+        return "The following facts are known about you:\n" + "\n".join(user_facts)
+
+    async def _compose_user_introduction_prompt(
+        self, person: Person, context: Context
     ) -> str:
+        user_introduction = await self.db.user_introductions.get_user_introduction(
+            context, person
+        )
+        return f"Introduction of a user who requested the response: {user_introduction}"
+
+    async def _compose_chat_history_prompt(self, user_input, context: Context) -> str:
         # TODO: also add the names and context details in history
-        current_date_prompt = get_current_date_prompt()
+
+        # Take everything besides the last one since the last one is the current message
+        messages_history = (await self.db.dialogs.get_messages(context))[0:-1]
         return (
             "The conversation so far:\n"
-            + "\n".join([f"{name}: {message}" for name, _, message in history])
-            + f"\n\n{current_date_prompt}"
+            + "\n".join([f"{name}: {message}" for name, _, message in messages_history])
             + f"\n\nAnd the user just asked: {user_input}"
+        )
+
+    async def compose_prompt(
+        self,
+        initiator: Person,
+        context: Context,
+        user_transcribed_message: TranscribedMessage,
+    ) -> str:
+        current_date_prompt = get_current_date_prompt()
+        chat_mode_prompt = await self._compose_chat_mode_prompt(context)
+        user_input_prompt = await self._compose_user_input_prompt(
+            transcribed_message=user_transcribed_message
+        )
+        chat_history_prompt = await self._compose_chat_history_prompt(
+            user_input_prompt, context
+        )
+        chat_facts_prompt = await self._compose_chat_facts_prompt(context)
+        user_facts_prompt = await self._compose_user_facts_prompt(initiator, context)
+        user_introduction_prompt = await self._compose_user_introduction_prompt(
+            initiator, context
+        )
+        return (
+            f"{current_date_prompt}\n"
+            f"{chat_mode_prompt}\n"
+            f"{user_input_prompt}\n"
+            f"{chat_history_prompt}\n"
+            f"{chat_facts_prompt}\n"
+            f"{user_facts_prompt}\n"
+            f"{user_introduction_prompt}\n"
         )
 
     async def get_reply_system_prompt(self) -> str:

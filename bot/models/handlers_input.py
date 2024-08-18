@@ -24,3 +24,10 @@ class Message(BaseModel):
     timestamp: datetime
     in_file_image: Optional[str] = None
     in_file_audio: Optional[str] = None
+
+
+class TranscribedMessage(BaseModel):
+    message_text: str
+    timestamp: datetime
+    image_description: Optional[str] = None
+    voice_description: Optional[str] = None
