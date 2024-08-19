@@ -70,9 +70,13 @@ class BaseHandler(ABC):
     ) -> LocalizedCommandResponse:
         await self.db.create_if_not_exists(person, context)
         if not await self.is_authenticated(person, context):
-            response = CommandResponse(text="not_authenticated")
-        else:
-            response = await self.get_response(person, context, message, args)
+            return LocalizedCommandResponse(
+                localized_text=await self.localizer.get_command_response(
+                    "not_authenticated"
+                ),
+                keyboard=None,
+            )
+        response = await self.get_response(person, context, message, args)
         if response is None:
             return None
         return await self.get_localized_response(response)
