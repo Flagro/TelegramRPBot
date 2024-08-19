@@ -70,11 +70,8 @@ class BaseHandler(ABC):
     ) -> LocalizedCommandResponse:
         await self.db.create_if_not_exists(person, context)
         if not await self.is_authenticated(person, context):
-            return LocalizedCommandResponse(
-                localized_text=await self.localizer.get_command_response(
-                    "not_authenticated"
-                ),
-                keyboard=None,
+            return self.get_localized_response(
+                CommandResponse(text="not_authenticated")
             )
         response = await self.get_response(person, context, message, args)
         if response is None:
@@ -86,11 +83,8 @@ class BaseHandler(ABC):
     ) -> AsyncIterator[LocalizedCommandResponse]:
         await self.db.create_if_not_exists(person, context)
         if not await self.is_authenticated(person, context):
-            yield LocalizedCommandResponse(
-                localized_text=await self.localizer.get_command_response(
-                    "not_authenticated"
-                ),
-                keyboard=None,
+            yield self.get_localized_response(
+                CommandResponse(text="not_authenticated")
             )
             return
         async for chunk in self.stream_get_response(person, context, message, args):
