@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union, Type
 from logging import Logger
 from ..models.base_bot import BaseBot
 from .rp_bot_handlers import (
@@ -58,7 +58,14 @@ class RPBot(BaseBot):
         self.bot_config = bot_config
         self.logger = logger
 
-    def _init_handler(self, handler):
+    def _init_handler(
+        self,
+        handler: Union[
+            Type[RPBotCommandHandler],
+            Type[RPBotCallbackHandler],
+            Type[RPBotMessageHandler],
+        ],
+    ) -> Union[RPBotCommandHandler, RPBotCallbackHandler, RPBotMessageHandler]:
         return handler(
             db=self.db,
             ai=self.ai,
