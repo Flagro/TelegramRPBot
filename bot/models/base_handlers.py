@@ -51,13 +51,16 @@ class BaseHandler(ABC):
                 return False
         return True
 
+    async def get_localized_text(self, text: str, kwargs: dict) -> Optional[str]:
+        return await self.localizer.get_command_response(text, kwargs)
+
     async def get_localized_response(
         self, command_response: CommandResponse
     ) -> LocalizedCommandResponse:
         localized_text = (
             None
             if command_response.text is None
-            else await self.localizer.get_command_response(
+            else await self.get_localized_text(
                 command_response.text, command_response.kwargs
             )
         )
@@ -65,10 +68,13 @@ class BaseHandler(ABC):
             localized_text=localized_text, keyboard=command_response.keyboard
         )
 
+    async def initialize_context(self, person: Person, context: Context) -> None:
+        await self.db.create_if_not_exists(person, context)
+
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> LocalizedCommandResponse:
-        await self.db.create_if_not_exists(person, context)
+        await self.initialize_context(person, context)
         if not await self.is_authenticated(person, context):
             return self.get_localized_response(
                 CommandResponse(text="not_authenticated")
@@ -81,11 +87,9 @@ class BaseHandler(ABC):
     async def stream_handle(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> AsyncIterator[LocalizedCommandResponse]:
-        await self.db.create_if_not_exists(person, context)
+        await self.initialize_context(person, context)
         if not await self.is_authenticated(person, context):
-            yield self.get_localized_response(
-                CommandResponse(text="not_authenticated")
-            )
+            yield self.get_localized_response(CommandResponse(text="not_authenticated"))
             return
         async for chunk in self.stream_get_response(person, context, message, args):
             if chunk is None:
@@ -116,13 +120,9 @@ class BaseCommandHandler(BaseHandler, ABC):
     list_priority_order: CommandPriority = CommandPriority.DEFAULT
 
     async def get_localized_description(self) -> str:
-        result = await self.localizer.get_command_response(
-            f"{self.command}_description"
-        )
+        result = await self.get_localized_text(f"{self.command}_description")
         if result is None:
-            return await self.localizer.get_command_response(
-                "default_command_description"
-            )
+            return await self.get_localized_text("default_command_description")
         return result
 
 
