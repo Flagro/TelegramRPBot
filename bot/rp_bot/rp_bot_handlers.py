@@ -1,0 +1,66 @@
+from abc import ABC, abstractmethod
+from typing import List, Optional
+from logging import Logger
+
+from .db import DB
+from .ai import AI
+from .prompt_manager import PromptManager
+from .auth import Auth
+from .localizer import Localizer
+from ..models.config import BotConfig
+from ..models.base_handlers import (
+    BaseCommandHandler,
+    BaseCallbackHandler,
+    BaseMessageHandler,
+)
+from ..models.base_auth import BasePermission
+from ..models.handlers_input import Person, Context
+
+
+class RPBotHandlerMixin(ABC):
+    def __init__(
+        self,
+        db: DB,
+        ai: AI,
+        localizer: Localizer,
+        prompt_manager: PromptManager,
+        auth: Auth,
+        bot_config: BotConfig,
+        logger: Logger,
+    ):
+        self.db = db
+        self.ai = ai
+        self.localizer = localizer
+        self.prompt_manager = prompt_manager
+        self.auth = auth
+        self.bot_config = bot_config
+        self.logger = logger
+
+    @property
+    @abstractmethod
+    def permission_classes(self) -> List[BasePermission]:
+        raise NotImplementedError
+
+    async def get_initialized_permissions(self) -> List[BasePermission]:
+        result = []
+        for permission_class in self.permission_classes:
+            result.append(permission_class(self.auth))
+        return result
+
+    async def get_localized_text(self, text: str, kwargs: dict) -> Optional[str]:
+        return await self.localizer.get_command_response(text, kwargs)
+
+    async def initialize_context(self, person: Person, context: Context) -> None:
+        await self.db.create_if_not_exists(person, context)
+
+
+class RPBotCommandHandler(RPBotHandlerMixin, BaseCommandHandler, ABC):
+    pass
+
+
+class RPBotCallbackHandler(RPBotHandlerMixin, BaseCallbackHandler, ABC):
+    pass
+
+
+class RPBotMessageHandler(RPBotHandlerMixin, BaseMessageHandler, ABC):
+    pass

@@ -1,21 +1,13 @@
 from abc import ABC, abstractmethod
 from typing import Tuple, List, AsyncIterator, Optional, Type
-import logging
 import enum
-
-# TODO: base handlers should be moved to the bot package
-from ..rp_bot.db import DB
-from ..rp_bot.ai import AI
-from ..rp_bot.prompt_manager import PromptManager
-from ..rp_bot.auth import Auth, BasePermission
-from ..rp_bot.localizer import Localizer
 
 from .handlers_input import Person, Context, Message
 from .handlers_response import (
     CommandResponse,
     LocalizedCommandResponse,
 )
-from .config import BotConfig
+from .base_auth import BasePermission
 
 
 class BaseHandler(ABC):
@@ -24,22 +16,20 @@ class BaseHandler(ABC):
 
     def __init__(
         self,
-        db: DB,
-        ai: AI,
-        localizer: Localizer,
-        prompt_manager: PromptManager,
-        auth: Auth,
-        bot_config: BotConfig,
     ):
-        self.db = db
-        self.ai = ai
-        self.localizer = localizer
-        self.prompt_manager = prompt_manager
-        self._initialized_permissions = []
-        for permission_class in self.permission_classes:
-            self._initialized_permissions.append(permission_class(auth))
-        self.bot_config = bot_config
-        self.logger = logging.getLogger(f"{__name__}.{id(self)}")
+        self._initialized_permissions = self.get_initialized_permissions()
+
+    @abstractmethod
+    async def get_initialized_permissions(self) -> List[BasePermission]:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def get_localized_text(self, text: str, kwargs: dict) -> Optional[str]:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def initialize_context(self, person: Person, context: Context) -> None:
+        raise NotImplementedError
 
     @property
     def permissions(self) -> List[BasePermission]:
@@ -50,9 +40,6 @@ class BaseHandler(ABC):
             if not await permission.check(person, context):
                 return False
         return True
-
-    async def get_localized_text(self, text: str, kwargs: dict) -> Optional[str]:
-        return await self.localizer.get_command_response(text, kwargs)
 
     async def get_localized_response(
         self, command_response: CommandResponse
@@ -67,9 +54,6 @@ class BaseHandler(ABC):
         return LocalizedCommandResponse(
             localized_text=localized_text, keyboard=command_response.keyboard
         )
-
-    async def initialize_context(self, person: Person, context: Context) -> None:
-        await self.db.create_if_not_exists(person, context)
 
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
