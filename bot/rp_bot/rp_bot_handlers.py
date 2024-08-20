@@ -34,6 +34,7 @@ class RPBotHandlerMixin(ABC):
         self.prompt_manager = prompt_manager
         self.auth = auth
         self.bot_config = bot_config
+        # TODO: the logger must be injected in the base handler class
         self.logger = logger
 
     @property
