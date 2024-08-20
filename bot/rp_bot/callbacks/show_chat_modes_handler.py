@@ -1,9 +1,9 @@
 from typing import List
 from collections import OrderedDict
 
-from ...models.base_handlers import BaseCallbackHandler
 from ...models.handlers_response import KeyboardResponse, CommandResponse
 from ...models.handlers_input import Person, Context, Message
+from ..rp_bot_handlers import RPBotCallbackHandler
 from ..db import DB
 from ..auth import AllowedUser, NotBanned
 
@@ -25,7 +25,7 @@ class ShowChatModesMixin:
         )
 
 
-class CallbackHandler(ShowChatModesMixin, BaseCallbackHandler):
+class CallbackHandler(ShowChatModesMixin, RPBotCallbackHandler):
     permission_classes = (AllowedUser, NotBanned)
     callback_action = ShowChatModesMixin._show_chat_modes_callback
 

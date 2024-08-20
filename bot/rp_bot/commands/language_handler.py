@@ -1,13 +1,14 @@
 from typing import List
 
-from ...models.base_handlers import BaseCommandHandler, CommandPriority
+from ...models.base_handlers import CommandPriority
 from ...models.handlers_response import CommandResponse
 from ...models.handlers_input import Person, Context, Message
 from ..callbacks.set_chat_language_handler import CallbackHandler
 from ..callbacks.show_chat_languages_handler import ShowChatLanguagesMixin
+from ..rp_bot_handlers import RPBotCommandHandler
 
 
-class CommandHandler(ShowChatLanguagesMixin, BaseCommandHandler):
+class CommandHandler(ShowChatLanguagesMixin, RPBotCommandHandler):
     permission_classes = CallbackHandler.permission_classes
     command = "language"
     list_priority_order = CommandPriority.DEFAULT

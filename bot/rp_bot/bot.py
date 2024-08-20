@@ -1,11 +1,11 @@
-from typing import List
+from typing import List, Union, Type
 from logging import Logger
-from bot.models.base_handlers import (
-    BaseCallbackHandler,
-    BaseCommandHandler,
-    BaseMessageHandler,
-)
 from ..models.base_bot import BaseBot
+from .rp_bot_handlers import (
+    RPBotCommandHandler,
+    RPBotCallbackHandler,
+    RPBotMessageHandler,
+)
 from .commands import handlers as command_handlers
 from .callbacks import handlers as callback_handlers
 from .messages import handlers as message_handlers
@@ -58,7 +58,14 @@ class RPBot(BaseBot):
         self.bot_config = bot_config
         self.logger = logger
 
-    def _init_handler(self, handler):
+    def _init_handler(
+        self,
+        handler: Union[
+            Type[RPBotCommandHandler],
+            Type[RPBotCallbackHandler],
+            Type[RPBotMessageHandler],
+        ],
+    ) -> Union[RPBotCommandHandler, RPBotCallbackHandler, RPBotMessageHandler]:
         return handler(
             db=self.db,
             ai=self.ai,
@@ -66,16 +73,17 @@ class RPBot(BaseBot):
             prompt_manager=self.prompt_manager,
             auth=self.auth,
             bot_config=self.bot_config,
+            logger=self.logger.getChild(handler.__name__),
         )
 
     @property
-    def commands(self) -> List[BaseCommandHandler]:
+    def commands(self) -> List[RPBotCommandHandler]:
         return [self._init_handler(handler) for handler in command_handlers]
 
     @property
-    def callbacks(self) -> List[BaseCallbackHandler]:
+    def callbacks(self) -> List[RPBotCallbackHandler]:
         return [self._init_handler(handler) for handler in callback_handlers]
 
     @property
-    def messages(self) -> List[BaseMessageHandler]:
+    def messages(self) -> List[RPBotMessageHandler]:
         return [self._init_handler(handler) for handler in message_handlers]

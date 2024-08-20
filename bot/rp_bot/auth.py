@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import List, Optional
 from ..models.handlers_input import Person, Context
 from .db import DB
@@ -25,32 +25,26 @@ class Auth:
         return await self.db.users.is_user_banned(user_handle)
 
 
-class BasePermission(ABC):
+class BaseRPBotPermission(ABC):
     def __init__(self, auth: Auth):
         self.auth = auth
 
-    @abstractmethod
-    async def check(self, person: Person, context: Context) -> bool:
-        raise NotImplementedError(
-            "Permission check method must be implemented by subclasses."
-        )
 
-
-class GroupAdmin(BasePermission):
+class GroupAdmin(BaseRPBotPermission):
     async def check(self, person: Person, context: Context) -> bool:
         return person.is_group_admin
 
 
-class AllowedUser(BasePermission):
+class AllowedUser(BaseRPBotPermission):
     async def check(self, person: Person, context: Context) -> bool:
         return await self.auth.is_allowed(person.user_handle)
 
 
-class BotAdmin(BasePermission):
+class BotAdmin(BaseRPBotPermission):
     async def check(self, person: Person, context: Context) -> bool:
         return await self.auth.is_admin(person.user_handle)
 
 
-class NotBanned(BasePermission):
+class NotBanned(BaseRPBotPermission):
     async def check(self, person: Person, context: Context) -> bool:
         return not await self.auth.is_banned(person.user_handle)

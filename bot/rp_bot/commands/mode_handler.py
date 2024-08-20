@@ -1,13 +1,14 @@
 from typing import List
 
-from ...models.base_handlers import BaseCommandHandler, CommandPriority
+from ...models.base_handlers import CommandPriority
 from ...models.handlers_response import CommandResponse
 from ...models.handlers_input import Person, Context, Message
 from ..callbacks.set_chat_mode_handler import CallbackHandler
 from ..callbacks.show_chat_modes_handler import ShowChatModesMixin
+from ..rp_bot_handlers import RPBotCommandHandler
 
 
-class CommandHandler(ShowChatModesMixin, BaseCommandHandler):
+class CommandHandler(ShowChatModesMixin, RPBotCommandHandler):
     permission_classes = CallbackHandler.permission_classes
     command = "mode"
     list_priority_order = CommandPriority.DEFAULT
