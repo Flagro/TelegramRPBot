@@ -73,6 +73,7 @@ class RPBot(BaseBot):
             prompt_manager=self.prompt_manager,
             auth=self.auth,
             bot_config=self.bot_config,
+            logger=self.logger.getChild(handler.__name__),
         )
 
     @property
