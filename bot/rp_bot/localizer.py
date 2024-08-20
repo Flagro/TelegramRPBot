@@ -1,5 +1,5 @@
 from typing import Optional, List
-from .config.localizer_translations import LocalizerTranslations
+from ..models.config.localizer_translations import LocalizerTranslations
 
 
 class Localizer:

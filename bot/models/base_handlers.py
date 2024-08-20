@@ -8,8 +8,8 @@ from ..rp_bot.db import DB
 from ..rp_bot.ai import AI
 from ..rp_bot.prompt_manager import PromptManager
 from ..rp_bot.auth import Auth, BasePermission
+from ..rp_bot.localizer import Localizer
 
-from .localizer import Localizer
 from .handlers_input import Person, Context, Message
 from .handlers_response import (
     CommandResponse,

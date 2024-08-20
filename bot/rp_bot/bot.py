@@ -13,7 +13,7 @@ from .ai import AI
 from .db import DB
 from .auth import Auth
 from .prompt_manager import PromptManager
-from ..models.localizer import Localizer
+from .localizer import Localizer
 from ..models.config import (
     BotConfig,
     DefaultChatModes,
