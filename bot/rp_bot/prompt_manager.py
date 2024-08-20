@@ -52,7 +52,7 @@ class PromptManager:
         # TODO: also add the names and context details in history
 
         # Take everything besides the last one since the last one is the current message
-        messages_history = (await self.db.dialogs.get_messages(context))[0:-1]
+        messages_history = (await self.db.dialogs.get_messages(context))[:-1]
         return (
             "The conversation so far:\n"
             + "\n".join([f"{name}: {message}" for name, _, message in messages_history])
