@@ -1,13 +1,13 @@
 from typing import Optional, AsyncIterator, List
 from datetime import datetime
 
-from ...models.base_handlers import BaseMessageHandler
 from ...models.handlers_response import CommandResponse
 from ...models.handlers_input import Person, Context, Message, TranscribedMessage
 from ..auth import AllowedUser, BotAdmin, NotBanned
+from ..rp_bot_handlers import RPBotMessageHandler
 
 
-class MessageHandler(BaseMessageHandler):
+class MessageHandler(RPBotMessageHandler):
     permission_classes = (AllowedUser, BotAdmin, NotBanned)
 
     async def _estimate_reply_usage(

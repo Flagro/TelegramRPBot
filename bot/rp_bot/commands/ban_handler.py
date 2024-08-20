@@ -1,12 +1,13 @@
 from typing import List
 
-from ...models.base_handlers import BaseCommandHandler, CommandPriority
+from ...models.base_handlers import CommandPriority
 from ...models.handlers_response import CommandResponse
 from ...models.handlers_input import Person, Context, Message
+from ..rp_bot_handlers import RPBotCommandHandler
 from ..auth import BotAdmin
 
 
-class CommandHandler(BaseCommandHandler):
+class CommandHandler(RPBotCommandHandler):
     permission_classes = (BotAdmin,)
     command = "ban"
     list_priority_order = CommandPriority.ADMIN

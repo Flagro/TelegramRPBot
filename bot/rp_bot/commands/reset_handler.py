@@ -1,12 +1,13 @@
 from typing import List
 
-from ...models.base_handlers import BaseCommandHandler, CommandPriority
+from ...models.base_handlers import CommandPriority
 from ...models.handlers_response import CommandResponse
 from ...models.handlers_input import Person, Context, Message
 from ..auth import GroupAdmin, AllowedUser, NotBanned
+from ..rp_bot_handlers import RPBotCommandHandler
 
 
-class CommandHandler(BaseCommandHandler):
+class CommandHandler(RPBotCommandHandler):
     permission_classes = (GroupAdmin, AllowedUser, NotBanned)
     command = "reset"
     list_priority_order = CommandPriority.DEFAULT

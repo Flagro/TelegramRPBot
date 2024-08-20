@@ -1,12 +1,12 @@
 from typing import List
 
-from ...models.base_handlers import BaseCallbackHandler
 from ...models.handlers_response import CommandResponse
 from ...models.handlers_input import Person, Context, Message
+from ..rp_bot_handlers import RPBotCallbackHandler
 from ..auth import GroupAdmin, AllowedUser, NotBanned
 
 
-class CallbackHandler(BaseCallbackHandler):
+class CallbackHandler(RPBotCallbackHandler):
     permission_classes = (GroupAdmin, AllowedUser, NotBanned)
     callback_action = "set_chat_language"
 

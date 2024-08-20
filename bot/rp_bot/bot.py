@@ -1,11 +1,11 @@
 from typing import List
 from logging import Logger
-from bot.models.base_handlers import (
-    BaseCallbackHandler,
-    BaseCommandHandler,
-    BaseMessageHandler,
-)
 from ..models.base_bot import BaseBot
+from .rp_bot_handlers import (
+    RPBotCommandHandler,
+    RPBotCallbackHandler,
+    RPBotMessageHandler,
+)
 from .commands import handlers as command_handlers
 from .callbacks import handlers as callback_handlers
 from .messages import handlers as message_handlers
@@ -69,13 +69,13 @@ class RPBot(BaseBot):
         )
 
     @property
-    def commands(self) -> List[BaseCommandHandler]:
+    def commands(self) -> List[RPBotCommandHandler]:
         return [self._init_handler(handler) for handler in command_handlers]
 
     @property
-    def callbacks(self) -> List[BaseCallbackHandler]:
+    def callbacks(self) -> List[RPBotCallbackHandler]:
         return [self._init_handler(handler) for handler in callback_handlers]
 
     @property
-    def messages(self) -> List[BaseMessageHandler]:
+    def messages(self) -> List[RPBotMessageHandler]:
         return [self._init_handler(handler) for handler in message_handlers]
