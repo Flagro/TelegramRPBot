@@ -1,11 +1,15 @@
 from typing import Optional, List
+
+from .db import DB
+from ..models.handlers_input import Context
 from ..models.config.localizer_translations import LocalizerTranslations
 
 
 class Localizer:
     def __init__(
-        self, translations: LocalizerTranslations, default_language: str
+        self, db: DB, translations: LocalizerTranslations, default_language: str
     ) -> None:
+        self.db = db
         self.translations: LocalizerTranslations = translations
         self.default_language: str = default_language
 
@@ -13,8 +17,12 @@ class Localizer:
         self,
         text: str,
         kwargs: Optional[dict] = None,
-        language: Optional[str] = "english",
+        context: Optional[Context] = None,
     ) -> Optional[str]:
+        if context is None:
+            language = self.default_language
+        else:
+            language = self.db.chats.get_language(context)
         if text not in self.translations.translations:
             return None
         localizer_translation = self.translations.translations[text]

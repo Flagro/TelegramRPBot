@@ -24,7 +24,9 @@ class BaseHandler(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_localized_text(self, text: str, kwargs: dict) -> Optional[str]:
+    async def get_localized_text(
+        self, text: str, kwargs: dict, context: Optional[Context] = None
+    ) -> Optional[str]:
         raise NotImplementedError
 
     @abstractmethod
@@ -42,13 +44,13 @@ class BaseHandler(ABC):
         return True
 
     async def get_localized_response(
-        self, command_response: CommandResponse
+        self, command_response: CommandResponse, context: Optional[Context] = None
     ) -> LocalizedCommandResponse:
         localized_text = (
             None
             if command_response.text is None
             else await self.get_localized_text(
-                command_response.text, command_response.kwargs
+                command_response.text, command_response.kwargs, context
             )
         )
         return LocalizedCommandResponse(
@@ -61,24 +63,27 @@ class BaseHandler(ABC):
         await self.initialize_context(person, context)
         if not await self.is_authenticated(person, context):
             return self.get_localized_response(
-                CommandResponse(text="not_authenticated")
+                CommandResponse(text="not_authenticated"), context
             )
         response = await self.get_response(person, context, message, args)
         if response is None:
             return None
-        return await self.get_localized_response(response)
+        return await self.get_localized_response(response, context)
 
     async def stream_handle(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> AsyncIterator[LocalizedCommandResponse]:
         await self.initialize_context(person, context)
         if not await self.is_authenticated(person, context):
-            yield self.get_localized_response(CommandResponse(text="not_authenticated"))
+            yield self.get_localized_response(
+                CommandResponse(text="not_authenticated"),
+                context,
+            )
             return
         async for chunk in self.stream_get_response(person, context, message, args):
             if chunk is None:
                 continue
-            yield await self.get_localized_response(chunk)
+            yield await self.get_localized_response(chunk, context)
 
     @abstractmethod
     async def get_response(
@@ -103,10 +108,10 @@ class BaseCommandHandler(BaseHandler, ABC):
     command: str = None
     list_priority_order: CommandPriority = CommandPriority.DEFAULT
 
-    async def get_localized_description(self) -> str:
-        result = await self.get_localized_text(f"{self.command}_description")
+    async def get_localized_description(self, context: Optional[Context] = None) -> str:
+        result = await self.get_localized_text(f"{self.command}_description", context)
         if result is None:
-            return await self.get_localized_text("default_command_description")
+            return await self.get_localized_text("default_command_description", context)
         return result
 
 

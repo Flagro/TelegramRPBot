@@ -48,8 +48,12 @@ class RPBotHandlerMixin(ABC):
             result.append(permission_class(self.auth))
         return result
 
-    async def get_localized_text(self, text: str, kwargs: dict) -> Optional[str]:
-        return await self.localizer.get_command_response(text, kwargs)
+    async def get_localized_text(
+        self, text: str, kwargs: dict, context: Optional[Context] = None
+    ) -> Optional[str]:
+        return await self.localizer.get_command_response(
+            text=text, kwargs=kwargs, context=context
+        )
 
     async def initialize_context(self, person: Person, context: Context) -> None:
         await self.db.create_if_not_exists(person, context)

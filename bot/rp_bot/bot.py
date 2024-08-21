@@ -47,7 +47,9 @@ class RPBot(BaseBot):
         )
         self.ai = AI(openai_api_key=openai_api_key, ai_config=ai_config)
         self.localizer = Localizer(
-            translations=translations, default_language=bot_config.default_language
+            db=self.db,
+            translations=translations,
+            default_language=bot_config.default_language,
         )
         self.prompt_manager = PromptManager(db=self.db)
         self.auth = Auth(
