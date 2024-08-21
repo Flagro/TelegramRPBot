@@ -1,8 +1,9 @@
-from motor.motor_asyncio import AsyncIOMotorDatabase
 from collections import namedtuple
 from datetime import datetime
+from motor.motor_asyncio import AsyncIOMotorDatabase
+
 from .base_models import BaseModel
-from ...models.handlers_input import Person, Context
+from ...models.handlers_input import Person
 
 
 UserUsageResponse = namedtuple("UserUsageResponse", ["this_month_usage", "limit"])

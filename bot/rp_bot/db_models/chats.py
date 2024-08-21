@@ -1,7 +1,8 @@
-from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import Optional
+from motor.motor_asyncio import AsyncIOMotorDatabase
+
 from .base_models import BaseModel
-from ...models.handlers_input import Person, Context
+from ...models.handlers_input import Context
 
 
 class Chats(BaseModel):

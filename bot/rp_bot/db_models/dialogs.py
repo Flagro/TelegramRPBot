@@ -1,6 +1,7 @@
-from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import List, Tuple, Union, Literal, Optional
 from datetime import datetime
+from motor.motor_asyncio import AsyncIOMotorDatabase
+
 from .base_models import BaseModel
 from ...models.handlers_input import Person, Context, TranscribedMessage
 

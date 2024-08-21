@@ -1,10 +1,12 @@
-from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import List
 from bson import ObjectId
 from collections import namedtuple
+from motor.motor_asyncio import AsyncIOMotorDatabase
+
+
 from .base_models import BaseModel
 from ...models.config import DefaultChatModes
-from ...models.handlers_input import Person, Context
+from ...models.handlers_input import Context
 
 
 ChatModeResponse = namedtuple(
