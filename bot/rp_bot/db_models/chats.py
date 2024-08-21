@@ -57,7 +57,7 @@ class Chats(BaseModel):
             {"$set": {"language": language}},
         )
 
-    async def get_language(self, context: Context) -> Optional[str]:
+    async def get_language(self, context: Context) -> str:
         chat_id = context.chat_id
         chat_data = await self.chats.find_one(
             {"chat_id": chat_id}, {"_id": 0, "language": 1}
