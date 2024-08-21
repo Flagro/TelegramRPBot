@@ -19,9 +19,8 @@ async def is_content_acceptable(text: str):
 
 
 class AI:
-    def __init__(self, openai_api_key: str, db: DB, ai_config: AIConfig):
+    def __init__(self, openai_api_key: str, ai_config: AIConfig):
         self.client = OpenAI(api_key=openai_api_key)
-        self.db = db
         self.ai_config = ai_config
 
     async def _get_default_text_model_name(self) -> str:

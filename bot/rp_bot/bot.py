@@ -45,7 +45,7 @@ class RPBot(BaseBot):
             last_n_messages_to_store=bot_config.last_n_messages_to_store,
             default_usage_limit=bot_config.default_usage_limit,
         )
-        self.ai = AI(openai_api_key=openai_api_key, db=self.db, ai_config=ai_config)
+        self.ai = AI(openai_api_key=openai_api_key, ai_config=ai_config)
         self.localizer = Localizer(
             translations=translations, default_language=bot_config.default_language
         )
