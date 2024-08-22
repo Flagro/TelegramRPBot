@@ -13,6 +13,7 @@ class Person(BaseModel):
 
 class Context(BaseModel):
     chat_id: int
+    chat_name: str
     thread_id: Optional[int]
     is_group: bool
     is_bot_mentioned: bool

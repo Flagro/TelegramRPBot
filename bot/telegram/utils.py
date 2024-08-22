@@ -32,6 +32,7 @@ async def get_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Con
     if is_callback(update):
         return Context(
             chat_id=update.callback_query.message.chat.id,
+            chat_name=update.callback_query.message.chat.title,
             thread_id=None,
             is_group=True,
             is_bot_mentioned=False,
@@ -45,6 +46,7 @@ async def get_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Con
         )
         return Context(
             chat_id=update.message.chat_id,
+            chat_name=update.message.chat.title,
             thread_id=get_thread_id(update),
             is_group=True,
             is_bot_mentioned=bot_mentioned(update, context),
