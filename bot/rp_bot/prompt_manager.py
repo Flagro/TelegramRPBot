@@ -66,7 +66,6 @@ class PromptManager:
         user_transcribed_message: TranscribedMessage,
     ) -> str:
         current_date_prompt = get_current_date_prompt()
-        chat_mode_prompt = await self._compose_chat_mode_prompt(context)
         user_input_prompt = await self._compose_user_input_prompt(
             transcribed_message=user_transcribed_message
         )
@@ -80,7 +79,6 @@ class PromptManager:
         )
         return (
             f"{current_date_prompt}\n"
-            f"{chat_mode_prompt}\n"
             f"{user_input_prompt}\n"
             f"{chat_history_prompt}\n"
             f"{chat_facts_prompt}\n"
@@ -88,5 +86,12 @@ class PromptManager:
             f"{user_introduction_prompt}\n"
         )
 
-    async def get_reply_system_prompt(self) -> str:
-        return "You are a helpful assistant. Please provide a response to the user's query."
+    async def get_reply_system_prompt(self, context: Context) -> str:
+        chat_name = context.chat_name
+        chat_mode_prompt = await self._compose_chat_mode_prompt(context)
+        return (
+            "You are a helpful assistant. "
+            f"You are currently in the chat: {chat_name}. "
+            f"{chat_mode_prompt} "
+            "Please provide a response to the user's query."
+        )

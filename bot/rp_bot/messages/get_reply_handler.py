@@ -107,7 +107,7 @@ class MessageHandler(RPBotMessageHandler):
         prompt = await self.prepare_get_reply(person, context, message)
         if not prompt:
             return None
-        system_prompt = self.prompt_manager.get_reply_system_prompt()
+        system_prompt = self.prompt_manager.get_reply_system_prompt(context)
         response_message = await self.ai.get_reply(prompt, system_prompt)
         result = CommandResponse(
             text="message_response", kwargs={"response_text": response_message}
@@ -122,7 +122,7 @@ class MessageHandler(RPBotMessageHandler):
         if not prompt:
             return
         response_message = ""
-        system_prompt = self.prompt_manager.get_reply_system_prompt()
+        system_prompt = self.prompt_manager.get_reply_system_prompt(context)
         async for response_message_chunk in self.ai.get_streaming_reply(
             prompt, system_prompt
         ):
