@@ -2,7 +2,7 @@ import logging
 from decouple import config
 from pathlib import Path
 
-from bot.rp_bot.bot import RPBot
+from bot.rp_bot.bot import get_rp_bot
 from bot.models.config import (
     TGConfig,
     BotConfig,
@@ -36,7 +36,7 @@ def main():
         db_name=config("DB_NAME"),
     )
 
-    rp_bot = RPBot(
+    rp_bot = get_rp_bot(
         db_uri=db_uri,
         openai_api_key=config("OPENAI_API_KEY"),
         translations=translations,

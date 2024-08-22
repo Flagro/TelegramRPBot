@@ -22,41 +22,64 @@ from ..models.config import (
 )
 
 
+def get_rp_bot(
+    db_uri: str,
+    openai_api_key: str,
+    translations: LocalizerTranslations,
+    default_chat_modes: DefaultChatModes,
+    ai_config: AIConfig,
+    bot_config: BotConfig,
+    allowed_handles: List[str],
+    admin_handles: List[str],
+    logger: Logger,
+):
+    db = DB(
+        db_uri=db_uri,
+        default_language=bot_config.default_language,
+        default_chat_modes=default_chat_modes,
+        last_n_messages_to_remember=bot_config.last_n_messages_to_remember,
+        last_n_messages_to_store=bot_config.last_n_messages_to_store,
+        default_usage_limit=bot_config.default_usage_limit,
+    )
+    ai = AI(openai_api_key=openai_api_key, ai_config=ai_config)
+    localizer = Localizer(
+        db=db,
+        translations=translations,
+        default_language=bot_config.default_language,
+    )
+    prompt_manager = PromptManager(db=db)
+    auth = Auth(
+        allowed_handles=allowed_handles,
+        admin_handles=admin_handles,
+        db=db,
+    )
+    return RPBot(
+        db=db,
+        ai=ai,
+        localizer=localizer,
+        prompt_manager=prompt_manager,
+        auth=auth,
+        bot_config=bot_config,
+        logger=logger,
+    )
+
+
 class RPBot(BaseBot):
     def __init__(
         self,
-        db_uri: str,
-        openai_api_key: str,
-        translations: LocalizerTranslations,
-        default_chat_modes: DefaultChatModes,
-        ai_config: AIConfig,
+        db: DB,
+        ai: AI,
+        localizer: Localizer,
+        prompt_manager: PromptManager,
+        auth: Auth,
         bot_config: BotConfig,
-        allowed_handles: List[str],
-        admin_handles: List[str],
         logger: Logger,
     ):
-        # TODO: this must be done in a separate function
-        # in order to implement a better dependency injection
-        self.db = DB(
-            db_uri=db_uri,
-            default_language=bot_config.default_language,
-            default_chat_modes=default_chat_modes,
-            last_n_messages_to_remember=bot_config.last_n_messages_to_remember,
-            last_n_messages_to_store=bot_config.last_n_messages_to_store,
-            default_usage_limit=bot_config.default_usage_limit,
-        )
-        self.ai = AI(openai_api_key=openai_api_key, ai_config=ai_config)
-        self.localizer = Localizer(
-            db=self.db,
-            translations=translations,
-            default_language=bot_config.default_language,
-        )
-        self.prompt_manager = PromptManager(db=self.db)
-        self.auth = Auth(
-            allowed_handles=allowed_handles,
-            admin_handles=admin_handles,
-            db=self.db,
-        )
+        self.db = db
+        self.ai = ai
+        self.localizer = localizer
+        self.prompt_manager = prompt_manager
+        self.auth = auth
         self.bot_config = bot_config
         self.logger = logger
 
