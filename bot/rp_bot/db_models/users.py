@@ -1,4 +1,3 @@
-from collections import namedtuple
 from datetime import datetime
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
@@ -6,14 +5,10 @@ from .base_models import BaseModel
 from ...models.handlers_input import Person
 
 
-UserUsageResponse = namedtuple("UserUsageResponse", ["this_month_usage", "limit"])
-
-
 class Users(BaseModel):
-    def __init__(self, db: AsyncIOMotorDatabase, default_usage_limit: int) -> None:
+    def __init__(self, db: AsyncIOMotorDatabase) -> None:
         super().__init__(db)
         self.users = db.users
-        self.default_usage_limit = default_usage_limit
 
     async def create_user_if_not_exists(self, person: Person) -> None:
         user_handle = person.user_handle
@@ -24,39 +19,10 @@ class Users(BaseModel):
                     "handle": user_handle,
                     "first_name": person.first_name,
                     "last_name": person.last_name,
-                    "usage": 0,
-                    "limit": self.default_usage_limit,
                 }
             },
             upsert=True,
         )
-
-    async def add_usage_points(self, person: Person, points: int) -> None:
-        user_handle = person.user_handle
-        await self.users.update_one(
-            {"handle": user_handle}, {"$inc": {"usage": points}}
-        )
-
-    async def get_user_usage(self, person: Person) -> int:
-        user_handle = person.user_handle
-        usage_data = await self.users.find_one(
-            {"handle": user_handle}, {"_id": 0, "usage": 1}
-        )
-        return usage_data.get("usage", 0)
-
-    async def get_user_usage_report(self, person: Person) -> UserUsageResponse:
-        user_handle = person.user_handle
-        usage_data = await self.users.find_one(
-            {"handle": user_handle}, {"_id": 0, "usage": 1, "limit": 1}
-        )
-        return UserUsageResponse(usage_data.get("usage", 0), usage_data.get("limit", 0))
-
-    async def get_user_usage_limit(self, person: Person) -> int:
-        user_handle = person.user_handle
-        usage_data = await self.users.find_one(
-            {"handle": user_handle}, {"_id": 0, "limit": 1}
-        )
-        return usage_data.get("limit", 0)
 
     async def ban_user(self, user_handle: str, time_seconds: int) -> None:
         # add timestamp to the user's banned field and set the ban duration

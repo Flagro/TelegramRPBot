@@ -15,7 +15,7 @@ class CommandHandler(RPBotCommandHandler):
     async def get_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
-        user_usage = await self.db.users.get_user_usage_report(person)
+        user_usage = await self.db.user_usage.get_user_usage_report(person)
         return CommandResponse(
             text="usage_text", kwargs={"this_month_usage": user_usage.this_month_usage}
         )
