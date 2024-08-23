@@ -60,8 +60,8 @@ class MessageHandler(RPBotMessageHandler):
         estimated_usage = await self._estimate_reply_usage(
             context, user_transcribed_message
         )
-        user_usage = await self.db.users.get_user_usage(person)
-        user_limit = await self.db.users.get_user_usage_limit(person)
+        user_usage = await self.db.user_usage.get_user_usage(person)
+        user_limit = await self.db.user_usage.get_user_usage_limit(person)
         if user_usage + estimated_usage > user_limit:
             self.logger.info(
                 f"User {person.user_handle} exceeded the usage limit of {user_limit}"
@@ -87,7 +87,7 @@ class MessageHandler(RPBotMessageHandler):
         response_message: str,
     ) -> None:
         user_usage = await self._get_user_usage(response_message)
-        await self.db.users.add_usage_points(person, user_usage)
+        await self.db.user_usage.add_usage_points(person, user_usage)
         await self.db.dialogs.add_message_to_dialog(
             context,
             "bot",
