@@ -7,12 +7,6 @@ AIConfig:
     presence_penalty: 0
     request_timeout: 60.0
     Models:
-      gpt-3.5-turbo-16k:
-        name: "gpt-3.5-turbo-16k"
-        rate:
-          input_token_price: 1
-          output_token_price: 2
-
       gpt-4:
         name: "gpt-4"
         rate:
@@ -25,6 +19,12 @@ AIConfig:
         rate:
           input_token_price: 5
           output_token_price: 10
+
+      gpt-4o-mini:
+        name: "gpt-4o-mini"
+        rate:
+          input_token_price: 1
+          output_token_price: 2
 
   ImageProcessing:
     image_size: "512x512"
