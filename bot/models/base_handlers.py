@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Tuple, List, AsyncIterator, Optional, Type
+
+from logging import Logger
 import enum
 
 from .handlers_input import Person, Context, Message
@@ -16,7 +18,9 @@ class BaseHandler(ABC):
 
     def __init__(
         self,
+        logger: Logger,
     ):
+        self.logger = logger
         self._initialized_permissions = self.get_initialized_permissions()
 
     @abstractmethod

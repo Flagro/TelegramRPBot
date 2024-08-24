@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
-from logging import Logger
 
 from .db import DB
 from .ai import AI
@@ -26,16 +25,16 @@ class RPBotHandlerMixin(ABC):
         prompt_manager: PromptManager,
         auth: Auth,
         bot_config: BotConfig,
-        logger: Logger,
+        *args,
+        **kwargs
     ):
+        super().__init__(*args, **kwargs)
         self.db = db
         self.ai = ai
         self.localizer = localizer
         self.prompt_manager = prompt_manager
         self.auth = auth
         self.bot_config = bot_config
-        # TODO: the logger must be injected in the base handler class
-        self.logger = logger
 
     @property
     @abstractmethod
