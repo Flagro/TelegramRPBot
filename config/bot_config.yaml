@@ -1,5 +1,5 @@
 BotConfig:
-  default_language: en
+  default_language: english
   last_n_messages_to_remember: 25
   last_n_messages_to_store: 50
   default_usage_limit: 1000000000

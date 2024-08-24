@@ -24,12 +24,15 @@ class BaseHandler(ABC):
         self._initialized_permissions = self.get_initialized_permissions()
 
     @abstractmethod
-    async def get_initialized_permissions(self) -> List[BasePermission]:
+    def get_initialized_permissions(self) -> List[BasePermission]:
         raise NotImplementedError
 
     @abstractmethod
     async def get_localized_text(
-        self, text: str, kwargs: dict, context: Optional[Context] = None
+        self,
+        text: str,
+        kwargs: Optional[dict] = None,
+        context: Optional[Context] = None,
     ) -> Optional[str]:
         raise NotImplementedError
 
@@ -54,7 +57,9 @@ class BaseHandler(ABC):
             None
             if command_response.text is None
             else await self.get_localized_text(
-                command_response.text, command_response.kwargs, context
+                text=command_response.text,
+                kwargs=command_response.kwargs,
+                context=context,
             )
         )
         return LocalizedCommandResponse(
@@ -113,9 +118,13 @@ class BaseCommandHandler(BaseHandler, ABC):
     list_priority_order: CommandPriority = CommandPriority.DEFAULT
 
     async def get_localized_description(self, context: Optional[Context] = None) -> str:
-        result = await self.get_localized_text(f"{self.command}_description", context)
+        result = await self.get_localized_text(
+            text=f"{self.command}_description", context=context
+        )
         if result is None:
-            return await self.get_localized_text("default_command_description", context)
+            return await self.get_localized_text(
+                text="default_command_description", context=context
+            )
         return result
 
 

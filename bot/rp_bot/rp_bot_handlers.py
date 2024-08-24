@@ -28,27 +28,27 @@ class RPBotHandlerMixin(ABC):
         *args,
         **kwargs
     ):
-        super().__init__(*args, **kwargs)
         self.db = db
         self.ai = ai
         self.localizer = localizer
         self.prompt_manager = prompt_manager
         self.auth = auth
         self.bot_config = bot_config
+        super().__init__(*args, **kwargs)
 
     @property
     @abstractmethod
     def permission_classes(self) -> List[BasePermission]:
         raise NotImplementedError
 
-    async def get_initialized_permissions(self) -> List[BasePermission]:
+    def get_initialized_permissions(self) -> List[BasePermission]:
         result = []
         for permission_class in self.permission_classes:
             result.append(permission_class(self.auth))
         return result
 
     async def get_localized_text(
-        self, text: str, kwargs: dict, context: Optional[Context] = None
+        self, text: str, kwargs: Optional[dict] = None, context: Optional[Context] = None
     ) -> Optional[str]:
         return await self.localizer.get_command_response(
             text=text, kwargs=kwargs, context=context

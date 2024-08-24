@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from .base_models import BaseModel
@@ -10,7 +10,7 @@ class UserFacts(BaseModel):
         super().__init__(db)
         self.user_facts = db.user_facts
 
-    async def get_chat_facts(self, context: Context) -> List[str, str]:
+    async def get_chat_facts(self, context: Context) -> List[Tuple[str, str]]:
         """
         Return a list of facts for the current chat as a list
         user_handle, fact

@@ -30,6 +30,8 @@ class Localizer:
             language = self.default_language
         if language not in localizer_translation.language_translation:
             return None
+        if kwargs is None:
+            kwargs = {}
         response_text = localizer_translation.language_translation[language].format(
             **kwargs
         )
