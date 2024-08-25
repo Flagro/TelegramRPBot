@@ -47,6 +47,12 @@ class BaseHandler(ABC):
     async def is_authenticated(self, person: Person, context: Context) -> bool:
         for permission in self.permissions:
             if not await permission.check(person, context):
+                handler_name = str(self)
+                permission_name = permission.__class__.__name__
+                self.logger.info(
+                    f"User {person.user_handle} does not have permission to use "
+                    f"{handler_name}. Permission: {permission_name}"
+                )
                 return False
         return True
 
@@ -117,6 +123,9 @@ class BaseCommandHandler(BaseHandler, ABC):
     command: str = None
     list_priority_order: CommandPriority = CommandPriority.DEFAULT
 
+    def __str__(self):
+        return f"Command Handler: {self.command}"
+
     async def get_localized_description(self, context: Optional[Context] = None) -> str:
         result = await self.get_localized_text(
             text=f"{self.command}_description", context=context
@@ -131,9 +140,15 @@ class BaseCommandHandler(BaseHandler, ABC):
 class BaseCallbackHandler(BaseHandler, ABC):
     callback_action: str = None
 
+    def __str__(self):
+        return f"Callback Handler: {self.callback_action}"
+
 
 class BaseMessageHandler(BaseHandler, ABC):
     streamable: bool = True
+
+    def __str__(self):
+        return "Message Handler"
 
     @abstractmethod
     async def stream_get_response(
