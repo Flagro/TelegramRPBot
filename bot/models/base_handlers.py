@@ -47,6 +47,12 @@ class BaseHandler(ABC):
     async def is_authenticated(self, person: Person, context: Context) -> bool:
         for permission in self.permissions:
             if not await permission.check(person, context):
+                handler_name = str(self)
+                permission_name = permission.__class__.__name__
+                self.logger.info(
+                    f"User {person.user_handle} does not have permission to use "
+                    f"{handler_name}. Permission: {permission_name}"
+                )
                 return False
         return True
 
@@ -66,6 +72,17 @@ class BaseHandler(ABC):
             localized_text=localized_text, keyboard=command_response.keyboard
         )
 
+    async def _log_handler_request(
+        self, person: Person, context: Context, message: Message, args: List[str]
+    ) -> None:
+        handler_name = str(self)
+        user_handle = person.user_handle
+        chat_id = context.chat_id
+        args_prompt = " with args: " + " ".join(args) if args else ""
+        self.logger.info(
+            f"Handling request for {handler_name} in chat {chat_id} by user {user_handle}{args_prompt}"
+        )
+
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> LocalizedCommandResponse:
@@ -74,6 +91,7 @@ class BaseHandler(ABC):
             return self.get_localized_response(
                 CommandResponse(text="not_authenticated"), context
             )
+        await self._log_handler_request(person, context, message, args)
         response = await self.get_response(person, context, message, args)
         if response is None:
             return None
@@ -89,6 +107,7 @@ class BaseHandler(ABC):
                 context,
             )
             return
+        await self._log_handler_request(person, context, message, args)
         async for chunk in self.stream_get_response(person, context, message, args):
             if chunk is None:
                 continue
@@ -117,6 +136,9 @@ class BaseCommandHandler(BaseHandler, ABC):
     command: str = None
     list_priority_order: CommandPriority = CommandPriority.DEFAULT
 
+    def __str__(self):
+        return f"Command Handler: {self.command}"
+
     async def get_localized_description(self, context: Optional[Context] = None) -> str:
         result = await self.get_localized_text(
             text=f"{self.command}_description", context=context
@@ -131,9 +153,15 @@ class BaseCommandHandler(BaseHandler, ABC):
 class BaseCallbackHandler(BaseHandler, ABC):
     callback_action: str = None
 
+    def __str__(self):
+        return f"Callback Handler: {self.callback_action}"
+
 
 class BaseMessageHandler(BaseHandler, ABC):
     streamable: bool = True
+
+    def __str__(self):
+        return "Message Handler"
 
     @abstractmethod
     async def stream_get_response(
