@@ -72,6 +72,17 @@ class BaseHandler(ABC):
             localized_text=localized_text, keyboard=command_response.keyboard
         )
 
+    async def _log_handler_request(
+        self, person: Person, context: Context, message: Message, args: List[str]
+    ) -> None:
+        handler_name = str(self)
+        user_handle = person.user_handle
+        chat_id = context.chat_id
+        args_prompt = " with args: " + " ".join(args) if args else ""
+        self.logger.info(
+            f"Handling request for {handler_name} in chat {chat_id} by user {user_handle}{args_prompt}"
+        )
+
     async def handle(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> LocalizedCommandResponse:
@@ -80,6 +91,7 @@ class BaseHandler(ABC):
             return self.get_localized_response(
                 CommandResponse(text="not_authenticated"), context
             )
+        await self._log_handler_request(person, context, message, args)
         response = await self.get_response(person, context, message, args)
         if response is None:
             return None
@@ -95,6 +107,7 @@ class BaseHandler(ABC):
                 context,
             )
             return
+        await self._log_handler_request(person, context, message, args)
         async for chunk in self.stream_get_response(person, context, message, args):
             if chunk is None:
                 continue
