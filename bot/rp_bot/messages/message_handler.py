@@ -47,7 +47,7 @@ class MessageHandler(RPBotMessageHandler):
         person: Person,
         context: Context,
         message: Message,
-    ) -> Optional[str]:
+    ) -> Optional[TranscribedMessage]:
         conversation_tracker_enabled = (
             await self.db.chats.get_conversation_tracker_state(context)
         )
@@ -60,17 +60,6 @@ class MessageHandler(RPBotMessageHandler):
             )
             return None
         user_transcribed_message = await self._get_transcribed_message(message)
-        estimated_usage = await self._estimate_reply_usage(
-            context, user_transcribed_message
-        )
-        user_usage = await self.db.user_usage.get_user_usage(person)
-        user_limit = await self.db.user_usage.get_user_usage_limit(person)
-        if user_usage + estimated_usage > user_limit:
-            self.logger.info(
-                f"User {person.user_handle} exceeded the usage limit of {user_limit}"
-            )
-            # TODO: somehow return a special response from here
-            return None
         await self.db.dialogs.add_message_to_dialog(
             context=context,
             person=person,
@@ -82,13 +71,30 @@ class MessageHandler(RPBotMessageHandler):
                 "as context for future responses and not generating a response"
             )
             return None
-        prompt = await self.prompt_manager.compose_prompt(
-            user_transcribed_message, context
+        return user_transcribed_message
+
+    async def is_usage_under_limit(
+        self, person: Person, context: Context, transcribed_message: TranscribedMessage
+    ) -> bool:
+        estimated_usage = await self._estimate_reply_usage(context, transcribed_message)
+        user_usage = await self.db.user_usage.get_user_usage(person)
+        user_limit = await self.db.user_usage.get_user_usage_limit(person)
+        return user_usage + estimated_usage < user_limit
+
+    async def get_usage_over_limit_response(self, person: Person) -> CommandResponse:
+        usage_limit = await self.db.user_usage.get_user_usage_limit(person)
+        return CommandResponse(
+            text="usage_limit_exceeded",
+            kwargs={"user_handle": person.user_handle, "usage_limit": usage_limit},
         )
+
+    async def get_prompt_from_transcribed_message(
+        self, person: Person, context: Context, transcribed_message: TranscribedMessage
+    ) -> str:
+        prompt = await self.prompt_manager.compose_prompt(transcribed_message, context)
         self.logger.info(
             "Using AI to generate a response to the message from "
             f"{person.user_handle} in chat {context.chat_id}"
-            f"with estimated usage of {estimated_usage}"
         )
         return prompt
 
@@ -120,9 +126,17 @@ class MessageHandler(RPBotMessageHandler):
         message: Message,
         args: List[str],
     ) -> Optional[CommandResponse]:
-        prompt = await self.prepare_get_reply(person, context, message)
-        if not prompt:
+        transcribed_message = await self.prepare_get_reply(person, context, message)
+        if not transcribed_message:
             return None
+
+        if not self.is_usage_under_limit(person, context, transcribed_message):
+            return await self.get_usage_over_limit_response(person)
+
+        prompt = await self.get_prompt_from_transcribed_message(
+            person, context, transcribed_message
+        )
+
         system_prompt = self.prompt_manager.get_reply_system_prompt(context)
         response_message = await self.ai.get_reply(prompt, system_prompt)
         result = CommandResponse(
@@ -134,9 +148,18 @@ class MessageHandler(RPBotMessageHandler):
     async def stream_get_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> AsyncIterator[CommandResponse]:
-        prompt = await self.prepare_get_reply(person, context, message)
-        if not prompt:
+        transcribed_message = await self.prepare_get_reply(person, context, message)
+        if not transcribed_message:
             return
+
+        if not self.is_usage_under_limit(person, context, transcribed_message):
+            yield await self.get_usage_over_limit_response(person)
+            return
+
+        prompt = await self.get_prompt_from_transcribed_message(
+            person, context, transcribed_message
+        )
+
         response_message = ""
         system_prompt = self.prompt_manager.get_reply_system_prompt(context)
         async for response_message_chunk in self.ai.get_streaming_reply(
