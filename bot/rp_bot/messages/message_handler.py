@@ -55,6 +55,9 @@ class MessageHandler(RPBotMessageHandler):
         if not chat_is_started or (
             not conversation_tracker_enabled and not context.is_bot_mentioned
         ):
+            self.logger.info(
+                f"Ignoring message from {person.user_handle} in chat {context.chat_id}"
+            )
             return None
         user_transcribed_message = await self._get_transcribed_message(message)
         estimated_usage = await self._estimate_reply_usage(
@@ -74,9 +77,18 @@ class MessageHandler(RPBotMessageHandler):
             transcribed_message=user_transcribed_message,
         )
         if not context.is_bot_mentioned:
+            self.logger.info(
+                f"Saving the message from {person.user_handle} in chat {context.chat_id} "
+                "as context for future responses and not generating a response"
+            )
             return None
         prompt = await self.prompt_manager.compose_prompt(
             user_transcribed_message, context
+        )
+        self.logger.info(
+            "Using AI to generate a response to the message from "
+            f"{person.user_handle} in chat {context.chat_id}"
+            f"with estimated usage of {estimated_usage}"
         )
         return prompt
 
@@ -95,6 +107,10 @@ class MessageHandler(RPBotMessageHandler):
                 message_text=response_message,
                 timestamp=datetime.now(),
             ),
+        )
+        self.logger.info(
+            f"Generated a response for the message from {person.user_handle} in chat {context.chat_id}"
+            f"with usage of {user_usage}"
         )
 
     async def get_response(
