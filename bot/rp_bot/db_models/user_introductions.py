@@ -1,10 +1,10 @@
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from .base_models import BaseModel
+from .base_db_model import BaseDBModel
 from ...models.handlers_input import Person, Context
 
 
-class UserIntroductions(BaseModel):
+class UserIntroductions(BaseDBModel):
     def __init__(self, db: AsyncIOMotorDatabase) -> None:
         super().__init__(db)
         self.user_introductions = db.user_introductions

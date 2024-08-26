@@ -2,14 +2,14 @@ from collections import namedtuple
 from datetime import datetime
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from .base_models import BaseModel
+from .base_db_model import BaseDBModel
 from ...models.handlers_input import Person
 
 
 UserUsageResponse = namedtuple("UserUsageResponse", ["this_month_usage", "limit"])
 
 
-class UserUsage(BaseModel):
+class UserUsage(BaseDBModel):
     def __init__(self, db: AsyncIOMotorDatabase, default_usage_limit: int) -> None:
         super().__init__(db)
         self.user_usage = db.user_usage

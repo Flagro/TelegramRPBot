@@ -1,11 +1,11 @@
 from datetime import datetime
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from .base_models import BaseModel
+from .base_db_model import BaseDBModel
 from ...models.handlers_input import Person
 
 
-class Users(BaseModel):
+class Users(BaseDBModel):
     def __init__(self, db: AsyncIOMotorDatabase) -> None:
         super().__init__(db)
         self.users = db.users

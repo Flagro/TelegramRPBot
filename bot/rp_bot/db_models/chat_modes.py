@@ -1,10 +1,11 @@
 from typing import List
+from pydantic import BaseModel
 from bson import ObjectId
 from collections import namedtuple
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 
-from .base_models import BaseModel
+from .base_db_model import BaseDBModel
 from ...models.config import DefaultChatModes
 from ...models.handlers_input import Context
 
@@ -14,7 +15,7 @@ ChatModeResponse = namedtuple(
 )
 
 
-class ChatModes(BaseModel):
+class ChatModes(BaseDBModel):
     def __init__(
         self, db: AsyncIOMotorDatabase, default_chat_modes: DefaultChatModes
     ) -> None:

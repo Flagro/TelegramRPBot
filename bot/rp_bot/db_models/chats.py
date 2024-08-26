@@ -1,11 +1,11 @@
 from typing import Optional
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from .base_models import BaseModel
+from .base_db_model import BaseDBModel
 from ...models.handlers_input import Context
 
 
-class Chats(BaseModel):
+class Chats(BaseDBModel):
     def __init__(self, db: AsyncIOMotorDatabase, default_language: str) -> None:
         super().__init__(db)
         self.chats = db.chats

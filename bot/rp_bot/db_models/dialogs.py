@@ -2,11 +2,11 @@ from typing import List, Tuple, Union, Literal, Optional
 from datetime import datetime
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from .base_models import BaseModel
+from .base_db_model import BaseDBModel
 from ...models.handlers_input import Person, Context, TranscribedMessage
 
 
-class Dialogs(BaseModel):
+class Dialogs(BaseDBModel):
     def __init__(
         self,
         db: AsyncIOMotorDatabase,
