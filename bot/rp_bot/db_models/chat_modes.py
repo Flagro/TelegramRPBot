@@ -10,9 +10,10 @@ from ...models.config import DefaultChatModes
 from ...models.handlers_input import Context
 
 
-ChatModeResponse = namedtuple(
-    "ChatModeResponse", ["id", "mode_name", "mode_description"]
-)
+class ChatModeResponse(BaseModel):
+    id: str  # TODO: make it ObjectId
+    mode_name: str
+    mode_description: str
 
 
 class ChatModes(BaseDBModel):
