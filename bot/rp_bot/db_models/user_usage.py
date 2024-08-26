@@ -1,4 +1,3 @@
-from collections import namedtuple
 from pydantic import BaseModel
 from datetime import datetime
 from motor.motor_asyncio import AsyncIOMotorDatabase

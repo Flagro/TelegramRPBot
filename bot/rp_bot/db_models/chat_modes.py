@@ -1,7 +1,6 @@
 from typing import List
 from pydantic import BaseModel
 from bson import ObjectId
-from collections import namedtuple
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 
