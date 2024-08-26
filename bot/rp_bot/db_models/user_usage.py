@@ -1,4 +1,5 @@
 from collections import namedtuple
+from pydantic import BaseModel
 from datetime import datetime
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
@@ -6,7 +7,9 @@ from .base_db_model import BaseDBModel
 from ...models.handlers_input import Person
 
 
-UserUsageResponse = namedtuple("UserUsageResponse", ["this_month_usage", "limit"])
+class UserUsageResponse(BaseModel):
+    this_month_usage: int
+    limit: int
 
 
 class UserUsage(BaseDBModel):
