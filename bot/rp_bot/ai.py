@@ -3,12 +3,7 @@ import io
 from typing import AsyncIterator
 from openai import OpenAI
 
-from .db import DB
 from ..models.config.ai_config import AIConfig
-
-
-def count_tokens(text: str):
-    return tiktoken.count(text)
 
 
 class AI:
@@ -50,6 +45,10 @@ class AI:
         # return not all(r.results[0].categories.values())
         return True
 
+    @staticmethod
+    def count_tokens(text: str):
+        return tiktoken.count(text)
+
     async def get_reply(self, user_input: str, system_prompt: str) -> str:
         response = self.client.chat.completions.create(
             model=self._get_default_text_model_name(),
@@ -61,7 +60,9 @@ class AI:
         )
         return response.choices[0].message.content
 
-    async def get_streaming_reply(self, user_input: str, system_prompt: str) -> AsyncIterator[str]:
+    async def get_streaming_reply(
+        self, user_input: str, system_prompt: str
+    ) -> AsyncIterator[str]:
         response = self.client.chat.completions.create(
             model=self._get_default_text_model_name(),
             messages=[

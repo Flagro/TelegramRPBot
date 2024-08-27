@@ -15,12 +15,12 @@ class MessageHandler(RPBotMessageHandler):
     ) -> int:
         # Estimate the response based on amount of facts in the group chat,
         # the length of the message and wether or not it needs an image generation
-        return len(transcribed_message.message_text) // 10 + 1000 * (
+        return self.ai.count_tokens(transcribed_message.message_text) + 1000 * (
             "image" in transcribed_message.message_text
         )
 
     async def _get_user_usage(self, generated_message: str) -> int:
-        return len(generated_message) // 10
+        return self.ai.count_tokens(generated_message) * 10
 
     async def _get_transcribed_message(self, message: Message) -> TranscribedMessage:
         # Note that here the responsibility to pass NULL images and Audio is on the
