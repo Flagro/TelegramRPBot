@@ -1,4 +1,3 @@
-from typing import Optional
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from .base_db_model import BaseDBModel
