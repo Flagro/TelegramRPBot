@@ -11,13 +11,6 @@ def count_tokens(text: str):
     return tiktoken.count(text)
 
 
-async def is_content_acceptable(text: str):
-    # TODO: implement this
-    # r = await openai.Moderation.acreate(input=text)
-    # return not all(r.results[0].categories.values())
-    return True
-
-
 class AI:
     def __init__(self, openai_api_key: str, ai_config: AIConfig):
         self.client = OpenAI(api_key=openai_api_key)
@@ -50,6 +43,12 @@ class AI:
         # image_url = r.data[0].url
         # return image_url
         return ""
+
+    async def is_content_acceptable(self, text: str):
+        # TODO: implement this
+        # r = await openai.Moderation.acreate(input=text)
+        # return not all(r.results[0].categories.values())
+        return True
 
     async def get_reply(self, user_input: str, system_prompt: str) -> str:
         response = self.client.chat.completions.create(
