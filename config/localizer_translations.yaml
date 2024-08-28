@@ -77,6 +77,8 @@ LocalizerTranslations:
     english: "{response_text}"
   usage_limit_exceeded:
     english: "Usage limit exceeded for {user_handle} with {user_limit} limit"
+  content_not_acceptable:
+    english: "Hey {user_handle}, I can't accept this content"
   help_text:
     english: |
       <strong>Features 🌟</strong>
