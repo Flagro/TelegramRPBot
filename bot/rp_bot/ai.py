@@ -2,16 +2,20 @@ import tiktoken
 import io
 from typing import AsyncIterator
 from openai import OpenAI
+from langchain_openai import OpenAI
+from langchain_core.messages import HumanMessage, SystemMessage
 
 from ..models.config.ai_config import AIConfig
 
 
 class AI:
     def __init__(self, openai_api_key: str, ai_config: AIConfig):
-        self.client = OpenAI(api_key=openai_api_key)
         self.ai_config = ai_config
+        self.llm = OpenAI(
+            api_key=openai_api_key, model=self._get_default_text_model_name()
+        )
 
-    async def _get_default_text_model_name(self) -> str:
+    def _get_default_text_model_name(self) -> str:
         first_model = None
         for model in self.ai_config.TextGeneration.Models.values():
             if model.is_default:
@@ -50,28 +54,21 @@ class AI:
         return tiktoken.count(text)
 
     async def get_reply(self, user_input: str, system_prompt: str) -> str:
-        response = self.client.chat.completions.create(
-            model=self._get_default_text_model_name(),
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_input},
-            ],
-            temperature=self.ai_config.TextGeneration.temperature,
-        )
-        return response.choices[0].message.content
+        messages = [
+            SystemMessage(content=system_prompt),
+            HumanMessage(content=user_input),
+        ]
+        temperature = (self.ai_config.TextGeneration.temperature,)
+        response = self.llm.ainvoke(messages, temperature=temperature)
+        return response.content
 
     async def get_streaming_reply(
         self, user_input: str, system_prompt: str
     ) -> AsyncIterator[str]:
-        response = self.client.chat.completions.create(
-            model=self._get_default_text_model_name(),
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_input},
-            ],
-            stream=True,
-            temperature=self.ai_config.TextGeneration.temperature,
-        )
-        for chunk in response:
-            chunk_text = chunk.choices[0].delta.content
-            yield chunk_text
+        messages = [
+            SystemMessage(content=system_prompt),
+            HumanMessage(content=user_input),
+        ]
+        temperature = (self.ai_config.TextGeneration.temperature,)
+        for chunk in await self.llm.astream(messages, temperature=temperature):
+            yield chunk.content
