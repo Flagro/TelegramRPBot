@@ -6,9 +6,10 @@ description = "Bring the ability to setup a full roleplay experience in your tel
 authors = ["Anton Potapov <fgreyeducation@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.10"
 python-telegram-bot = {version="20.1", extras=["rate-limiter"]}
 openai = "1.3.3"
+langchain = "0.2.15"
 tiktoken = "^0.3.0"
 PyYAML = "6.0"
 motor = "*"
