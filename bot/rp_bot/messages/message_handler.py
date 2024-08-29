@@ -15,6 +15,7 @@ class MessageHandler(RPBotMessageHandler):
     ) -> int:
         # Estimate the response based on amount of facts in the group chat,
         # the length of the message and wether or not it needs an image generation
+        # TODO: check the image resolutiion and audio length
         return self.ai.count_tokens(transcribed_message.message_text) + 1000 * (
             "image" in transcribed_message.message_text
         )
