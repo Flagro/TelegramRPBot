@@ -146,16 +146,13 @@ def min_char_diff_for_buffering(content: str, is_group_chat: bool) -> int:
     Get the minimum string length difference to trigger new yield in the streaming response
     """
     if is_group_chat:
-        return (
-            180
-            if len(content) > 1000
-            else 120 if len(content) > 200 else 90 if len(content) > 50 else 50
-        )
-    return (
-        90
-        if len(content) > 1000
-        else 45 if len(content) > 200 else 25 if len(content) > 50 else 15
-    )
+        len_thresholds = [(180, 1000), (120, 200), (90, 50), (50, -1)]
+    else:
+        len_thresholds = [(90, 1000), (45, 200), (25, 50), (15, -1)]
+        
+    for char_diff, len_threshold in len_thresholds:
+        if len(content) > len_threshold:
+            return char_diff # Always reachable since len is always > 0
 
 
 def is_group_chat(update: Update) -> bool:
