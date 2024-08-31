@@ -17,7 +17,7 @@ motor = "*"
 python-decouple = "*"
 tenacity = "8.2.2"
 pydub = "^0.25.1"
-pydantic = "*"
+pydantic = "^2.7.4"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
