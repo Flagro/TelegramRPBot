@@ -20,6 +20,7 @@ class Chats(BaseDBModel):
                     "language": self.default_language,
                     "is_started": False,
                     "conversation_tracker": False,
+                    "auto_fact": False,
                 }
             },
             upsert=True,
@@ -80,3 +81,19 @@ class Chats(BaseDBModel):
             {"$set": {"conversation_tracker": new_conversation_tracker_state}},
         )
         return new_conversation_tracker_state
+
+    async def get_auto_fact_state(self, context: Context) -> bool:
+        chat_id = context.chat_id
+        chat_data = await self.chats.find_one(
+            {"chat_id": chat_id}, {"_id": 0, "auto_fact": 1}
+        )
+        return chat_data.get("auto_fact", False)
+
+    async def switch_auto_fact(self, context: Context) -> bool:
+        old_auto_fact_state = await self.get_auto_fact_state(context)
+        new_auto_fact_state = not old_auto_fact_state
+        await self.chat_modes.update_one(
+            {"chat_id": context.chat_id},
+            {"$set": {"auto_fact": new_auto_fact_state}},
+        )
+        return new_auto_fact_state
