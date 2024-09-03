@@ -1,0 +1,74 @@
+name: Deploy to Kubernetes
+
+on:
+  workflow_run:
+    workflows: ["Publish Docker Image"]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }} or ${{ github.event_name == 'workflow_dispatch' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Fetch tags
+        run: git fetch --depth=1 --tags
+
+      - name: Get latest tag or set default
+        id: latest_tag
+        run: |
+          TAG=$(git tag -l --sort=-v:refname | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1)
+          if [ -z "$TAG" ]; then
+            TAG="latest"
+          fi
+          echo "::set-output name=tag::$TAG"
+
+      - name: Configure kubectl
+        uses: azure/k8s-set-context@v1
+        with:
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
+
+      - name: Create Namespace (if not exists)
+        run: |
+          kubectl get ns telegramrpbot || kubectl create ns telegramrpbot
+
+      - name: Install yq (YAML Processor)
+        run: sudo snap install yq
+
+      - name: Update Chart.yaml
+        run: |
+          yq eval -i ".version = \"${{ steps.latest_tag.outputs.tag }}\"" ./helm/Chart.yaml
+          yq eval -i ".appVersion = \"${{ steps.latest_tag.outputs.tag }}\"" ./helm/Chart.yaml
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4.1.0
+
+      - name: Write TLS Certificates to Files
+        run: |
+          echo "${{ secrets.SSL_CERTIFICATE }}" > ./crt.pem
+          echo "${{ secrets.SSL_KEY }}" > ./key.pem
+
+      - name: Deploy with Helm
+        env:
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+        run: |
+          helm upgrade --install telegramrpbot ./helm \
+            --namespace telegramrpbot \
+            --set backendDeployment.telegramrpbot.image.tag=${{ steps.latest_tag.outputs.tag }} \
+            --set dbSecrets.dbUser="$DB_USER" \
+            --set dbSecrets.dbPassword="$DB_PASSWORD" \
+            --set backendSecrets.secretKey="$SECRET_KEY" \
+            --set backendSecrets.adminUsername="$ADMIN_USERNAME" \
+            --set backendSecrets.adminEmail="$ADMIN_EMAIL" \
+            --set backendSecrets.adminPassword="$ADMIN_PASSWORD" \
+            --set-file tlsSecrets.crt="./crt.pem" \
+            --set-file tlsSecrets.key="./key.pem"
