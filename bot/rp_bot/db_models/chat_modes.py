@@ -10,7 +10,7 @@ from ...models.handlers_input import Context
 
 
 class ChatModeResponse(BaseModel):
-    id: str  # TODO: make it ObjectId
+    id: ObjectId
     mode_name: str
     mode_description: str
 
