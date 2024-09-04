@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List, Optional
 
 from .db import DB
-from .ai import AI
+from ai_agent.ai import AI
 from .prompt_manager import PromptManager
 from .auth import Auth
 from .localizer import Localizer
