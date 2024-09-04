@@ -8,7 +8,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain_core.output_parsers import JsonOutputParser
 
-from ..models.config.ai_config import AIConfig
+from ...models.config.ai_config import AIConfig
 
 
 class ImageInformation(BaseModel):
