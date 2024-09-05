@@ -1,11 +1,9 @@
 import tiktoken
 import io
-import base64
 from typing import AsyncIterator
 from openai import OpenAI
 from langchain_openai import OpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_core.output_parsers import JsonOutputParser
 
 from ...models.config.ai_config import AIConfig
 from .agent_tools.describe_image import describe_image, ImageInformation
@@ -34,7 +32,8 @@ class AI:
     async def describe_image(
         self, in_memory_image_stream: io.BytesIO
     ) -> ImageInformation:
-        return describe_image(in_memory_image_stream)
+        # TODO: pass the image model into the chain
+        return describe_image.invoke(in_memory_image_stream)
 
     async def transcribe_audio(self, in_memory_audio_stream: io.BytesIO) -> str:
         # TODO: implement this

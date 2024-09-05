@@ -3,6 +3,7 @@ import base64
 from typing import Literal, List
 from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain_core.output_parsers import JsonOutputParser
+from langchain_core.runnables import chain
 
 
 class ImageInformation(BaseModel):
@@ -16,6 +17,7 @@ class ImageInformation(BaseModel):
     )
 
 
+@chain
 def describe_image(in_memory_image_stream: io.BytesIO) -> ImageInformation:
     # Encode in base64:
     image_base64 = base64.b64encode(in_memory_image_stream.getvalue()).decode()
