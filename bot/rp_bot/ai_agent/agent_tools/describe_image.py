@@ -1,10 +1,6 @@
-import tiktoken
 import io
 import base64
-from typing import AsyncIterator, Literal, List
-from openai import OpenAI
-from langchain_openai import OpenAI
-from langchain_core.messages import HumanMessage, SystemMessage
+from typing import Literal, List
 from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain_core.output_parsers import JsonOutputParser
 
@@ -27,5 +23,6 @@ def describe_image(in_memory_image_stream: io.BytesIO) -> ImageInformation:
 
     # TODO: implement moderation
     # TODO: implement image chain runnable
+    # TODO: pass the image model here
 
     return ""
