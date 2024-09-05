@@ -1,21 +1,14 @@
 import tiktoken
 import io
 import base64
-from typing import AsyncIterator, Literal, List
+from typing import AsyncIterator
 from openai import OpenAI
 from langchain_openai import OpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain_core.output_parsers import JsonOutputParser
 
 from ...models.config.ai_config import AIConfig
-
-
-class ImageInformation(BaseModel):
-    # TODO: move this to prompt manager
-    image_description: str = Field(description="a short description of the image")
-    image_type: Literal["screenshot", "picture", "selfie", "anime"] = Field(description="type of the image")
-    main_objects: List[str] = Field(description="list of the main objects on the picture")
+from .agent_tools.describe_image import describe_image, ImageInformation
 
 
 class AI:
@@ -25,7 +18,8 @@ class AI:
             api_key=openai_api_key, model=self._get_default_text_model_name()
         )
         self.vision_model = OpenAI(
-            api_key=openai_api_key, model="gpt-4-vision-preview" # TODO: add getter for vision model
+            api_key=openai_api_key,
+            model="gpt-4-vision-preview",  # TODO: add getter for vision model
         )
 
     def _get_default_text_model_name(self) -> str:
@@ -37,15 +31,10 @@ class AI:
                 first_model = model.name
         return first_model
 
-    async def describe_image(self, in_memory_image_stream: io.BytesIO) -> str:
-        # Encode in base64:
-        image_base64 = base64.b64encode(in_memory_image_stream.getvalue()).decode()
-        parser = JsonOutputParser(pydantic_object=ImageInformation)
-        
-        # TODO: implement moderation
-        # TODO: implement image chain runnable
-        
-        return ""
+    async def describe_image(
+        self, in_memory_image_stream: io.BytesIO
+    ) -> ImageInformation:
+        return describe_image(in_memory_image_stream)
 
     async def transcribe_audio(self, in_memory_audio_stream: io.BytesIO) -> str:
         # TODO: implement this
