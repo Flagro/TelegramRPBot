@@ -29,7 +29,7 @@ class PromptManager:
         chat_mode = await self.db.chat_modes.get_chat_mode(context)
         return f"The current chat mode is: {chat_mode.mode_name}. {chat_mode.mode_description}"
 
-    async def _compose_chat_facts_prompt(self, context: Context) -> str:
+    async def compose_chat_facts_prompt(self, context: Context) -> str:
         # TODO: this should be an optional tool
         chat_facts = await self.db.user_facts.get_chat_facts(context)
         return (
@@ -73,7 +73,7 @@ class PromptManager:
         chat_history_prompt = await self._compose_chat_history_prompt(
             user_input_prompt, context
         )
-        chat_facts_prompt = await self._compose_chat_facts_prompt(context)
+        chat_facts_prompt = await self.compose_chat_facts_prompt(context)
         user_facts_prompt = await self._compose_user_facts_prompt(initiator, context)
         user_introduction_prompt = await self._compose_user_introduction_prompt(
             initiator, context

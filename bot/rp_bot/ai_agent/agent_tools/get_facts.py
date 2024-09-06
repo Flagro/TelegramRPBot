@@ -1,14 +1,11 @@
 from langchain_core.runnables import chain
 
 from ...db import DB
+from ...prompt_manager import PromptManager
 from ....models.handlers_input import Context
 
 
 @chain
-async def get_chat_facts(db: DB, context: Context) -> str:
+async def get_chat_facts(prompt_manager: PromptManager, context: Context) -> str:
     # TODO: pass the user handles
-    chat_facts = await db.user_facts.get_chat_facts(context)
-    # TODO: the prompt manager should be used for that
-    return "The following facts are known about the users in this chat:\n" + "\n".join(
-        [f"{user}: {fact}" for user, fact in chat_facts]
-    )
+    return prompt_manager.compose_chat_facts_prompt(context)
