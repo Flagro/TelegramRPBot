@@ -37,7 +37,7 @@ class PromptManager:
             + "\n".join([f"{user}: {fact}" for user, fact in chat_facts])
         )
 
-    async def _compose_user_facts_prompt(self, person: Person, context: Context) -> str:
+    async def compose_user_facts_prompt(self, person: Person, context: Context) -> str:
         user_facts = await self.db.user_facts.get_user_facts(context, person)
         return "The following facts are known about you:\n" + "\n".join(user_facts)
 
@@ -74,7 +74,7 @@ class PromptManager:
             user_input_prompt, context
         )
         chat_facts_prompt = await self.compose_chat_facts_prompt(context)
-        user_facts_prompt = await self._compose_user_facts_prompt(initiator, context)
+        user_facts_prompt = await self.compose_user_facts_prompt(initiator, context)
         user_introduction_prompt = await self._compose_user_introduction_prompt(
             initiator, context
         )
