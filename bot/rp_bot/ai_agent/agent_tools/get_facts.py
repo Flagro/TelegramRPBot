@@ -16,7 +16,5 @@ async def get_user_facts(
     db: DB, prompt_manager: PromptManager, context: Context, user_handle: str
 ) -> str:
     # TODO: pass the user handles
-    # TODO: get the proper Person from the db
-    return prompt_manager.compose_user_facts_prompt(
-        Person(user_handle=user_handle), context
-    )
+    person = db.users.get_person_by_handle(user_handle)
+    return prompt_manager.compose_user_facts_prompt(person, context)
