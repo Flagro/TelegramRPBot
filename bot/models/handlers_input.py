@@ -4,7 +4,6 @@ from typing import Optional
 
 
 class Person(BaseModel):
-    user_id: int
     user_handle: str
     first_name: str
     last_name: str
