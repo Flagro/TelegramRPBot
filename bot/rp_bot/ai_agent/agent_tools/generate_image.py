@@ -10,10 +10,10 @@ def generate_image(llm: OpenAI, prompt: str) -> str:
     """
     Returns the URL of the generated image based on the prompt.
     """
-    prompt = PromptTemplate(
+    image_description_generation_prompt = PromptTemplate(
         input_variables=["image_description"],
         template="Generate a detailed prompt to generate an image based on the description: {image_description}",
     )
-    image_chain = LLMChain(llm=llm, prompt=prompt)
+    image_chain = LLMChain(llm=llm, prompt=image_description_generation_prompt)
     image_url = DallEAPIWrapper().run(image_chain.run(prompt))
     return image_url
