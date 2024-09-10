@@ -17,12 +17,21 @@ class AI:
         )
         self.vision_model = OpenAI(
             api_key=openai_api_key,
-            model="gpt-4-vision-preview",  # TODO: add getter for vision model
+            model=self._get_default_image_model_name(),
         )
 
     def _get_default_text_model_name(self) -> str:
         first_model = None
         for model in self.ai_config.TextGeneration.Models.values():
+            if model.is_default:
+                return model.name
+            if first_model is None:
+                first_model = model.name
+        return first_model
+
+    def _get_default_image_model_name(self) -> str:
+        first_model = None
+        for model in self.ai_config.ImageGeneration.Models.values():
             if model.is_default:
                 return model.name
             if first_model is None:
