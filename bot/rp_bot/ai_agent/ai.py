@@ -17,22 +17,36 @@ class AI:
         )
         self.vision_model = OpenAI(
             api_key=openai_api_key,
-            model=self._get_default_image_model_name(),
+            model=self._get_default_vision_model_name(),
+        )
+        # TODO: fix this - this is not OpenAI object
+        self.image_generation_model = OpenAI(
+            api_key=openai_api_key,
+            model=self._get_default_image_generation_model_name(),
         )
 
     def _get_default_text_model_name(self) -> str:
         first_model = None
         for model in self.ai_config.TextGeneration.Models.values():
-            if model.is_default:
+            if model.text_default:
                 return model.name
             if first_model is None:
                 first_model = model.name
         return first_model
 
-    def _get_default_image_model_name(self) -> str:
+    def _get_default_vision_model_name(self) -> str:
+        first_model = None
+        for model in self.ai_config.TextGeneration.Models.values():
+            if model.vision_default:
+                return model.name
+            if first_model is None:
+                first_model = model.name
+        return first_model
+
+    def _get_default_image_generation_model_name(self) -> str:
         first_model = None
         for model in self.ai_config.ImageGeneration.Models.values():
-            if model.is_default:
+            if model.image_generation_default:
                 return model.name
             if first_model is None:
                 first_model = model.name
