@@ -4,13 +4,17 @@ from typing import Dict, Optional
 
 
 class Rate(BaseModel):
-    input_token_price: int
-    output_token_price: int
+    input_token_price: Optional[float]
+    output_token_price: Optional[float]
+    input_pixel_price: Optional[float]
+    output_pixel_price: Optional[float]
 
 
 class Model(BaseModel):
     name: str
-    is_default: Optional[bool] = False
+    text_default: Optional[bool] = False
+    vision_default: Optional[bool] = False
+    image_generation_default: Optional[bool] = False
     rate: Rate
 
 
@@ -24,10 +28,12 @@ class TextGeneration(BaseModel):
     Models: Dict[str, Model]
 
 
-class ImageProcessing(BaseModel):
-    image_size: str
+class ImageGeneration(BaseModel):
+    output_image_size: str
+    request_timeout: float
+    Models: Dict[str, Model]
 
 
 class AIConfig(BaseYAMLConfigModel):
     TextGeneration: TextGeneration
-    ImageProcessing: ImageProcessing
+    ImageProcessing: ImageGeneration

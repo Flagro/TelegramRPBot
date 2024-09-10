@@ -15,16 +15,25 @@ AIConfig:
 
       gpt-4o:
         name: "gpt-4o"
-        default: true
+        text_default: true
+        vision_defaul: true
         rate:
           input_token_price: 5
           output_token_price: 10
+          input_pixel_price: 0.0001
 
       gpt-4o-mini:
         name: "gpt-4o-mini"
         rate:
           input_token_price: 1
           output_token_price: 2
-
-  ImageProcessing:
-    image_size: "512x512"
+  ImageGeneration:
+    request_timeout: 60.0
+    output_image_size: "512x512"
+    Models:
+      dalle-3:
+        name: "dalle-3"
+        image_generation_default: true
+        rate:
+          input_token_price: 0.0001
+          output_pixel_price: 10
