@@ -36,4 +36,4 @@ class ImageGeneration(BaseModel):
 
 class AIConfig(BaseYAMLConfigModel):
     TextGeneration: TextGeneration
-    ImageProcessing: ImageGeneration
+    ImageGeneration: ImageGeneration
