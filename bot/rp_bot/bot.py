@@ -41,13 +41,17 @@ def get_rp_bot(
         last_n_messages_to_store=bot_config.last_n_messages_to_store,
         default_usage_limit=bot_config.default_usage_limit,
     )
-    ai = AI(openai_api_key=openai_api_key, ai_config=ai_config)
     localizer = Localizer(
         db=db,
         translations=translations,
         default_language=bot_config.default_language,
     )
     prompt_manager = PromptManager(db=db)
+    ai = AI(
+        openai_api_key=openai_api_key,
+        ai_config=ai_config,
+        prompt_manager=prompt_manager,
+    )
     auth = Auth(
         allowed_handles=allowed_handles,
         admin_handles=admin_handles,
