@@ -25,6 +25,13 @@ class PromptManager:
             result.append(transcribed_message.voice_description)
         return " ".join(result)
 
+    async def compose_engage_needed_prompt(self, user_input: str) -> str:
+        return (
+            "Your task is to determine wether or not we can somehow "
+            "engage after the user's input. "
+            f"The user just said: {user_input}"
+        )
+
     async def _compose_chat_mode_prompt(self, context: Context) -> str:
         chat_mode = await self.db.chat_modes.get_chat_mode(context)
         return f"The current chat mode is: {chat_mode.mode_name}. {chat_mode.mode_description}"

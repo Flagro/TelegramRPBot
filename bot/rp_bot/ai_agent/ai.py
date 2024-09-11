@@ -63,7 +63,7 @@ class AI:
         return self._get_default_model_name("image_generation")
 
     async def engage_is_needed(self, user_input: str) -> bool:
-        prompt = self.prompt_manager.compose_engage_needed_prompt(user_input)
+        prompt = await self.prompt_manager.compose_engage_needed_prompt(user_input)
         return check_engage_needed.invoke(self.llm, prompt)
 
     async def describe_image(
