@@ -8,6 +8,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from ...models.config.ai_config import AIConfig
 from ..prompt_manager import PromptManager
 from .agent_tools.describe_image import describe_image, ImageInformation
+from .agent_tools.check_engage_needed import check_engage_needed
 
 
 class AI:
@@ -60,6 +61,10 @@ class AI:
 
     def _get_default_image_generation_model_name(self) -> str:
         return self._get_default_model_name("image_generation")
+
+    async def engage_is_needed(self, user_input: str) -> bool:
+        prompt = await self.prompt_manager.compose_engage_needed_prompt(user_input)
+        return check_engage_needed.invoke(self.llm, prompt)
 
     async def describe_image(
         self, in_memory_image_stream: io.BytesIO
