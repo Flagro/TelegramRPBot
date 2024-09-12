@@ -31,6 +31,7 @@ Currently this is the work in progress.
 - `/usage` – Show usage limits for your user
 - `/language` - Set bot preferred language
 - `/conversationtracker` - Turn on/off the conversation tracker for current chat
+- `/autoengage` - Turn on/off the automatic engage mode (the bot will reply to your messages when it finds it necessary)
 - `/ban [@tg_handle]` - Ban the user (could work by replying to user's message as well)
 - `/unban [@tg_handle]` - Unban the user
 - `/help` – Show help
