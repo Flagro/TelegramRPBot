@@ -71,6 +71,10 @@ LocalizerTranslations:
     english: "Conversation tracker turned on"
   conversation_tracker_turned_off:
     english: "Conversation tracker turned off"
+  autoengage_turned_on:
+    english: "Autoengage turned on"
+  autoengage_turned_off:
+    english: "Autoengage turned off"
   message_response:
     english: "{response_text}"
   streaming_message_response:
