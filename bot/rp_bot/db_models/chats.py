@@ -20,6 +20,7 @@ class Chats(BaseDBModel):
                     "language": self.default_language,
                     "is_started": False,
                     "conversation_tracker": False,
+                    "autoengage": False,
                 }
             },
             upsert=True,
@@ -80,3 +81,19 @@ class Chats(BaseDBModel):
             {"$set": {"conversation_tracker": new_conversation_tracker_state}},
         )
         return new_conversation_tracker_state
+
+    async def get_autoengage_state(self, context: Context) -> bool:
+        chat_id = context.chat_id
+        chat_data = await self.chats.find_one(
+            {"chat_id": chat_id}, {"_id": 0, "autoengage": 1}
+        )
+        return chat_data.get("autoengage", False)
+
+    async def switch_autoengage(self, context: Context) -> bool:
+        old_autoengage_state = await self.get_autoengage_state(context)
+        new_autoengage_state = not old_autoengage_state
+        await self.chat_modes.update_one(
+            {"chat_id": context.chat_id},
+            {"$set": {"autoengage": new_autoengage_state}},
+        )
+        return new_autoengage_state
