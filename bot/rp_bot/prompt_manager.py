@@ -25,18 +25,26 @@ class PromptManager:
             result.append(transcribed_message.voice_description)
         return " ".join(result)
 
+    async def compose_engage_needed_prompt(self, user_input: str) -> str:
+        return (
+            "Your task is to determine wether or not we can somehow "
+            "engage after the user's input. "
+            f"The user just said: {user_input}"
+        )
+
     async def _compose_chat_mode_prompt(self, context: Context) -> str:
         chat_mode = await self.db.chat_modes.get_chat_mode(context)
         return f"The current chat mode is: {chat_mode.mode_name}. {chat_mode.mode_description}"
 
-    async def _compose_chat_facts_prompt(self, context: Context) -> str:
+    async def compose_chat_facts_prompt(self, context: Context) -> str:
+        # TODO: this should be an optional tool
         chat_facts = await self.db.user_facts.get_chat_facts(context)
         return (
             "The following facts are known about the users in this chat:\n"
             + "\n".join([f"{user}: {fact}" for user, fact in chat_facts])
         )
 
-    async def _compose_user_facts_prompt(self, person: Person, context: Context) -> str:
+    async def compose_user_facts_prompt(self, person: Person, context: Context) -> str:
         user_facts = await self.db.user_facts.get_user_facts(context, person)
         return "The following facts are known about you:\n" + "\n".join(user_facts)
 
@@ -72,8 +80,8 @@ class PromptManager:
         chat_history_prompt = await self._compose_chat_history_prompt(
             user_input_prompt, context
         )
-        chat_facts_prompt = await self._compose_chat_facts_prompt(context)
-        user_facts_prompt = await self._compose_user_facts_prompt(initiator, context)
+        chat_facts_prompt = await self.compose_chat_facts_prompt(context)
+        user_facts_prompt = await self.compose_user_facts_prompt(initiator, context)
         user_introduction_prompt = await self._compose_user_introduction_prompt(
             initiator, context
         )

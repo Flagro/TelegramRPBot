@@ -66,12 +66,23 @@ class MessageHandler(RPBotMessageHandler):
             person=person,
             transcribed_message=user_transcribed_message,
         )
-        if not context.is_bot_mentioned:
+        autoengage_state = await self.db.chats.get_autoengage_state(context)
+        engage_is_needed = False
+        if autoengage_state:
+            engage_is_needed = await self.ai.engage_is_needed(
+                user_transcribed_message.message_text
+            )
+        if not context.is_bot_mentioned and not engage_is_needed:
             self.logger.info(
                 f"Saving the message from {person.user_handle} in chat {context.chat_id} "
                 "as context for future responses and not generating a response"
             )
             return None
+        if not context.is_bot_mentioned and engage_is_needed:
+            self.logger.info(
+                f"Engaging with the message from {person.user_handle} in chat {context.chat_id} "
+                "as the agent detected a question or a request for information"
+            )
         return user_transcribed_message
 
     async def is_usage_under_limit(

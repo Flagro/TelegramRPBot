@@ -12,6 +12,7 @@ class Users(BaseDBModel):
 
     async def create_user_if_not_exists(self, person: Person) -> None:
         user_handle = person.user_handle
+        # TODO: pass the user id and other info
         await self.users.update_one(
             {"handle": user_handle},
             {
@@ -22,6 +23,17 @@ class Users(BaseDBModel):
                 }
             },
             upsert=True,
+        )
+
+    async def get_person_by_handle(self, user_handle: str) -> Person:
+        user_data = await self.users.find_one({"handle": user_handle})
+        user_first_name = user_data.get("first_name", "")
+        user_last_name = user_data.get("last_name", "")
+        return Person(
+            user_handle=user_handle,
+            first_name=user_first_name,
+            last_name=user_last_name,
+            is_group_admin=False,  # TODO: handle this more gracefully
         )
 
     async def ban_user(self, user_handle: str, time_seconds: int) -> None:

@@ -32,6 +32,7 @@ Currently this is the work in progress.
 - `/language` - Set bot preferred language
 - `/conversationtracker` - Turn on/off the conversation tracker for current chat
 - `/autofact` - Turn on/off the automatic fact extraction for the current chat based on chat history
+- `/autoengage` - Turn on/off the automatic engage mode (the bot will reply to your messages when it finds it necessary)
 - `/ban [@tg_handle]` - Ban the user (could work by replying to user's message as well)
 - `/unban [@tg_handle]` - Unban the user
 - `/help` – Show help

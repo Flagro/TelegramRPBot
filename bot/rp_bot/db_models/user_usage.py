@@ -9,6 +9,7 @@ from ...models.handlers_input import Person
 class UserUsageResponse(BaseModel):
     this_month_usage: int
     limit: int
+    last_reset: datetime
 
 
 class UserUsage(BaseDBModel):
@@ -54,9 +55,13 @@ class UserUsage(BaseDBModel):
     async def get_user_usage_report(self, person: Person) -> UserUsageResponse:
         user_handle = person.user_handle
         usage_data = await self.user_usage.find_one(
-            {"handle": user_handle}, {"_id": 0, "usage": 1, "limit": 1}
+            {"handle": user_handle}, {"_id": 0, "usage": 1, "limit": 1, "last_reset": 1}
         )
-        return UserUsageResponse(usage_data.get("usage", 0), usage_data.get("limit", 0))
+        return UserUsageResponse(
+            usage_data.get("usage", 0),
+            usage_data.get("limit", 0),
+            usage_data.get("last_reset", datetime.now()),
+        )
 
     async def get_user_usage_limit(self, person: Person) -> int:
         user_handle = person.user_handle

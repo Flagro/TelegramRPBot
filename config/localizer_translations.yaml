@@ -71,6 +71,10 @@ LocalizerTranslations:
     english: "Conversation tracker turned on"
   conversation_tracker_turned_off:
     english: "Conversation tracker turned off"
+  autoengage_turned_on:
+    english: "Autoengage turned on"
+  autoengage_turned_off:
+    english: "Autoengage turned off"
   message_response:
     english: "{response_text}"
   streaming_message_response:
@@ -105,6 +109,7 @@ LocalizerTranslations:
       • <em>/fact [@tg_handle] [fact]</em> - add fact about the person within the chat
       • <em>/clearfacts [@tg_handle]</em> - delete facts for given person
       • <em>/conversationtracker</em> - Turn on/off conversation tracker
+      • <em>/autoengage</em> - Turn on/off the automatic engage mode (the bot will automatically engage in the conversation)
       • <em>/usage</em> - Show usage limits for your user
       • <em>/language</em> - Set bot preferred language
       • <em>/ban [@tg_handle]</em> (Admin only) - Ban the user (could work by replying to user's message as well)
