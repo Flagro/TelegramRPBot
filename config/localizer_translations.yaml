@@ -75,6 +75,10 @@ LocalizerTranslations:
     english: "Autoengage turned on"
   autoengage_turned_off:
     english: "Autoengage turned off"
+  autofact_turned_on:
+    english: "Autofact turned on"
+  autofact_turned_off:
+    english: "Autofact turned off"
   message_response:
     english: "{response_text}"
   streaming_message_response:
