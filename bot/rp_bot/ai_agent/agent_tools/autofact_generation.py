@@ -18,7 +18,9 @@ class ChatFacts(BaseModel):
 
 
 @chain
-async def check_if_facts_needed(prompt_manager: PromptManager, context: Context, llm: OpenAI) -> bool:
+async def check_if_facts_needed(
+    prompt_manager: PromptManager, context: Context, llm: OpenAI
+) -> bool:
     prompt = prompt_manager.compose_check_if_facts_needed_prompt(context)
     facts_needed = await llm.invoke(prompt)
     # TODO: finish this implementation
@@ -26,6 +28,8 @@ async def check_if_facts_needed(prompt_manager: PromptManager, context: Context,
 
 
 @chain
-async def compsoe_facts_based_on_messages(db: DB, prompt_manager: PromptManager, context: Context) -> ChatFacts:
+async def compsoe_facts_based_on_messages(
+    db: DB, prompt_manager: PromptManager, context: Context
+) -> ChatFacts:
     # TODO: generate a chat facts list here
     return []
