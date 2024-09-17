@@ -64,13 +64,13 @@ class AI:
 
     async def engage_is_needed(self, user_input: str) -> bool:
         prompt = await self.prompt_manager.compose_engage_needed_prompt(user_input)
-        return check_engage_needed.invoke(self.llm, prompt)
+        return await check_engage_needed.ainvoke(self.llm, prompt)
 
     async def describe_image(
         self, in_memory_image_stream: io.BytesIO
     ) -> ImageInformation:
         # TODO: pass the image model into the chain
-        return describe_image.invoke(in_memory_image_stream)
+        return await describe_image.ainvoke(in_memory_image_stream)
 
     async def transcribe_audio(self, in_memory_audio_stream: io.BytesIO) -> str:
         # TODO: implement this
@@ -101,7 +101,7 @@ class AI:
             HumanMessage(content=user_input),
         ]
         temperature = (self.ai_config.TextGeneration.temperature,)
-        response = self.llm.ainvoke(messages, temperature=temperature)
+        response = await self.llm.ainvoke(messages, temperature=temperature)
         return response.content
 
     async def get_streaming_reply(

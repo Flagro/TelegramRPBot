@@ -22,7 +22,7 @@ async def check_if_facts_needed(
     prompt_manager: PromptManager, context: Context, llm: OpenAI
 ) -> bool:
     prompt = prompt_manager.compose_check_if_facts_needed_prompt(context)
-    facts_needed = await llm.invoke(prompt)
+    facts_needed = await llm.ainvoke(prompt)
     # TODO: finish this implementation
     return False
 
