@@ -31,5 +31,6 @@ async def check_if_facts_needed(
 async def compsoe_facts_based_on_messages(
     db: DB, prompt_manager: PromptManager, context: Context
 ) -> ChatFacts:
+    prompt = prompt_manager.compose_facts_based_on_messages_prompt(context)
     # TODO: generate a chat facts list here
     return []
