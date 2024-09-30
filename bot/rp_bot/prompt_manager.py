@@ -101,10 +101,12 @@ class PromptManager:
     async def get_reply_system_prompt(self, context: Context) -> str:
         chat_name = context.chat_name
         chat_mode_prompt = await self._compose_chat_mode_prompt(context)
+        chat_language = self.db.chats.get_language(context)
         return (
             "You are a helpful assistant. "
             f"You are currently in the chat: {chat_name}. "
             f"{chat_mode_prompt} "
             "Please provide a response to the user's query. "
-            "Do not forget to use the language that was used by the user. " # TODO: use chat language from context
+            f"The chat that is used in chat is: {chat_language} "
+            "but do not hesitate to answer in another language if user's query is in another language. "
         )
