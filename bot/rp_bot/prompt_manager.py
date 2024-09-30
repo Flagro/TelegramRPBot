@@ -105,5 +105,6 @@ class PromptManager:
             "You are a helpful assistant. "
             f"You are currently in the chat: {chat_name}. "
             f"{chat_mode_prompt} "
-            "Please provide a response to the user's query."
+            "Please provide a response to the user's query. "
+            "Do not forget to use the language that was used by the user. " # TODO: use chat language from context
         )
