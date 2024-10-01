@@ -20,9 +20,17 @@ class PromptManager:
         # TODO: also add user name and context details
         result = [transcribed_message.message_text]
         if transcribed_message.image_description:
-            result.append(transcribed_message.image_description)
+            image_prompt = (
+                "The text description of the image is: "
+                f"{transcribed_message.image_description}"
+            )
+            result.append(image_prompt)
         if transcribed_message.voice_description:
-            result.append(transcribed_message.voice_description)
+            voice_prompt = (
+                "The text description of the attached voice audio is: "
+                f"{transcribed_message.voice_description}"
+            )
+            result.append(voice_prompt)
         return " ".join(result)
 
     async def compose_engage_needed_prompt(self, user_input: str) -> str:
