@@ -65,10 +65,13 @@ class PromptManager:
     async def _compose_chat_history_prompt(self, user_input, context: Context) -> str:
         # Take everything besides the last one since the last one is the current message
         messages_history = (await self.db.dialogs.get_messages(context))[:-1]
+        messages_history_prompt = "\n".join(
+            [f"{name}: {message}" for name, _, message in messages_history]
+        )
         return (
             "The conversation so far:\n"
-            + "\n".join([f"{name}: {message}" for name, _, message in messages_history])
-            + f"\n\nAnd the user just asked: {user_input}"
+            f"{messages_history_prompt}\n\n"
+            f"And the user just asked: {user_input}"
         )
 
     async def compose_prompt(
