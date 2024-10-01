@@ -6,7 +6,7 @@ from ..models.handlers_input import Person, Context, TranscribedMessage
 
 def get_current_date_prompt() -> str:
     date_prompt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    return f"Today's date and time is: {date_prompt}. "
+    return date_prompt
 
 
 class PromptManager:
@@ -93,7 +93,7 @@ class PromptManager:
             initiator, context
         )
         return (
-            f"{current_date_prompt}\n"
+            f"Today's date and time is: {current_date_prompt}\n"
             f"{user_input_prompt}\n"
             f"{chat_history_prompt}\n"
             f"{chat_facts_prompt}\n"
