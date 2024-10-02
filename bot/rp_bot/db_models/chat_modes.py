@@ -32,8 +32,7 @@ class ChatModes(BaseDBModel):
             )
 
     async def get_chat_modes(self, context: Context) -> List[ChatModeResponse]:
-        chat_id = context.chat_id
-        cursor = self.chat_modes.find({"chat_id": chat_id})
+        cursor = self.chat_modes.find({"chat_id": context.chat_id})
         chat_modes = []
         async for doc in cursor:
             chat_modes.append(
@@ -54,30 +53,28 @@ class ChatModes(BaseDBModel):
         )
 
     async def get_mode_name_by_id(self, context: Context, mode_id: str) -> str:
-        chat_id = context.chat_id
         chat_data = await self.chat_modes.find_one(
-            {"chat_id": chat_id, "_id": ObjectId(mode_id)}
+            {"chat_id": context.chat_id, "_id": ObjectId(mode_id)}
         )
         return chat_data["mode_name"]
 
     async def set_chat_mode(self, context: Context, mode_id: str) -> None:
-        chat_id = context.chat_id
         await self.chat_modes.update_one(
-            {"chat_id": chat_id, "_id": ObjectId(mode_id)},
+            {"chat_id": context.chat_id, "_id": ObjectId(mode_id)},
             {"$set": {"active_mode": True}},
         )
 
     async def delete_chat_mode(self, context: Context, mode_id: str) -> None:
-        chat_id = context.chat_id
-        await self.chat_modes.delete_one({"chat_id": chat_id, "_id": ObjectId(mode_id)})
+        await self.chat_modes.delete_one(
+            {"chat_id": context.chat_id, "_id": ObjectId(mode_id)}
+        )
 
     async def add_chat_mode(
         self, context: Context, mode_name: str, mode_description: str
     ) -> None:
-        chat_id = context.chat_id
         await self.chat_modes.insert_one(
             {
-                "chat_id": chat_id,
+                "chat_id": context.chat_id,
                 "mode_name": mode_name,
                 "mode_description": mode_description,
             }
