@@ -15,8 +15,7 @@ class UserFacts(BaseDBModel):
         Return a list of facts for the current chat as a list
         user_handle, fact
         """
-        chat_id = context.chat_id
-        cursor = self.user_facts.find({"chat_id": chat_id})
+        cursor = self.user_facts.find({"chat_id": context.chat_id})
         facts = []
         async for doc in cursor:
             for fact in doc["facts"]:
@@ -24,18 +23,14 @@ class UserFacts(BaseDBModel):
         return facts
 
     async def get_user_facts(self, context: Context, person: Person) -> List[str]:
-        chat_id = context.chat_id
-        user_handle = person.user_handle
         facts = await self.user_facts.find_one(
-            {"chat_id": chat_id, "user_handle": user_handle}
+            {"chat_id": context.chat_id, "user_handle": person.user_handle}
         )
         return facts.get("facts", [])
 
     async def add_fact(self, context: Context, person: Person, fact: str) -> None:
-        chat_id = context.chat_id
-        user_handle = person.user_handle
         await self.user_facts.update_one(
-            {"chat_id": chat_id, "user_handle": user_handle},
+            {"chat_id": context.chat_id, "user_handle": person.user_handle},
             {"$push": {"facts": fact}},
             upsert=True,
         )
@@ -47,7 +42,6 @@ class UserFacts(BaseDBModel):
             context (Context): context of the chat
             facts_user_handle (str): user handle to delete facts for
         """
-        chat_id = context.chat_id
         await self.user_facts.delete_one(
-            {"chat_id": chat_id, "user_handle": facts_user_handle}
+            {"chat_id": context.chat_id, "user_handle": facts_user_handle}
         )
