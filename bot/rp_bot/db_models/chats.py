@@ -28,9 +28,8 @@ class Chats(BaseDBModel):
         )
 
     async def start_chat(self, context: Context) -> None:
-        chat_id = context.chat_id
         await self.chats.update_one(
-            {"chat_id": chat_id},
+            {"chat_id": context.chat_id},
             {"$set": {"is_started": True}},
         )
 
@@ -38,37 +37,32 @@ class Chats(BaseDBModel):
         """Check if chat is started
         by checking the flag is_started in the chat document
         """
-        chat_id = context.chat_id
         chat_data = await self.chats.find_one(
-            {"chat_id": chat_id}, {"_id": 0, "is_started": 1}
+            {"chat_id": context.chat_id}, {"_id": 0, "is_started": 1}
         )
         return chat_data.get("is_started", False)
 
     async def stop_chat(self, context: Context) -> None:
-        chat_id = context.chat_id
         await self.chats.update_one(
-            {"chat_id": chat_id},
+            {"chat_id": context.chat_id},
             {"$set": {"is_started": False}},
         )
 
     async def set_language(self, context: Context, language: str) -> None:
-        chat_id = context.chat_id
         await self.chats.update_one(
-            {"chat_id": chat_id},
+            {"chat_id": context.chat_id},
             {"$set": {"language": language}},
         )
 
     async def get_language(self, context: Context) -> str:
-        chat_id = context.chat_id
         chat_data = await self.chats.find_one(
-            {"chat_id": chat_id}, {"_id": 0, "language": 1}
+            {"chat_id": context.chat_id}, {"_id": 0, "language": 1}
         )
         return chat_data.get("language")
 
     async def get_conversation_tracker_state(self, context: Context) -> bool:
-        chat_id = context.chat_id
         chat_data = await self.chats.find_one(
-            {"chat_id": chat_id}, {"_id": 0, "conversation_tracker": 1}
+            {"chat_id": context.chat_id}, {"_id": 0, "conversation_tracker": 1}
         )
         return chat_data.get("conversation_tracker", False)
 
@@ -84,9 +78,8 @@ class Chats(BaseDBModel):
         return new_conversation_tracker_state
 
     async def get_auto_fact_state(self, context: Context) -> bool:
-        chat_id = context.chat_id
         chat_data = await self.chats.find_one(
-            {"chat_id": chat_id}, {"_id": 0, "auto_fact": 1}
+            {"chat_id": context.chat_id}, {"_id": 0, "auto_fact": 1}
         )
         return chat_data.get("auto_fact", False)
 
@@ -98,10 +91,10 @@ class Chats(BaseDBModel):
             {"$set": {"auto_fact": new_auto_fact_state}},
         )
         return new_auto_fact_state
+
     async def get_autoengage_state(self, context: Context) -> bool:
-        chat_id = context.chat_id
         chat_data = await self.chats.find_one(
-            {"chat_id": chat_id}, {"_id": 0, "autoengage": 1}
+            {"chat_id": context.chat_id}, {"_id": 0, "autoengage": 1}
         )
         return chat_data.get("autoengage", False)
 
