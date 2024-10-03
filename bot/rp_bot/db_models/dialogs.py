@@ -19,8 +19,7 @@ class Dialogs(BaseDBModel):
         self.last_n_messages_to_store = last_n_messages_to_store
 
     async def reset(self, context: Context) -> None:
-        chat_id = context.chat_id
-        await self.dialogs.delete_many({"chat_id": chat_id})
+        await self.dialogs.delete_many({"chat_id": context.chat_id})
 
     async def get_messages(
         self, context: Context
@@ -34,9 +33,8 @@ class Dialogs(BaseDBModel):
         Returns:
             List[Tuple[str, bool, datetime, TranscribedMessage]]: list of tuples with user_handle, is_bot and message
         """
-        chat_id = context.chat_id
         cursor = (
-            self.dialogs.find({"chat_id": chat_id})
+            self.dialogs.find({"chat_id": context.chat_id})
             .sort("_id", -1)
             .limit(self.last_n_messages_to_remember)
         )
