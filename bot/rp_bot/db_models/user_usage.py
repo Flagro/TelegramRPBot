@@ -40,22 +40,20 @@ class UserUsage(BaseDBModel):
                 )
 
     async def add_usage_points(self, person: Person, points: int) -> None:
-        user_handle = person.user_handle
         await self.user_usage.update_one(
-            {"handle": user_handle}, {"$inc": {"usage": points}}
+            {"handle": person.user_handle}, {"$inc": {"usage": points}}
         )
 
     async def get_user_usage(self, person: Person) -> int:
-        user_handle = person.user_handle
         usage_data = await self.user_usage.find_one(
-            {"handle": user_handle}, {"_id": 0, "usage": 1}
+            {"handle": person.user_handle}, {"_id": 0, "usage": 1}
         )
         return usage_data.get("usage", 0)
 
     async def get_user_usage_report(self, person: Person) -> UserUsageResponse:
-        user_handle = person.user_handle
         usage_data = await self.user_usage.find_one(
-            {"handle": user_handle}, {"_id": 0, "usage": 1, "limit": 1, "last_reset": 1}
+            {"handle": person.user_handle},
+            {"_id": 0, "usage": 1, "limit": 1, "last_reset": 1},
         )
         return UserUsageResponse(
             usage_data.get("usage", 0),
@@ -64,8 +62,7 @@ class UserUsage(BaseDBModel):
         )
 
     async def get_user_usage_limit(self, person: Person) -> int:
-        user_handle = person.user_handle
         usage_data = await self.user_usage.find_one(
-            {"handle": user_handle}, {"_id": 0, "limit": 1}
+            {"handle": person.user_handle}, {"_id": 0, "limit": 1}
         )
         return usage_data.get("limit", 0)
