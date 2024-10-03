@@ -13,6 +13,7 @@ class Users(BaseDBModel):
     async def create_user_if_not_exists(self, person: Person) -> None:
         user_handle = person.user_handle
         # TODO: pass the user id and other info
+        # TODO: think about passing the whole person object
         await self.users.update_one(
             {"handle": user_handle},
             {
