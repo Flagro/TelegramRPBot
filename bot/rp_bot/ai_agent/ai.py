@@ -78,21 +78,24 @@ class AI:
         # return r["text"] or ""
         return ""
 
-    async def generate_image(self, prompt: str):
+    async def generate_image(self, prompt: str) -> str:
+        """
+        Returns the URL of the generated image
+        """
         # TODO: implement this
         # r = await openai.Image.acreate(prompt=prompt, n=1, size="512x512")
         # image_url = r.data[0].url
         # return image_url
         return ""
 
-    async def is_content_acceptable(self, text: str):
+    async def is_content_acceptable(self, text: str) -> bool:
         # TODO: implement this
         # r = await openai.Moderation.acreate(input=text)
         # return not all(r.results[0].categories.values())
         return True
 
     @staticmethod
-    def count_tokens(text: str):
+    def count_tokens(text: str) -> int:
         return tiktoken.count(text)
 
     async def get_reply(self, user_input: str, system_prompt: str) -> str:
