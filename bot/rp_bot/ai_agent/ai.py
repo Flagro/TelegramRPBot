@@ -68,9 +68,11 @@ class AI:
 
     async def describe_image(
         self, in_memory_image_stream: io.BytesIO
-    ) -> ImageInformation:
+    ) -> str:
         # TODO: pass the image model into the chain
-        return await describe_image.ainvoke(in_memory_image_stream)
+        image_information = await describe_image.ainvoke(in_memory_image_stream)
+        image_description = image_information.image_description
+        return image_description
 
     async def transcribe_audio(self, in_memory_audio_stream: io.BytesIO) -> str:
         # TODO: implement this
