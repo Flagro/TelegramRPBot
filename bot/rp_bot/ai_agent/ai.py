@@ -12,7 +12,9 @@ from .agent_tools.check_engage_needed import check_engage_needed
 
 
 class AI:
-    def __init__(self, openai_api_key: str, ai_config: AIConfig, prompt_manager: PromptManager):
+    def __init__(
+        self, openai_api_key: str, ai_config: AIConfig, prompt_manager: PromptManager
+    ):
         self.ai_config = ai_config
         self.prompt_manager = prompt_manager
         self.llm = OpenAI(
@@ -66,12 +68,12 @@ class AI:
         prompt = await self.prompt_manager.compose_engage_needed_prompt(user_input)
         return await check_engage_needed.ainvoke(self.llm, prompt)
 
-    async def describe_image(
-        self, in_memory_image_stream: io.BytesIO
-    ) -> str:
+    async def describe_image(self, in_memory_image_stream: io.BytesIO) -> str:
         # TODO: pass the image model into the chain
         image_information = await describe_image.ainvoke(in_memory_image_stream)
-        image_description = image_information.image_description
+        image_description = await self.prompt_manager.compose_image_description_prompt(
+            image_information
+        )
         return image_description
 
     async def transcribe_audio(self, in_memory_audio_stream: io.BytesIO) -> str:

@@ -2,6 +2,7 @@ from datetime import datetime
 
 from .db import DB
 from ..models.handlers_input import Person, Context, TranscribedMessage
+from .ai_agent.agent_tools.describe_image import ImageInformation
 
 
 def get_current_date_prompt() -> str:
@@ -39,6 +40,11 @@ class PromptManager:
             "engage after the user's input. "
             f"The user just said: {user_input}"
         )
+
+    async def compose_image_description_prompt(
+        self, image_information: ImageInformation
+    ) -> str:
+        return f"The description of the image is: {image_information}"
 
     async def compose_check_if_facts_needed_prompt(self, context: Context) -> str:
         return "Check if the user prompt requires any facts to be generated."
