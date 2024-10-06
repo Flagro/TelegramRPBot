@@ -46,12 +46,6 @@ class PromptManager:
     ) -> str:
         return f"The description of the image is: {image_information}"
 
-    async def compose_check_if_facts_needed_prompt(self, context: Context) -> str:
-        return "Check if the user prompt requires any facts to be generated."
-
-    async def compose_facts_based_on_messages_prompt(self, context: Context) -> str:
-        return "Generate a list of facts based on the messages in the chat."
-
     async def _compose_chat_mode_prompt(self, context: Context) -> str:
         chat_mode = await self.db.chat_modes.get_chat_mode(context)
         return f"The current chat mode is: {chat_mode.mode_name}. {chat_mode.mode_description}"

@@ -21,7 +21,7 @@ class ChatFacts(BaseModel):
 async def check_if_facts_needed(
     prompt_manager: PromptManager, context: Context, llm: OpenAI
 ) -> bool:
-    prompt = prompt_manager.compose_check_if_facts_needed_prompt(context)
+    prompt = "Check if the user prompt requires any facts to be generated."
     facts_needed = await llm.ainvoke(prompt)
     # TODO: finish this implementation
     return False
@@ -31,6 +31,6 @@ async def check_if_facts_needed(
 async def compsoe_facts_based_on_messages(
     db: DB, prompt_manager: PromptManager, context: Context
 ) -> ChatFacts:
-    prompt = prompt_manager.compose_facts_based_on_messages_prompt(context)
+    prompt = "Generate a list of facts based on the messages in the chat."
     # TODO: generate a chat facts list here
     return []
