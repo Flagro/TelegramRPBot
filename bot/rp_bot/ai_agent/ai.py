@@ -7,7 +7,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 
 from ...models.config.ai_config import AIConfig
 from ..prompt_manager import PromptManager
-from .agent_tools.describe_image import describe_image, ImageInformation
+from .agent_tools.describe_image import describe_image
 from .agent_tools.check_engage_needed import check_engage_needed
 
 
