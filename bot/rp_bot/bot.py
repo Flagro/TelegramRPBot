@@ -87,24 +87,6 @@ class RPBot(BaseBot):
         self.bot_config = bot_config
         self.logger = logger
 
-    def _init_handler(
-        self,
-        handler: Union[
-            Type[RPBotCommandHandler],
-            Type[RPBotCallbackHandler],
-            Type[RPBotMessageHandler],
-        ],
-    ) -> Union[RPBotCommandHandler, RPBotCallbackHandler, RPBotMessageHandler]:
-        return handler(
-            db=self.db,
-            ai=self.ai,
-            localizer=self.localizer,
-            prompt_manager=self.prompt_manager,
-            auth=self.auth,
-            bot_config=self.bot_config,
-            logger=self.logger.getChild(handler.__name__),
-        )
-
     def _init_handlers(
         self,
         handlers: List[
@@ -115,7 +97,18 @@ class RPBot(BaseBot):
             ]
         ],
     ) -> List[Union[RPBotCommandHandler, RPBotCallbackHandler, RPBotMessageHandler]]:
-        return [self._init_handler(handler) for handler in handlers]
+        return [
+            handler(
+                db=self.db,
+                ai=self.ai,
+                localizer=self.localizer,
+                prompt_manager=self.prompt_manager,
+                auth=self.auth,
+                bot_config=self.bot_config,
+                logger=self.logger.getChild(handler.__name__),
+            )
+            for handler in handlers
+        ]
 
     @property
     def commands(self) -> List[RPBotCommandHandler]:
