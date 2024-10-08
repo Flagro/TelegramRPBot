@@ -1,7 +1,9 @@
-from .base_config import BaseYAMLConfigModel
-from pydantic import BaseModel
 from typing import Dict
 import yaml
+
+from pydantic import BaseModel
+
+from .base_config import BaseYAMLConfigModel
 
 
 class LocalizerTranslation(BaseModel):

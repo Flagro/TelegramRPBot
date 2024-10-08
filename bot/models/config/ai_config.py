@@ -1,6 +1,8 @@
-from .base_config import BaseYAMLConfigModel
-from pydantic import BaseModel
 from typing import Dict, Optional
+
+from pydantic import BaseModel
+
+from .base_config import BaseYAMLConfigModel
 
 
 class Rate(BaseModel):

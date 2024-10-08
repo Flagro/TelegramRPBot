@@ -1,6 +1,8 @@
-from .base_config import BaseYAMLConfigModel
 from typing import Dict
+
 from pydantic import BaseModel
+
+from .base_config import BaseYAMLConfigModel
 
 
 class ChatMode(BaseModel):
