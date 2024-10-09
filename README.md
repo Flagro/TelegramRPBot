@@ -2,7 +2,7 @@
 
 Bring the ability to setup a full roleplay experience in your telegram group chats.
 
-Currently this is the work in progress.
+Note: Currently this is the work in progress.
 
 ## Features
 - Create and use chat-bounded chat modes by describing the agent and how you want it to act
