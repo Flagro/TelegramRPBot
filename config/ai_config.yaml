@@ -22,11 +22,6 @@ AIConfig:
           output_token_price: 10
           input_pixel_price: 0.0001
 
-      gpt-4o-mini:
-        name: "gpt-4o-mini"
-        rate:
-          input_token_price: 1
-          output_token_price: 2
   ImageGeneration:
     request_timeout: 60.0
     output_image_size: "512x512"
