@@ -18,12 +18,7 @@ async def is_group_admin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     user_id = update.effective_user.id
 
     chat_administrators = await context.bot.get_chat_administrators(chat_id)
-
-    for admin in chat_administrators:
-        if admin.user.id == user_id:
-            return True
-
-    return False
+    return any(admin.user.id == user_id for admin in chat_administrators)
 
 
 async def get_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Context:
