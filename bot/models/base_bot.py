@@ -1,6 +1,7 @@
-from .base_handlers import BaseCommandHandler, BaseMessageHandler, BaseCallbackHandler
 from abc import ABC, abstractmethod
 from typing import List
+
+from .base_handlers import BaseCommandHandler, BaseMessageHandler, BaseCallbackHandler
 
 
 class BaseBot(ABC):

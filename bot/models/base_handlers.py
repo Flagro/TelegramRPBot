@@ -1,8 +1,7 @@
+import enum
 from abc import ABC, abstractmethod
 from typing import Tuple, List, AsyncIterator, Optional, Type
-
 from logging import Logger
-import enum
 
 from .handlers_input import Person, Context, Message
 from .handlers_response import (
