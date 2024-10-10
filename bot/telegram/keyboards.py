@@ -15,8 +15,9 @@ def get_paginated_list_keyboard(
     modes_per_page: Optional[int] = 5,
 ) -> InlineKeyboardMarkup:
     value_names = list(value_id_to_name.values())
+    capitalized_value_names = [value_name.capitalize() for value_name in value_names]
     value_ids = list(value_id_to_name.keys())
-    values = list(zip(value_names, value_ids))
+    values = list(zip(capitalized_value_names, value_ids))
     page_start = page_index * modes_per_page
     page_end = (page_index + 1) * modes_per_page
 
