@@ -11,14 +11,14 @@ AIConfig:
         name: "gpt-4"
         rate:
           input_token_price: 5
-          output_token_price: 10
+          output_token_price: 50
 
       gpt-4o:
         name: "gpt-4o"
         text_default: true
         vision_defaul: true
         rate:
-          input_token_price: 5
+          input_token_price: 1
           output_token_price: 10
           input_pixel_price: 0.0001
 
