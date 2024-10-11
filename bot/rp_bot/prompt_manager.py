@@ -5,7 +5,7 @@ from ..models.handlers_input import Person, Context, TranscribedMessage
 from .ai_agent.agent_tools.describe_image import ImageInformation
 
 
-def get_current_date_prompt() -> str:
+def _get_current_date_prompt() -> str:
     date_prompt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     return date_prompt
 
@@ -88,7 +88,7 @@ class PromptManager:
         context: Context,
         user_transcribed_message: TranscribedMessage,
     ) -> str:
-        current_date_prompt = get_current_date_prompt()
+        current_date_prompt = _get_current_date_prompt()
         user_input_prompt = await self._compose_user_input_prompt(
             transcribed_message=user_transcribed_message
         )
