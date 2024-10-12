@@ -15,10 +15,16 @@ class MessageHandler(RPBotMessageHandler):
     ) -> int:
         # Estimate the response based on amount of facts in the group chat,
         # the length of the message and wether or not it needs an image generation
-        # TODO: check the image resolutiion and audio length
-        return self.ai.count_tokens(transcribed_message.message_text) + 1000 * (
-            "image" in transcribed_message.message_text
-        )
+        # TODO: add proper check for audio length
+        audio_length = 100  # estimate for 1 minute of audio
+
+        # TODO: add proper check for image size
+        image_pixels_count = 2048 * 2048  # 512x512 image
+
+        token_len = self.ai.count_tokens(transcribed_message.message_text)
+
+        total_price = self.ai.get_price(token_len, audio_length, image_pixels_count)
+        return total_price
 
     async def _get_user_usage(self, generated_message: str) -> int:
         return self.ai.count_tokens(generated_message) * 10

@@ -64,6 +64,22 @@ class AI:
     def _get_default_image_generation_model_name(self) -> str:
         return self._get_default_model_name("image_generation")
 
+    def get_price(
+        self, token_len: int, audio_length: int, image_pixels_count: int
+    ) -> float:
+        # TODO: take rates by model name
+        input_token_price = self.ai_config.TextGeneration.rate.input_token_price
+        output_token_price = self.ai_config.TextGeneration.rate.output_token_price
+        input_pixel_price = self.ai_config.TextGeneration.rate.input_pixel_price
+        output_pixel_price = self.ai_config.TextGeneration.rate.output_pixel_price
+        return (
+            token_len * input_token_price
+            + token_len * output_token_price
+            + audio_length * input_token_price
+            + image_pixels_count * input_pixel_price
+            + image_pixels_count * output_pixel_price
+        )
+
     async def engage_is_needed(self, user_input: str) -> bool:
         prompt = await self.prompt_manager.compose_engage_needed_prompt(user_input)
         return await check_engage_needed.ainvoke(self.llm, prompt)
