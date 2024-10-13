@@ -16,7 +16,7 @@ class MessageHandler(RPBotMessageHandler):
         # Estimate the response based on amount of facts in the group chat,
         # the length of the message and wether or not it needs an image generation
         # TODO: add proper check for audio length
-        audio_length = 100  # estimate for 1 minute of audio
+        audio_length = 100  # estimate for 100 seconds of audio
 
         # TODO: add proper check for image size
         image_pixels_count = 2048 * 2048  # 512x512 image
