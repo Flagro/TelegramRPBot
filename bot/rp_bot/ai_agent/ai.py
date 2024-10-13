@@ -1,6 +1,6 @@
 import tiktoken
 import io
-from typing import AsyncIterator, Literal, Optional, Union
+from typing import AsyncIterator, Literal, Optional
 from openai import OpenAI
 from langchain_openai import OpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
