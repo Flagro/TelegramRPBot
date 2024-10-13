@@ -1,11 +1,11 @@
 import tiktoken
 import io
-from typing import AsyncIterator, Literal
+from typing import AsyncIterator, Literal, Optional, Union
 from openai import OpenAI
 from langchain_openai import OpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 
-from ...models.config.ai_config import AIConfig
+from ...models.config.ai_config import AIConfig, Model
 from ..prompt_manager import PromptManager
 from .agent_tools.describe_image import describe_image
 from .agent_tools.check_engage_needed import check_engage_needed
@@ -54,6 +54,16 @@ class AI:
             if first_model is None:
                 first_model = model.name
         return first_model
+
+    def _get_model_by_name(
+        self, model_name: str, model_type: Literal["text", "vision", "image_generation"]
+    ) -> Optional[Model]:
+        models_dict = {
+            "text": self.ai_config.TextGeneration.Models,
+            "vision": self.ai_config.TextGeneration.Models,
+            "image_generation": self.ai_config.ImageGeneration.Models,
+        }
+        return models_dict[model_type].get(model_name)
 
     def _get_default_text_model_name(self) -> str:
         return self._get_default_model_name("text")
