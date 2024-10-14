@@ -1,6 +1,6 @@
 import tiktoken
 import io
-from typing import AsyncIterator, Literal, Optional
+from typing import AsyncIterator, Literal
 from openai import OpenAI
 from langchain_openai import OpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
@@ -57,7 +57,7 @@ class AI:
 
     def _get_model_by_name(
         self, model_name: str, model_type: Literal["text", "vision", "image_generation"]
-    ) -> Optional[Model]:
+    ) -> Model:
         models_dict = {
             "text": self.ai_config.TextGeneration.Models,
             "vision": self.ai_config.TextGeneration.Models,
