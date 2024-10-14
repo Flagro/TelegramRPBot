@@ -65,6 +65,13 @@ class AI:
         }
         return models_dict[model_type].get(model_name)
 
+    def _get_default_model(
+        self, model_type: Literal["text", "vision", "image_generation"]
+    ) -> Model:
+        return self._get_model_by_name(
+            self._get_default_model_name(model_type), model_type
+        )
+
     def _get_default_text_model_name(self) -> str:
         return self._get_default_model_name("text")
 
