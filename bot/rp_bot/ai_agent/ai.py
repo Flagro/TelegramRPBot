@@ -66,13 +66,13 @@ class AI:
         return models_dict[model_type].get(model_name)
 
     def _get_default_text_model_name(self) -> str:
-        return self._get_default_model_name("text")
+        return self._get_default_model("text").name
 
     def _get_default_vision_model_name(self) -> str:
-        return self._get_default_model_name("vision")
+        return self._get_default_model("vision").name
 
     def _get_default_image_generation_model_name(self) -> str:
-        return self._get_default_model_name("image_generation")
+        return self._get_default_model("image_generation").name
 
     def get_price(
         self, token_len: int, audio_length: int, image_pixels_count: int
