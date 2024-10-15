@@ -55,31 +55,6 @@ class AI:
                 first_model = model
         return first_model
 
-    def _get_default_model_name(
-        self, model_type: Literal["text", "vision", "image_generation"]
-    ) -> str:
-        params_dict = {
-            "text": {
-                "models_dict": self.ai_config.TextGeneration.Models,
-                "default_attr": "text_default",
-            },
-            "vision": {
-                "models_dict": self.ai_config.TextGeneration.Models,
-                "default_attr": "vision_default",
-            },
-            "image_generation": {
-                "models_dict": self.ai_config.ImageGeneration.Models,
-                "default_attr": "image_generation_default",
-            },
-        }
-        first_model = None
-        for model in params_dict[model_type]["models_dict"].values():
-            if getattr(model, params_dict[model_type]["default_attr"]):
-                return model.name
-            if first_model is None:
-                first_model = model.name
-        return first_model
-
     def _get_model_by_name(
         self, model_name: str, model_type: Literal["text", "vision", "image_generation"]
     ) -> Model:
@@ -89,13 +64,6 @@ class AI:
             "image_generation": self.ai_config.ImageGeneration.Models,
         }
         return models_dict[model_type].get(model_name)
-
-    def _get_default_model(
-        self, model_type: Literal["text", "vision", "image_generation"]
-    ) -> Model:
-        return self._get_model_by_name(
-            self._get_default_model_name(model_type), model_type
-        )
 
     def _get_default_text_model_name(self) -> str:
         return self._get_default_model_name("text")
