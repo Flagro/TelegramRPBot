@@ -56,7 +56,11 @@ class AI:
         return first_model
 
     def get_price(
-        self, token_len: int, audio_length: int, image_pixels_count: int
+        self,
+        token_len: int,
+        audio_length: int,
+        image_pixels_count: int,
+        image_generation_needed: bool,
     ) -> float:
         """
         Returns the price of the AI services for the given
@@ -70,16 +74,26 @@ class AI:
         text_model_rate = self._get_default_model("text").rate
         vision_model_rate = self._get_default_model("vision").rate
         image_generation_model_rate = self._get_default_model("image_generation").rate
+        image_generation_dimensions = self.ai_config.ImageGeneration.output_image_size
+        image_generation_dimensions_x, image_generation_dimensions_y = (
+            image_generation_dimensions.split("x")
+        )
         input_token_price = text_model_rate.input_token_price
         output_token_price = text_model_rate.output_token_price
         input_pixel_price = vision_model_rate.input_pixel_price
         output_pixel_price = image_generation_model_rate.output_pixel_price
+
+        image_generation_pixels = (
+            0
+            if not image_generation_needed
+            else int(image_generation_dimensions_x) * int(image_generation_dimensions_y)
+        )
         return (
             token_len * input_token_price
             + token_len * output_token_price
             + audio_length * input_token_price
             + image_pixels_count * input_pixel_price
-            + image_pixels_count * output_pixel_price
+            + image_generation_pixels * output_pixel_price
         )
 
     async def engage_is_needed(self, user_input: str) -> bool:
