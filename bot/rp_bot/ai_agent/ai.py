@@ -18,16 +18,16 @@ class AI:
         self.ai_config = ai_config
         self.prompt_manager = prompt_manager
         self.llm = OpenAI(
-            api_key=openai_api_key, model=self._get_default_text_model_name()
+            api_key=openai_api_key, model=self._get_default_model("text").name
         )
         self.vision_model = OpenAI(
             api_key=openai_api_key,
-            model=self._get_default_vision_model_name(),
+            model=self._get_default_model("vision").name,
         )
         # TODO: fix this - this is not OpenAI object
         self.image_generation_model = OpenAI(
             api_key=openai_api_key,
-            model=self._get_default_image_generation_model_name(),
+            model=self._get_default_model("image_generation").name,
         )
 
     def _get_default_model(
@@ -54,15 +54,6 @@ class AI:
             if first_model is None:
                 first_model = model
         return first_model
-
-    def _get_default_text_model_name(self) -> str:
-        return self._get_default_model("text").name
-
-    def _get_default_vision_model_name(self) -> str:
-        return self._get_default_model("vision").name
-
-    def _get_default_image_generation_model_name(self) -> str:
-        return self._get_default_model("image_generation").name
 
     def get_price(
         self, token_len: int, audio_length: int, image_pixels_count: int
