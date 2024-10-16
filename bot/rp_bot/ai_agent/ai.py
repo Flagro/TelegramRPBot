@@ -61,17 +61,19 @@ class AI:
         """
         Returns the price of the AI services for the given
         input parameters
-        
+
         Args:
         token_len: the number of tokens in the input text
         audio_length: the length of the audio in seconds
         image_pixels_count: the number of pixels in the image
         """
-        # TODO: take rates by model name
-        input_token_price = self.ai_config.TextGeneration.rate.input_token_price
-        output_token_price = self.ai_config.TextGeneration.rate.output_token_price
-        input_pixel_price = self.ai_config.TextGeneration.rate.input_pixel_price
-        output_pixel_price = self.ai_config.TextGeneration.rate.output_pixel_price
+        text_model_rate = self._get_default_model("text").rate
+        vision_model_rate = self._get_default_model("vision").rate
+        image_generation_model_rate = self._get_default_model("image_generation").rate
+        input_token_price = text_model_rate.input_token_price
+        output_token_price = text_model_rate.output_token_price
+        input_pixel_price = vision_model_rate.input_pixel_price
+        output_pixel_price = image_generation_model_rate.output_pixel_price
         return (
             token_len * input_token_price
             + token_len * output_token_price
