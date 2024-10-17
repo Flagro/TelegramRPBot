@@ -71,23 +71,21 @@ class AI:
         audio_length: the length of the audio in seconds
         image_pixels_count: the number of pixels in the image
         """
-        text_model_rate = self._get_default_model("text").rate
-        vision_model_rate = self._get_default_model("vision").rate
-        image_generation_model_rate = self._get_default_model("image_generation").rate
+        input_token_price = self._get_default_model("text").rate.input_token_price
+        output_token_price = self._get_default_model("text").rate.output_token_price
+        input_pixel_price = self._get_default_model("vision").rate.input_pixel_price
+        output_pixel_price = self._get_default_model("image_generation").rate.output_pixel_price
+
         image_generation_dimensions = self.ai_config.ImageGeneration.output_image_size
         image_generation_dimensions_x, image_generation_dimensions_y = (
             image_generation_dimensions.split("x")
         )
-        input_token_price = text_model_rate.input_token_price
-        output_token_price = text_model_rate.output_token_price
-        input_pixel_price = vision_model_rate.input_pixel_price
-        output_pixel_price = image_generation_model_rate.output_pixel_price
-
         image_generation_pixels = (
             0
             if not image_generation_needed
             else int(image_generation_dimensions_x) * int(image_generation_dimensions_y)
         )
+
         return (
             token_len * input_token_price
             + token_len * output_token_price
