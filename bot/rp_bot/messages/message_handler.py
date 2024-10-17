@@ -27,7 +27,10 @@ class MessageHandler(RPBotMessageHandler):
         image_generation_needed = False
 
         total_price = self.ai.get_price(
-            token_len, audio_length, image_pixels_count, image_generation_needed
+            token_len=token_len,
+            audio_length=audio_length,
+            image_pixels_count=image_pixels_count,
+            image_generation_needed=image_generation_needed
         )
         return total_price
 
