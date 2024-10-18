@@ -19,7 +19,7 @@ class MessageHandler(RPBotMessageHandler):
         audio_length = 100  # estimate for 100 seconds of audio
 
         # TODO: add proper check for image size
-        image_pixels_count = 2048 * 2048  # 512x512 image
+        image_pixels_count = 2048 * 2048  # 2048x2048 image
 
         token_len = self.ai.count_tokens(transcribed_message.message_text)
 
