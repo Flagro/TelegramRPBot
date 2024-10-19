@@ -11,7 +11,7 @@ class MessageHandler(RPBotMessageHandler):
     permission_classes = (AllowedUser, BotAdmin, NotBanned)
 
     async def _estimate_reply_usage(
-        self, context: Context, transcribed_message: TranscribedMessage
+        self, context: Context, message: Message
     ) -> int:
         # Estimate the response based on amount of facts in the group chat,
         # the length of the message and wether or not it needs an image generation
@@ -21,7 +21,7 @@ class MessageHandler(RPBotMessageHandler):
         # TODO: add proper check for image size
         image_pixels_count = 2048 * 2048  # 2048x2048 image
 
-        token_len = self.ai.count_tokens(transcribed_message.message_text)
+        token_len = self.ai.count_tokens(message.message_text)
 
         # TODO: add proper check for image generation need
         image_generation_needed = False
@@ -62,7 +62,7 @@ class MessageHandler(RPBotMessageHandler):
         person: Person,
         context: Context,
         message: Message,
-    ) -> Optional[TranscribedMessage]:
+    ) -> Optional[Message]:
         conversation_tracker_enabled = (
             await self.db.chats.get_conversation_tracker_state(context)
         )
