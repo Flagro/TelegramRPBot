@@ -74,6 +74,8 @@ class MessageHandler(RPBotMessageHandler):
                 f"Ignoring message from {person.user_handle} in chat {context.chat_id}"
             )
             return None
+        # TODO: message transcribing might be costly, so we need to check price
+        # before transcribing and saving the message
         user_transcribed_message = await self._get_transcribed_message(message)
         await self.db.dialogs.add_message_to_dialog(
             context=context,
