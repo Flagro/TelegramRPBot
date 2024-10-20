@@ -10,9 +10,7 @@ from ..rp_bot_handlers import RPBotMessageHandler
 class MessageHandler(RPBotMessageHandler):
     permission_classes = (AllowedUser, BotAdmin, NotBanned)
 
-    async def _estimate_reply_usage(
-        self, context: Context, message: Message
-    ) -> int:
+    async def _estimate_reply_usage(self, context: Context, message: Message) -> int:
         # Estimate the response based on amount of facts in the group chat,
         # the length of the message and wether or not it needs an image generation
         # TODO: add proper check for audio length
@@ -30,7 +28,7 @@ class MessageHandler(RPBotMessageHandler):
             token_len=token_len,
             audio_length=audio_length,
             image_pixels_count=image_pixels_count,
-            image_generation_needed=image_generation_needed
+            image_generation_needed=image_generation_needed,
         )
         return total_price
 
@@ -85,9 +83,7 @@ class MessageHandler(RPBotMessageHandler):
         autoengage_state = await self.db.chats.get_autoengage_state(context)
         engage_is_needed = False
         if autoengage_state:
-            engage_is_needed = await self.ai.engage_is_needed(
-                message.message_text
-            )
+            engage_is_needed = await self.ai.engage_is_needed(message)
         if not context.is_bot_mentioned and not engage_is_needed:
             self.logger.info(
                 f"Saving the message from {person.user_handle} in chat {context.chat_id} "

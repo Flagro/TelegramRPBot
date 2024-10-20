@@ -6,6 +6,7 @@ from langchain_openai import OpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 
 from ...models.config.ai_config import AIConfig, Model
+from ...models.handlers_input import Message
 from ..prompt_manager import PromptManager
 from .agent_tools.describe_image import describe_image
 from .agent_tools.check_engage_needed import check_engage_needed
@@ -74,7 +75,9 @@ class AI:
         input_token_price = self._get_default_model("text").rate.input_token_price
         output_token_price = self._get_default_model("text").rate.output_token_price
         input_pixel_price = self._get_default_model("vision").rate.input_pixel_price
-        output_pixel_price = self._get_default_model("image_generation").rate.output_pixel_price
+        output_pixel_price = self._get_default_model(
+            "image_generation"
+        ).rate.output_pixel_price
 
         image_generation_dimensions = self.ai_config.ImageGeneration.output_image_size
         image_generation_dimensions_x, image_generation_dimensions_y = (
@@ -94,8 +97,10 @@ class AI:
             + image_generation_pixels * output_pixel_price
         )
 
-    async def engage_is_needed(self, user_input: str) -> bool:
-        prompt = await self.prompt_manager.compose_engage_needed_prompt(user_input)
+    async def engage_is_needed(self, message: Message) -> bool:
+        prompt = await self.prompt_manager.compose_engage_needed_prompt(
+            message.message_text
+        )
         return await check_engage_needed.ainvoke(self.llm, prompt)
 
     async def describe_image(self, in_memory_image_stream: io.BytesIO) -> str:
