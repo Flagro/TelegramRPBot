@@ -86,7 +86,7 @@ class MessageHandler(RPBotMessageHandler):
         engage_is_needed = False
         if autoengage_state:
             engage_is_needed = await self.ai.engage_is_needed(
-                user_transcribed_message.message_text
+                message.message_text
             )
         if not context.is_bot_mentioned and not engage_is_needed:
             self.logger.info(
@@ -99,7 +99,7 @@ class MessageHandler(RPBotMessageHandler):
                 f"Engaging with the message from {person.user_handle} in chat {context.chat_id} "
                 "as the agent detected a question or a request for information"
             )
-        return user_transcribed_message
+        return message
 
     async def is_usage_under_limit(
         self, person: Person, context: Context, transcribed_message: TranscribedMessage
