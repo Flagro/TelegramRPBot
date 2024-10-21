@@ -136,11 +136,14 @@ class AI:
     def count_tokens(text: str) -> int:
         return tiktoken.count(text)
 
-    async def get_reply(self, user_input: str, system_prompt: str) -> str:
-        messages = [
+    def compose_messages(self, user_input: str, system_prompt: str) -> list:
+        return [
             SystemMessage(content=system_prompt),
             HumanMessage(content=user_input),
         ]
+
+    async def get_reply(self, user_input: str, system_prompt: str) -> str:
+        messages = self.compose_messages(user_input, system_prompt)
         temperature = (self.ai_config.TextGeneration.temperature,)
         response = await self.llm.ainvoke(messages, temperature=temperature)
         return response.content
@@ -148,10 +151,7 @@ class AI:
     async def get_streaming_reply(
         self, user_input: str, system_prompt: str
     ) -> AsyncIterator[str]:
-        messages = [
-            SystemMessage(content=system_prompt),
-            HumanMessage(content=user_input),
-        ]
+        messages = self.compose_messages(user_input, system_prompt)
         temperature = (self.ai_config.TextGeneration.temperature,)
         for chunk in await self.llm.astream(messages, temperature=temperature):
             yield chunk.content
