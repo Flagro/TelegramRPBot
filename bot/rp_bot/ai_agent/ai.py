@@ -136,7 +136,8 @@ class AI:
     def count_tokens(text: str) -> int:
         return tiktoken.count(text)
 
-    def compose_messages(self, user_input: str, system_prompt: str) -> list:
+    @staticmethod
+    def compose_messages(user_input: str, system_prompt: str) -> list:
         return [
             SystemMessage(content=system_prompt),
             HumanMessage(content=user_input),
