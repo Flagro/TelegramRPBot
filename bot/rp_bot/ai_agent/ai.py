@@ -159,7 +159,7 @@ class AI:
     async def get_streaming_reply(
         self, user_input: str, system_prompt: str
     ) -> AsyncIterator[str]:
-        messages = self.compose_messages(user_input, system_prompt)
+        messages = self.compose_messages_openai(user_input, system_prompt)
         temperature = (self.ai_config.TextGeneration.temperature,)
         for chunk in await self.llm.astream(messages, temperature=temperature):
             yield chunk.content
