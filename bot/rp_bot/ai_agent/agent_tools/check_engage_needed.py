@@ -13,7 +13,7 @@ class EngageNeeded(BaseModel):
 
 
 @chain
-async def check_engage_needed(llm: OpenAI, prompt: str) -> bool:
+def check_engage_needed(llm: OpenAI, prompt: str) -> bool:
     """
     Returns True if the prompt contains a question or a request for information.
     """
