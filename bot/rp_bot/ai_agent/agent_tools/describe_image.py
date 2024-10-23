@@ -18,7 +18,7 @@ class ImageInformation(BaseModel):
 
 
 @chain
-def describe_image(in_memory_image_stream: io.BytesIO) -> ImageInformation:
+def describe_image_chain(in_memory_image_stream: io.BytesIO) -> ImageInformation:
     # Encode in base64:
     image_base64 = base64.b64encode(in_memory_image_stream.getvalue()).decode()
     parser = JsonOutputParser(pydantic_object=ImageInformation)

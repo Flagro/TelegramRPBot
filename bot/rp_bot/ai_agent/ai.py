@@ -7,7 +7,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from ...models.config.ai_config import AIConfig, Model
 from ...models.handlers_input import Message
 from ..prompt_manager import PromptManager
-from .agent_tools.describe_image import describe_image
+from .agent_tools.describe_image import describe_image_chain
 from .agent_tools.check_engage_needed import check_engage_needed
 
 
@@ -104,7 +104,7 @@ class AI:
 
     async def describe_image(self, in_memory_image_stream: io.BytesIO) -> str:
         # TODO: pass the image model into the chain
-        image_information = await describe_image.ainvoke(in_memory_image_stream)
+        image_information = await describe_image_chain.ainvoke(in_memory_image_stream)
         image_description = await self.prompt_manager.compose_image_description_prompt(
             image_information
         )
