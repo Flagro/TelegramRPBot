@@ -138,10 +138,18 @@ class AI:
 
     @staticmethod
     def compose_messages_langchain(user_input: str, system_prompt: str) -> list:
-        return [
-            SystemMessage(content=system_prompt),
-            HumanMessage(content=user_input),
+        openai_formatted_messages = AI.compose_messages_openai(
+            user_input, system_prompt
+        )
+        result = [
+            (
+                SystemMessage(content=message_dict["content"])
+                if message_dict["role"] == "system"
+                else HumanMessage(content=message_dict["content"])
+            )
+            for message_dict in openai_formatted_messages
         ]
+        return result
 
     @staticmethod
     def compose_messages_openai(user_input: str, system_prompt: str) -> list:
