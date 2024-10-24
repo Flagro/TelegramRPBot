@@ -137,10 +137,7 @@ class AI:
         return tiktoken.count(text)
 
     @staticmethod
-    def compose_messages_langchain(user_input: str, system_prompt: str) -> list:
-        openai_formatted_messages = AI.compose_messages_openai(
-            user_input, system_prompt
-        )
+    def compose_messages_langchain(openai_formatted_messages) -> list:
         result = [
             (
                 SystemMessage(content=message_dict["content"])
