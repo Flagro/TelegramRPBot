@@ -1,6 +1,6 @@
 import tiktoken
 import io
-from typing import AsyncIterator, Literal, Optional
+from typing import AsyncIterator, Literal, Optional, List, Dict
 from openai import OpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 
@@ -137,7 +137,9 @@ class AI:
         return tiktoken.count(text)
 
     @staticmethod
-    def compose_messages_langchain(openai_formatted_messages) -> list:
+    def compose_messages_langchain(
+        openai_formatted_messages: List[Dict[str, str]]
+    ) -> list:
         result = [
             (
                 SystemMessage(content=message_dict["content"])
