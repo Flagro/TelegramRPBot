@@ -167,6 +167,12 @@ class AI:
         self, user_input: str, system_prompt: str
     ) -> AsyncIterator[str]:
         messages = self.compose_messages_openai(user_input, system_prompt)
-        temperature = (self.ai_config.TextGeneration.temperature,)
-        for chunk in await self.llm.astream(messages, temperature=temperature):
-            yield chunk.content
+        response = self.llm.chat.completions.create(
+            model=self._get_default_model("text").name,
+            messages=messages,
+            stream=True,
+            temperature=self.ai_config.TextGeneration.temperature,
+        )
+        for chunk in response:
+            chunk_text = chunk.choices[0].delta.content
+            yield chunk_text
