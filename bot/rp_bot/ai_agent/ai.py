@@ -159,9 +159,13 @@ class AI:
 
     async def get_reply(self, user_input: str, system_prompt: str) -> str:
         messages = self.compose_messages_openai(user_input, system_prompt)
-        temperature = self.ai_config.TextGeneration.temperature
-        response = await self.llm.ainvoke(messages, temperature=temperature)
-        return response.content
+        response = self.llm.chat.completions.create(
+            model=self._get_default_model("text").name,
+            messages=messages,
+            stream=False,
+            temperature=self.ai_config.TextGeneration.temperature,
+        )
+        return response.choices[0].delta.content
 
     async def get_streaming_reply(
         self, user_input: str, system_prompt: str
