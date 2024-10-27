@@ -5,7 +5,7 @@ from typing import List, Optional, AsyncIterator
 from telegram import Update, constants
 from telegram.ext import ContextTypes
 
-from ..models.handlers_input import Person, Context, Message
+from ..models.handlers_input import Person, Context, Message, BotInput
 from ..models.handlers_response import LocalizedCommandResponse
 
 
@@ -130,6 +130,20 @@ def get_thread_id(update: Update) -> Optional[int]:
     if update.effective_message and update.effective_message.is_topic_message:
         return update.effective_message.message_thread_id
     return None
+
+
+def get_bot_input(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> BotInput:
+    """
+    Get the bot input from the update and context
+    """
+    return BotInput(
+        person=get_person(update, context),
+        context=get_context(update, context),
+        message=get_message(update, context),
+        args=get_args(update, context),
+    )
 
 
 def min_char_diff_for_buffering(content: str, is_group_chat: bool) -> int:
