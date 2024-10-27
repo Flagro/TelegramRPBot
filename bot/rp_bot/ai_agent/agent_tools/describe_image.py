@@ -27,4 +27,6 @@ def describe_image_chain(in_memory_image_stream: io.BytesIO) -> ImageInformation
     # TODO: implement image chain runnable
     # TODO: pass the image model here
 
-    return ""
+    return ImageInformation(
+        image_description="an image", image_type="picture", main_objects=["image"]
+    )
