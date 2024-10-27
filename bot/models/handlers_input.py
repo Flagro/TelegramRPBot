@@ -27,6 +27,13 @@ class Message(BaseModel):
     in_file_audio: Optional[str] = None
 
 
+class BotInput(BaseModel):
+    person: Person
+    context: Context
+    message: Message
+    args: Optional[str] = None
+
+
 class TranscribedMessage(BaseModel):
     message_text: str
     timestamp: datetime
