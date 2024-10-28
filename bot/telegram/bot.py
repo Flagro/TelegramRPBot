@@ -17,10 +17,7 @@ from typing import Literal, Optional
 from functools import partial
 
 from .utils import (
-    get_context,
-    get_person,
-    get_message,
-    get_args,
+    get_bot_input,
     buffer_streaming_response,
     is_group_chat,
 )
@@ -108,19 +105,16 @@ class TelegramBot:
         """
         Handles the update and sends the response back to the user.
         """
-        handler_context = await get_context(update, context)
-        handler_person = await get_person(update, context)
-        handler_message = await get_message(update, context)
-        handler_args = await get_args(update, context)
+        bot_input = get_bot_input(update, context)
 
         if bot_handler.streamable and self.telegram_bot_config.enable_message_streaming:
             first_message_id = None
             async for result in buffer_streaming_response(
                 bot_handler.stream_handle(
-                    person=handler_person,
-                    context=handler_context,
-                    message=handler_message,
-                    args=handler_args,
+                    person=bot_input.person,
+                    context=bot_input.context,
+                    message=bot_input.message,
+                    args=bot_input.args,
                 ),
                 is_group_chat(update=update),
             ):
@@ -132,7 +126,7 @@ class TelegramBot:
                         chat_id=update.effective_chat.id,
                         text=latest_text_response,
                         reply_message_id=update.effective_message.message_id,
-                        thread_id=handler_context.thread_id,
+                        thread_id=bot_input.context.thread_id,
                         parse_mode=ParseMode.HTML,
                         keyboard=result.keyboard,
                     )
@@ -151,17 +145,17 @@ class TelegramBot:
                         chat_id=update.effective_chat.id,
                         text=latest_text_response,
                         reply_message_id=first_message_id,
-                        thread_id=handler_context.thread_id,
+                        thread_id=bot_input.context.thread_id,
                         parse_mode=ParseMode.HTML,
                         keyboard=result.keyboard,
                     )
                 await asyncio.sleep(0.5)
         else:
             result = await bot_handler.handle(
-                person=handler_person,
-                context=handler_context,
-                message=handler_message,
-                args=handler_args,
+                person=bot_input.person,
+                context=bot_input.context,
+                message=bot_input.message,
+                args=bot_input.args,
             )
             if result is None:
                 return
@@ -173,7 +167,7 @@ class TelegramBot:
                 chat_id=update.effective_chat.id,
                 text=text_response,
                 reply_message_id=update.effective_message.message_id,
-                thread_id=handler_context.thread_id,
+                thread_id=bot_input.context.thread_id,
                 parse_mode=ParseMode.HTML,
                 keyboard=result.keyboard,
             )
