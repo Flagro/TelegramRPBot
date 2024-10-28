@@ -99,13 +99,12 @@ class TelegramBot:
             msg="Exception while handling an update:", exc_info=context.error
         )
 
-    async def handle(
-        self, update: Update, context: CallbackContext, bot_handler: BaseHandler
-    ) -> None:
+    async def handle(self, update: Update, context: CallbackContext, bot_handler: BaseHandler) -> None:
         """
         Handles the update and sends the response back to the user.
         """
         bot_input = get_bot_input(update, context)
+        await self.push_state(update, context, "sending_text")
 
         if bot_handler.streamable and self.telegram_bot_config.enable_message_streaming:
             first_message_id = None
@@ -118,37 +117,13 @@ class TelegramBot:
                 ),
                 is_group_chat(update=update),
             ):
-                latest_text_response = result.localized_text
-                await self.push_state(update, context, "sending_text")
-                if latest_text_response and first_message_id is None:
-                    message = await self.send_message(
-                        context=context,
-                        chat_id=update.effective_chat.id,
-                        text=latest_text_response,
-                        reply_message_id=update.effective_message.message_id,
-                        thread_id=bot_input.context.thread_id,
-                        parse_mode=ParseMode.HTML,
-                        keyboard=result.keyboard,
-                    )
-                    first_message_id = message.message_id
-                elif latest_text_response and first_message_id is not None:
-                    await context.bot.edit_message_text(
-                        chat_id=update.effective_chat.id,
-                        message_id=first_message_id,
-                        text=latest_text_response,
-                        parse_mode=ParseMode.HTML,
-                        reply_markup=result.keyboard,
-                    )
-                elif latest_text_response is None and result.keyboard is not None:
-                    await self.send_message(
-                        context=context,
-                        chat_id=update.effective_chat.id,
-                        text=latest_text_response,
-                        reply_message_id=first_message_id,
-                        thread_id=bot_input.context.thread_id,
-                        parse_mode=ParseMode.HTML,
-                        keyboard=result.keyboard,
-                    )
+                first_message_id = await self.process_stream_result(
+                    result,
+                    update,
+                    context,
+                    first_message_id,
+                    bot_input
+                )
                 await asyncio.sleep(0.5)
         else:
             result = await bot_handler.handle(
@@ -157,20 +132,57 @@ class TelegramBot:
                 message=bot_input.message,
                 args=bot_input.args,
             )
-            if result is None:
-                return
-            text_response = result.localized_text
+            if result is not None:
+                await self.process_result(result, update, context, bot_input)
 
-            await self.push_state(update, context, "sending_text")
+    async def process_stream_result(
+        self, result, update, context, first_message_id, bot_input
+    ):
+        latest_text_response = result.localized_text
+
+        if latest_text_response:
+            if first_message_id is None:
+                message = await self.send_message(
+                    context=context,
+                    chat_id=update.effective_chat.id,
+                    text=latest_text_response,
+                    reply_message_id=update.effective_message.message_id,
+                    thread_id=bot_input.context.thread_id,
+                    parse_mode=ParseMode.HTML,
+                    keyboard=result.keyboard,
+                )
+                first_message_id = message.message_id
+            else:
+                await context.bot.edit_message_text(
+                    chat_id=update.effective_chat.id,
+                    message_id=first_message_id,
+                    text=latest_text_response,
+                    parse_mode=ParseMode.HTML,
+                    reply_markup=result.keyboard,
+                )
+        elif result.keyboard:
             await self.send_message(
                 context=context,
                 chat_id=update.effective_chat.id,
-                text=text_response,
-                reply_message_id=update.effective_message.message_id,
+                text=latest_text_response or "",
+                reply_message_id=first_message_id or update.effective_message.message_id,
                 thread_id=bot_input.context.thread_id,
                 parse_mode=ParseMode.HTML,
                 keyboard=result.keyboard,
             )
+        return first_message_id
+
+    async def process_result(self, result, update, context, bot_input):
+        text_response = result.localized_text
+        await self.send_message(
+            context=context,
+            chat_id=update.effective_chat.id,
+            text=text_response,
+            reply_message_id=update.effective_message.message_id,
+            thread_id=bot_input.context.thread_id,
+            parse_mode=ParseMode.HTML,
+            keyboard=result.keyboard,
+        )
 
     async def push_state(
         self,
