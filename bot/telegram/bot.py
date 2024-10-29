@@ -27,6 +27,8 @@ from ..models.base_bot import BaseBot
 from ..models.config import TGConfig
 from ..models.base_handlers import BaseHandler
 from ..models.handlers_response import KeyboardResponse
+from ..models.handlers_input import BotInput
+from ..models.handlers_response import LocalizedCommandResponse
 
 
 class TelegramBot:
@@ -99,7 +101,9 @@ class TelegramBot:
             msg="Exception while handling an update:", exc_info=context.error
         )
 
-    async def handle(self, update: Update, context: CallbackContext, bot_handler: BaseHandler) -> None:
+    async def handle(
+        self, update: Update, context: CallbackContext, bot_handler: BaseHandler
+    ) -> None:
         """
         Handles the update and sends the response back to the user.
         """
@@ -118,11 +122,7 @@ class TelegramBot:
                 is_group_chat(update=update),
             ):
                 first_message_id = await self.process_stream_result(
-                    result,
-                    update,
-                    context,
-                    first_message_id,
-                    bot_input
+                    result, update, context, first_message_id, bot_input
                 )
                 await asyncio.sleep(0.5)
         else:
@@ -136,7 +136,12 @@ class TelegramBot:
                 await self.process_result(result, update, context, bot_input)
 
     async def process_stream_result(
-        self, result, update, context, first_message_id, bot_input
+        self,
+        result: LocalizedCommandResponse,
+        update: Update,
+        context: CallbackContext,
+        first_message_id: str,
+        bot_input: BotInput,
     ):
         latest_text_response = result.localized_text
 
@@ -165,7 +170,8 @@ class TelegramBot:
                 context=context,
                 chat_id=update.effective_chat.id,
                 text=latest_text_response or "",
-                reply_message_id=first_message_id or update.effective_message.message_id,
+                reply_message_id=first_message_id
+                or update.effective_message.message_id,
                 thread_id=bot_input.context.thread_id,
                 parse_mode=ParseMode.HTML,
                 keyboard=result.keyboard,
