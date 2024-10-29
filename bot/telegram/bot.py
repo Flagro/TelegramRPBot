@@ -142,7 +142,7 @@ class TelegramBot:
         context: CallbackContext,
         first_message_id: str,
         bot_input: BotInput,
-    ):
+    ) -> Optional[int]:
         latest_text_response = result.localized_text
 
         if latest_text_response:
@@ -178,7 +178,13 @@ class TelegramBot:
             )
         return first_message_id
 
-    async def process_result(self, result, update, context, bot_input):
+    async def process_result(
+        self,
+        result: LocalizedCommandResponse,
+        update: Update,
+        context: CallbackContext,
+        bot_input: BotInput,
+    ) -> None:
         text_response = result.localized_text
         await self.send_message(
             context=context,
