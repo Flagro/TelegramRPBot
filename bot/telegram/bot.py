@@ -124,7 +124,7 @@ class TelegramBot:
                 first_message_id = await self.process_stream_result(
                     result, update, context, first_message_id, bot_input
                 )
-                await asyncio.sleep(0.5)
+                await asyncio.sleep(self.telegram_bot_config.stream_buffer_sleep_time)
         else:
             result = await bot_handler.handle(
                 person=bot_input.person,
