@@ -152,7 +152,6 @@ class TelegramBot:
                     chat_id=update.effective_chat.id,
                     text=latest_text_response,
                     reply_message_id=update.effective_message.message_id,
-                    thread_id=bot_input.context.thread_id,
                     parse_mode=ParseMode.HTML,
                     keyboard=result.keyboard,
                 )
@@ -172,7 +171,6 @@ class TelegramBot:
                 text=latest_text_response or "",
                 reply_message_id=first_message_id
                 or update.effective_message.message_id,
-                thread_id=bot_input.context.thread_id,
                 parse_mode=ParseMode.HTML,
                 keyboard=result.keyboard,
             )
@@ -191,7 +189,6 @@ class TelegramBot:
             chat_id=update.effective_chat.id,
             text=text_response,
             reply_message_id=update.effective_message.message_id,
-            thread_id=bot_input.context.thread_id,
             parse_mode=ParseMode.HTML,
             keyboard=result.keyboard,
         )
@@ -219,7 +216,6 @@ class TelegramBot:
         text: Optional[str] = None,
         image_url: Optional[str] = None,
         reply_message_id: Optional[int] = None,
-        thread_id: Optional[int] = None,
         parse_mode: Optional[ParseMode] = ParseMode.HTML,
         keyboard: Optional[KeyboardResponse] = None,
     ) -> None:
