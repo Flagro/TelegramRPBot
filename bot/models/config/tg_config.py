@@ -6,3 +6,4 @@ class TGConfig(BaseYAMLConfigModel):
     enable_message_streaming: bool
     n_chat_modes_per_page: int
     stream_buffer_sleep_time: float
+    rate_limiter_max_retries: int
