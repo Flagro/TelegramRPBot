@@ -152,7 +152,6 @@ class TelegramBot:
                     chat_id=update.effective_chat.id,
                     text=latest_text_response,
                     reply_message_id=update.effective_message.message_id,
-                    parse_mode=ParseMode.HTML,
                     keyboard=result.keyboard,
                 )
                 first_message_id = message.message_id
@@ -161,7 +160,6 @@ class TelegramBot:
                     chat_id=update.effective_chat.id,
                     message_id=first_message_id,
                     text=latest_text_response,
-                    parse_mode=ParseMode.HTML,
                     reply_markup=result.keyboard,
                 )
         elif result.keyboard:
@@ -171,7 +169,6 @@ class TelegramBot:
                 text=latest_text_response or "",
                 reply_message_id=first_message_id
                 or update.effective_message.message_id,
-                parse_mode=ParseMode.HTML,
                 keyboard=result.keyboard,
             )
         return first_message_id
@@ -189,7 +186,6 @@ class TelegramBot:
             chat_id=update.effective_chat.id,
             text=text_response,
             reply_message_id=update.effective_message.message_id,
-            parse_mode=ParseMode.HTML,
             keyboard=result.keyboard,
         )
 
