@@ -216,7 +216,7 @@ class TelegramBot:
         text: Optional[str] = None,
         image_url: Optional[str] = None,
         reply_message_id: Optional[int] = None,
-        parse_mode: Optional[ParseMode] = ParseMode.HTML,
+        parse_mode: ParseMode = ParseMode.HTML,
         keyboard: Optional[KeyboardResponse] = None,
     ) -> None:
         if keyboard:
