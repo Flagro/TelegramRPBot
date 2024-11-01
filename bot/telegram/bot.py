@@ -43,7 +43,7 @@ class TelegramBot:
         self.commands = bot.commands
         self.messages = bot.messages
         self.callbacks = bot.callbacks
-        self.logger = logging.getLogger("TelegramBot")
+        self.logger = logging.getLogger(self.__class__.__name__)
 
     async def post_init(self, application: Application) -> None:
         """
