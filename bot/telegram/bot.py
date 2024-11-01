@@ -66,7 +66,11 @@ class TelegramBot:
             ApplicationBuilder()
             .token(self.telegram_token)
             .concurrent_updates(True)
-            .rate_limiter(AIORateLimiter(max_retries=5))
+            .rate_limiter(
+                AIORateLimiter(
+                    max_retries=self.telegram_bot_config.rate_limiter_max_retries
+                )
+            )
             .post_init(self.post_init)
             .build()
         )
