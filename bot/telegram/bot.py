@@ -146,7 +146,7 @@ class TelegramBot:
         context: CallbackContext,
         first_message_id: str,
         bot_input: BotInput,
-    ) -> Optional[int]:
+    ) -> str:
         latest_text_response = result.localized_text
 
         if latest_text_response or result.keyboard:
