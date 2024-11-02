@@ -149,7 +149,7 @@ class TelegramBot:
     ) -> Optional[int]:
         latest_text_response = result.localized_text
 
-        if latest_text_response:
+        if latest_text_response or result.keyboard:
             if first_message_id is None:
                 message = await self.send_message(
                     context=context,
@@ -166,15 +166,6 @@ class TelegramBot:
                     text=latest_text_response,
                     reply_markup=result.keyboard,
                 )
-        elif result.keyboard:
-            await self.send_message(
-                context=context,
-                chat_id=update.effective_chat.id,
-                text=latest_text_response or "",
-                reply_message_id=first_message_id
-                or update.effective_message.message_id,
-                keyboard=result.keyboard,
-            )
         return first_message_id
 
     async def process_result(
