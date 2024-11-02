@@ -126,7 +126,7 @@ class TelegramBot:
                 is_group_chat(update=update),
             ):
                 first_message_id = await self.process_stream_result(
-                    result, update, context, first_message_id, bot_input
+                    result, update, context, first_message_id
                 )
                 await asyncio.sleep(self.telegram_bot_config.stream_buffer_sleep_time)
         else:
@@ -137,7 +137,7 @@ class TelegramBot:
                 args=bot_input.args,
             )
             if result is not None:
-                await self.process_result(result, update, context, bot_input)
+                await self.process_result(result, update, context)
 
     async def process_stream_result(
         self,
@@ -145,14 +145,11 @@ class TelegramBot:
         update: Update,
         context: CallbackContext,
         first_message_id: str,
-        bot_input: BotInput,
     ) -> str:
         latest_text_response = result.localized_text
         if latest_text_response or result.keyboard:
             if first_message_id is None:
-                return await self.process_result(
-                    result, update, context, bot_input
-                )
+                return await self.process_result(result, update, context, bot_input)
             else:
                 await context.bot.edit_message_text(
                     chat_id=update.effective_chat.id,
@@ -167,7 +164,6 @@ class TelegramBot:
         result: LocalizedCommandResponse,
         update: Update,
         context: CallbackContext,
-        bot_input: BotInput,
     ) -> str:
         message = await self.send_message(
             context=context,
