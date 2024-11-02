@@ -174,15 +174,15 @@ class TelegramBot:
         update: Update,
         context: CallbackContext,
         bot_input: BotInput,
-    ) -> None:
-        text_response = result.localized_text
-        await self.send_message(
+    ) -> str:
+        message = await self.send_message(
             context=context,
             chat_id=update.effective_chat.id,
-            text=text_response,
+            text=result.localized_text,
             reply_message_id=update.effective_message.message_id,
             keyboard=result.keyboard,
         )
+        return message.message_id
 
     async def push_state(
         self,
