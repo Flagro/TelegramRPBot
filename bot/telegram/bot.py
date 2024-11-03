@@ -125,10 +125,13 @@ class TelegramBot:
                 ),
                 is_group_chat(update=update),
             ):
-                first_message_id = await self.process_stream_result(
-                    result, update, context, first_message_id
-                )
-                await asyncio.sleep(self.telegram_bot_config.stream_buffer_sleep_time)
+                if result is not None:
+                    first_message_id = await self.process_stream_result(
+                        result, update, context, first_message_id
+                    )
+                    await asyncio.sleep(
+                        self.telegram_bot_config.stream_buffer_sleep_time
+                    )
         else:
             result = await bot_handler.handle(
                 person=bot_input.person,
