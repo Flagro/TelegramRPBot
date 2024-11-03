@@ -207,18 +207,11 @@ class TelegramBot:
                 callback=keyboard.callback,
                 button_action=keyboard.button_action,
             )
-        if image_url:
-            return await context.bot.send_photo(
-                chat_id=chat_id,
-                photo=image_url,
-                reply_to_message_id=reply_message_id,
-                parse_mode=parse_mode,
-            )
-        else:
-            return await context.bot.send_message(
-                chat_id=chat_id,
-                text=text,
-                reply_to_message_id=reply_message_id,
-                parse_mode=parse_mode,
-                reply_markup=markup,
-            )
+        return await context.bot.send_message(
+            chat_id=chat_id,
+            text=text,
+            reply_to_message_id=reply_message_id,
+            photo=image_url,
+            parse_mode=parse_mode,
+            reply_markup=markup,
+        )
