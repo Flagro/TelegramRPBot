@@ -1,3 +1,7 @@
+class ModerationError(Exception):
+    pass
+
+
 def moderate_image(image_base64: str) -> bool:
     """
     Moderates the image and returns True if the image is safe
