@@ -9,7 +9,7 @@ from ...models.handlers_input import Message
 from ..prompt_manager import PromptManager
 from .agent_tools.describe_image import describe_image_chain
 from .agent_tools.check_engage_needed import check_engage_needed
-from .moderation import ModerationError, moderate_image, moderate_text
+from .moderation import ModerationError, moderate_image, moderate_text, moderate_audio
 
 
 class AI:
@@ -114,6 +114,8 @@ class AI:
         return image_description
 
     async def transcribe_audio(self, in_memory_audio_stream: io.BytesIO) -> str:
+        if not moderate_audio(in_memory_audio_stream):
+            raise ModerationError("Audio is not safe")
         # TODO: implement this
         # r = await openai.Audio.atranscribe(in_memory_audio_stream)
         # return r["text"] or ""
@@ -128,12 +130,6 @@ class AI:
         # image_url = r.data[0].url
         # return image_url
         return ""
-
-    async def is_content_acceptable(self, text: str) -> bool:
-        # TODO: implement this
-        # r = await openai.Moderation.acreate(input=text)
-        # return not all(r.results[0].categories.values())
-        return True
 
     @staticmethod
     def count_tokens(text: str) -> int:
@@ -161,6 +157,8 @@ class AI:
         ]
 
     async def get_reply(self, user_input: str, system_prompt: str) -> str:
+        if not moderate_text(user_input):
+            raise ModerationError("Text is not safe")
         messages = self.compose_messages_openai(user_input, system_prompt)
         response = self.llm.chat.completions.create(
             model=self._get_default_model("text").name,
@@ -173,6 +171,8 @@ class AI:
     async def get_streaming_reply(
         self, user_input: str, system_prompt: str
     ) -> AsyncIterator[str]:
+        if not moderate_text(user_input):
+            raise ModerationError("Text is not safe")
         messages = self.compose_messages_openai(user_input, system_prompt)
         response = self.llm.chat.completions.create(
             model=self._get_default_model("text").name,
