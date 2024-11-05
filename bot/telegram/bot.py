@@ -202,13 +202,15 @@ class TelegramBot:
         parse_mode: ParseMode = ParseMode.HTML,
         keyboard: Optional[KeyboardResponse] = None,
     ) -> None:
-        markup = None
-        if keyboard:
-            markup = get_paginated_list_keyboard(
+        markup = (
+            None
+            if not keyboard
+            else get_paginated_list_keyboard(
                 value_id_to_name=keyboard.modes_dict,
                 callback=keyboard.callback,
                 button_action=keyboard.button_action,
             )
+        )
         return await context.bot.send_message(
             chat_id=chat_id,
             text=text,
