@@ -152,7 +152,7 @@ class TelegramBot:
         latest_text_response = result.localized_text
         if latest_text_response or result.keyboard:
             if first_message_id is None:
-                return await self.process_result(result, update, context, bot_input)
+                return await self.process_result(result, update, context)
             else:
                 await context.bot.edit_message_text(
                     chat_id=update.effective_chat.id,
