@@ -27,7 +27,6 @@ from ..models.base_bot import BaseBot
 from ..models.config import TGConfig
 from ..models.base_handlers import BaseHandler
 from ..models.handlers_response import KeyboardResponse
-from ..models.handlers_input import BotInput
 from ..models.handlers_response import LocalizedCommandResponse
 
 
