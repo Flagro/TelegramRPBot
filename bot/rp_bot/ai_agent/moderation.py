@@ -35,6 +35,7 @@ def moderate_user_message(message: Message) -> bool:
     """
     Moderates the user message and returns True if the message is safe
     """
+    # TODO: consider making it a method of the Message class
     return all(
         [
             moderate_text(message.message_text),
