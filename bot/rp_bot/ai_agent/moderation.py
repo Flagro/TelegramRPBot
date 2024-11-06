@@ -1,5 +1,7 @@
 import io
 
+from ...models.handlers_input import Message
+
 
 class ModerationError(Exception):
     pass
@@ -27,3 +29,16 @@ def moderate_text(text: str) -> bool:
     """
     # TODO: implement this
     return True
+
+
+def moderate_user_message(message: Message) -> bool:
+    """
+    Moderates the user message and returns True if the message is safe
+    """
+    return all(
+        [
+            moderate_text(message.message_text),
+            moderate_image(message.in_file_image) if message.in_file_image else True,
+            moderate_audio(message.in_file_audio) if message.in_file_audio else True,
+        ]
+    )
