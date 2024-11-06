@@ -3,6 +3,7 @@ from typing import List, Optional
 
 from .db import DB
 from ai_agent.ai import AI
+from ai_agent.moderation import moderate_user_message
 from .prompt_manager import PromptManager
 from .auth import Auth
 from .localizer import Localizer
@@ -13,7 +14,7 @@ from ..models.base_handlers import (
     BaseMessageHandler,
 )
 from ..models.base_auth import BasePermission
-from ..models.handlers_input import Person, Context
+from ..models.handlers_input import Person, Context, Message
 
 
 class RPBotHandlerMixin(ABC):
@@ -46,6 +47,9 @@ class RPBotHandlerMixin(ABC):
         for permission_class in self.permission_classes:
             result.append(permission_class(self.auth))
         return result
+
+    async def moderate_message(self, message: Message) -> bool:
+        return moderate_user_message(message)
 
     async def get_localized_text(
         self, text: str, kwargs: Optional[dict] = None, context: Optional[Context] = None

@@ -39,6 +39,10 @@ class BaseHandler(ABC):
     async def initialize_context(self, person: Person, context: Context) -> None:
         raise NotImplementedError
 
+    @abstractmethod
+    async def moderate_message(self, message: Message) -> bool:
+        raise NotImplementedError
+
     @property
     def permissions(self) -> List[BasePermission]:
         return self._initialized_permissions
@@ -90,6 +94,10 @@ class BaseHandler(ABC):
             return self.get_localized_response(
                 CommandResponse(text="not_authenticated"), context
             )
+        if not await self.moderate_message(message):
+            return self.get_localized_response(
+                CommandResponse(text="message_moderation_failed"), context
+            )
         await self._log_handler_request(person, context, message, args)
         response = await self.get_response(person, context, message, args)
         if response is None:
@@ -103,6 +111,12 @@ class BaseHandler(ABC):
         if not await self.is_authenticated(person, context):
             yield self.get_localized_response(
                 CommandResponse(text="not_authenticated"),
+                context,
+            )
+            return
+        if not await self.moderate_message(message):
+            yield self.get_localized_response(
+                CommandResponse(text="message_moderation_failed"),
                 context,
             )
             return
