@@ -160,11 +160,6 @@ class MessageHandler(RPBotMessageHandler):
         prompt = await self.get_prompt_from_transcribed_message(
             person, context, transcribed_message
         )
-        if not self.ai.is_content_acceptable(prompt):
-            return CommandResponse(
-                text="content_not_acceptable",
-                kwargs={"user_handle": person.user_handle},
-            )
         system_prompt = self.prompt_manager.get_reply_system_prompt(context)
         response_message = await self.ai.get_reply(prompt, system_prompt)
         result = CommandResponse(
@@ -187,12 +182,6 @@ class MessageHandler(RPBotMessageHandler):
         prompt = await self.get_prompt_from_transcribed_message(
             person, context, transcribed_message
         )
-        if not self.ai.is_content_acceptable(prompt):
-            return CommandResponse(
-                text="content_not_acceptable",
-                kwargs={"user_handle": person.user_handle},
-            )
-
         response_message = ""
         system_prompt = self.prompt_manager.get_reply_system_prompt(context)
         async for response_message_chunk in self.ai.get_streaming_reply(

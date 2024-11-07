@@ -135,12 +135,6 @@ class AI:
     def count_tokens(text: str) -> int:
         return tiktoken.count(text)
 
-    async def is_content_acceptable(self, text: str) -> bool:
-        # TODO: implement this
-        # r = await openai.Moderation.acreate(input=text)
-        # return not all(r.results[0].categories.values())
-        return True
-
     @staticmethod
     def compose_messages_langchain(
         openai_formatted_messages: List[Dict[str, str]]
