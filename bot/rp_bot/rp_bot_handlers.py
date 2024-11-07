@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from .db import DB
 from ai_agent.ai import AI
-from ai_agent.moderation import moderate_user_message
+from ai_agent.moderation import moderate_text, moderate_image, moderate_audio
 from .prompt_manager import PromptManager
 from .auth import Auth
 from .localizer import Localizer
@@ -49,7 +49,14 @@ class RPBotHandlerMixin(ABC):
         return result
 
     async def moderate_message(self, message: Message) -> bool:
-        return moderate_user_message(message)
+        # TODO: return an appropriate error message for each case
+        return all(
+            [
+                moderate_text(message.message_text),
+                moderate_image(message.in_file_image) if message.in_file_image else True,
+                moderate_audio(message.in_file_audio) if message.in_file_audio else True,
+            ]
+        )
 
     async def get_localized_text(
         self, text: str, kwargs: Optional[dict] = None, context: Optional[Context] = None
