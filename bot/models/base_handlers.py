@@ -96,7 +96,11 @@ class BaseHandler(ABC):
             response = await self.get_response(person, context, message, args)
         except ModerationError as moderation_error:
             return self.get_localized_response(
-                CommandResponse(text="message_moderation_failed"), context
+                CommandResponse(
+                    text="message_moderation_failed",
+                    kwargs={"moderation_reason": str(moderation_error)},
+                ),
+                context,
             )
         if response is None:
             return None
@@ -120,7 +124,10 @@ class BaseHandler(ABC):
                 yield await self.get_localized_response(chunk, context)
         except ModerationError as moderation_error:
             yield self.get_localized_response(
-                CommandResponse(text="message_moderation_failed"),
+                CommandResponse(
+                    text="message_moderation_failed",
+                    kwargs={"moderation_reason": str(moderation_error)},
+                ),
                 context,
             )
             return

@@ -84,7 +84,7 @@ LocalizerTranslations:
   streaming_message_response:
     english: "{response_text}"
   message_moderation_failed:
-    english: "Message moderation failed"
+    english: "Message moderation failed, reason: {moderation_reason}"
   usage_limit_exceeded:
     english: "Usage limit exceeded for {user_handle} with {user_limit} limit"
   help_text:
