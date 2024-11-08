@@ -6,10 +6,11 @@ from langchain_core.messages import HumanMessage, SystemMessage
 
 from ...models.config.ai_config import AIConfig, Model
 from ...models.handlers_input import Message
+from ...models.base_moderation import ModerationError
 from ..prompt_manager import PromptManager
 from .agent_tools.describe_image import describe_image_chain
 from .agent_tools.check_engage_needed import check_engage_needed
-from .moderation import ModerationError, moderate_image, moderate_text, moderate_audio
+from .moderation import moderate_image, moderate_text, moderate_audio
 
 
 class AI:
