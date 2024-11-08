@@ -9,6 +9,7 @@ from .handlers_response import (
     LocalizedCommandResponse,
 )
 from .base_auth import BasePermission
+from .base_moderation import ModerationError
 
 
 class BaseHandler(ABC):
@@ -37,10 +38,6 @@ class BaseHandler(ABC):
 
     @abstractmethod
     async def initialize_context(self, person: Person, context: Context) -> None:
-        raise NotImplementedError
-
-    @abstractmethod
-    async def moderate_message(self, message: Message) -> bool:
         raise NotImplementedError
 
     @property
@@ -94,12 +91,13 @@ class BaseHandler(ABC):
             return self.get_localized_response(
                 CommandResponse(text="not_authenticated"), context
             )
-        if not await self.moderate_message(message):
+        await self._log_handler_request(person, context, message, args)
+        try:
+            response = await self.get_response(person, context, message, args)
+        except ModerationError as moderation_error:
             return self.get_localized_response(
                 CommandResponse(text="message_moderation_failed"), context
             )
-        await self._log_handler_request(person, context, message, args)
-        response = await self.get_response(person, context, message, args)
         if response is None:
             return None
         return await self.get_localized_response(response, context)
@@ -114,17 +112,18 @@ class BaseHandler(ABC):
                 context,
             )
             return
-        if not await self.moderate_message(message):
+        await self._log_handler_request(person, context, message, args)
+        try:
+            async for chunk in self.stream_get_response(person, context, message, args):
+                if chunk is None:
+                    continue
+                yield await self.get_localized_response(chunk, context)
+        except ModerationError as moderation_error:
             yield self.get_localized_response(
                 CommandResponse(text="message_moderation_failed"),
                 context,
             )
             return
-        await self._log_handler_request(person, context, message, args)
-        async for chunk in self.stream_get_response(person, context, message, args):
-            if chunk is None:
-                continue
-            yield await self.get_localized_response(chunk, context)
 
     @abstractmethod
     async def get_response(

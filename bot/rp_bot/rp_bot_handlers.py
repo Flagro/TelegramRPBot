@@ -14,7 +14,7 @@ from ..models.base_handlers import (
     BaseMessageHandler,
 )
 from ..models.base_auth import BasePermission
-from ..models.handlers_input import Person, Context, Message
+from ..models.handlers_input import Person, Context
 
 
 class RPBotHandlerMixin(ABC):
@@ -47,16 +47,6 @@ class RPBotHandlerMixin(ABC):
         for permission_class in self.permission_classes:
             result.append(permission_class(self.auth))
         return result
-
-    async def moderate_message(self, message: Message) -> bool:
-        # TODO: return an appropriate error message for each case
-        return all(
-            [
-                moderate_text(message.message_text),
-                moderate_image(message.in_file_image) if message.in_file_image else True,
-                moderate_audio(message.in_file_audio) if message.in_file_audio else True,
-            ]
-        )
 
     async def get_localized_text(
         self, text: str, kwargs: Optional[dict] = None, context: Optional[Context] = None
