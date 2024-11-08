@@ -1,0 +1,2 @@
+class ModerationError(Exception):
+    pass

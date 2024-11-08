@@ -1,10 +1,6 @@
 import io
 
 
-class ModerationError(Exception):
-    pass
-
-
 def moderate_image(in_memory_image_stream: io.BytesIO) -> bool:
     """
     Moderates the image and returns True if the image is safe
