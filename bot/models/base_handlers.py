@@ -78,9 +78,13 @@ class BaseHandler(ABC):
         handler_name = str(self)
         user_handle = person.user_handle
         chat_id = context.chat_id
+        message_details = (
+            f" with message of length {len(message.text)}" if message.text else ""
+        )
         args_prompt = " with args: " + " ".join(args) if args else ""
         self.logger.info(
-            f"Handling request for {handler_name} in chat {chat_id} by user {user_handle}{args_prompt}"
+            f"Handling request for {handler_name} in chat {chat_id} "
+            f"by user {user_handle}{message_details}{args_prompt}"
         )
 
     async def handle(
