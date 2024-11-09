@@ -108,10 +108,8 @@ class BaseHandler(ABC):
     ) -> AsyncIterator[LocalizedCommandResponse]:
         await self.initialize_context(person, context)
         if not await self.is_authenticated(person, context):
-            yield self.get_localized_response(
-                CommandResponse(text="not_authenticated"),
-                context,
-            )
+            chunk = CommandResponse(text="not_authenticated")
+            yield await self.get_localized_response(chunk, context)
             return
         await self._log_handler_request(person, context, message, args)
         try:
