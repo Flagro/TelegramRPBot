@@ -95,12 +95,9 @@ class BaseHandler(ABC):
         try:
             response = await self.get_response(person, context, message, args)
         except ModerationError as moderation_error:
-            return self.get_localized_response(
-                CommandResponse(
-                    text="message_moderation_failed",
-                    kwargs={"moderation_reason": str(moderation_error)},
-                ),
-                context,
+            response = CommandResponse(
+                text="message_moderation_failed",
+                kwargs={"moderation_reason": str(moderation_error)},
             )
         if response is None:
             return None
@@ -123,13 +120,11 @@ class BaseHandler(ABC):
                     continue
                 yield await self.get_localized_response(chunk, context)
         except ModerationError as moderation_error:
-            yield self.get_localized_response(
-                CommandResponse(
-                    text="message_moderation_failed",
-                    kwargs={"moderation_reason": str(moderation_error)},
-                ),
-                context,
+            chunk = CommandResponse(
+                text="message_moderation_failed",
+                kwargs={"moderation_reason": str(moderation_error)},
             )
+            yield await self.get_localized_response(chunk, context)
             return
 
     @abstractmethod
