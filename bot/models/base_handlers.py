@@ -177,7 +177,8 @@ class BaseMessageHandler(BaseHandler, ABC):
     streamable: bool = True
 
     def __str__(self):
-        return "Message Handler"
+        streamable_prompt = "" if self.streamable else "Non-"
+        return f"Message Handler ({streamable_prompt}Streamable)"
 
     @abstractmethod
     async def stream_get_response(
