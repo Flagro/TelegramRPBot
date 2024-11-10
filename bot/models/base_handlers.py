@@ -152,7 +152,7 @@ class BaseCommandHandler(BaseHandler, ABC):
     command: str = None
     list_priority_order: CommandPriority = CommandPriority.DEFAULT
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Command Handler: {self.command}"
 
     async def get_localized_description(self, context: Optional[Context] = None) -> str:
@@ -169,14 +169,14 @@ class BaseCommandHandler(BaseHandler, ABC):
 class BaseCallbackHandler(BaseHandler, ABC):
     callback_action: str = None
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Callback Handler: {self.callback_action}"
 
 
 class BaseMessageHandler(BaseHandler, ABC):
     streamable: bool = True
 
-    def __str__(self):
+    def __str__(self) -> str:
         streamable_prompt = "" if self.streamable else "Non-"
         return f"Message Handler ({streamable_prompt}Streamable)"
 
