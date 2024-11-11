@@ -23,10 +23,11 @@ def moderate_text(text: str) -> bool:
     """
     Moderates the text and returns True if the text is safe
     """
+    # TODO: moderation needs a class in order to use the right credentials
     client = OpenAI()
     response = client.moderations.create(
         model="omni-moderation-latest",
-        input="...text to classify goes here...",
+        input=text,
     )
     flagged = response['results'][0]['flagged']
     if flagged:
