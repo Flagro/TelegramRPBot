@@ -1,4 +1,5 @@
 import io
+import openai
 
 
 def moderate_image(in_memory_image_stream: io.BytesIO) -> bool:
@@ -21,5 +22,8 @@ def moderate_text(text: str) -> bool:
     """
     Moderates the text and returns True if the text is safe
     """
-    # TODO: implement this
+    response = openai.Moderation.create(input=text)
+    flagged = response['results'][0]['flagged']
+    if flagged:
+        return False
     return True
