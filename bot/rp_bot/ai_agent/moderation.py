@@ -1,5 +1,6 @@
 import io
-import openai
+
+from openai import OpenAI
 
 
 def moderate_image(in_memory_image_stream: io.BytesIO) -> bool:
@@ -22,7 +23,11 @@ def moderate_text(text: str) -> bool:
     """
     Moderates the text and returns True if the text is safe
     """
-    response = openai.Moderation.create(input=text)
+    client = OpenAI()
+    response = client.moderations.create(
+        model="omni-moderation-latest",
+        input="...text to classify goes here...",
+    )
     flagged = response['results'][0]['flagged']
     if flagged:
         return False
