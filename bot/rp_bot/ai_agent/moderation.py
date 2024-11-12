@@ -6,7 +6,7 @@ from openai import OpenAI
 class Moderation:
     def __init__(self):
         # TODO: Pass the openai api key here
-        self.client = OpenAI()    
+        self.client = OpenAI()
 
     def moderate_image(self, in_memory_image_stream: io.BytesIO) -> bool:
         """
@@ -15,14 +15,12 @@ class Moderation:
         # TODO: implement this
         return True
 
-
     def moderate_audio(self, in_memory_audio_stream: io.BytesIO) -> bool:
         """
         Moderates the audio and returns True if the audio is safe
         """
         # TODO: implement this
         return True
-
 
     def moderate_text(self, text: str) -> bool:
         """
@@ -32,7 +30,7 @@ class Moderation:
             model="omni-moderation-latest",
             input=text,
         )
-        flagged = response['results'][0]['flagged']
+        flagged = response["results"][0]["flagged"]
         if flagged:
             return False
         return True
