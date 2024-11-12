@@ -4,9 +4,8 @@ from openai import OpenAI
 
 
 class Moderation:
-    def __init__(self):
-        # TODO: Pass the openai api key here
-        self.client = OpenAI()
+    def __init__(self, openai_api_key: str):
+        self.client = OpenAI(api_key=openai_api_key)
 
     def moderate_image(self, in_memory_image_stream: io.BytesIO) -> bool:
         """
