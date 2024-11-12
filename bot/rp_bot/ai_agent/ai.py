@@ -10,13 +10,14 @@ from ...models.base_moderation import ModerationError
 from ..prompt_manager import PromptManager
 from .agent_tools.describe_image import describe_image_chain
 from .agent_tools.check_engage_needed import check_engage_needed
-from .moderation import moderate_image, moderate_text, moderate_audio
+from .moderation import Moderation
 
 
 class AI:
     def __init__(
         self, openai_api_key: str, ai_config: AIConfig, prompt_manager: PromptManager
     ):
+        self.moderation = Moderation(openai_api_key)
         self.ai_config = ai_config
         self.prompt_manager = prompt_manager
         self.llm = OpenAI(
@@ -105,7 +106,7 @@ class AI:
         return await check_engage_needed.ainvoke(self.llm, prompt)
 
     async def describe_image(self, in_memory_image_stream: io.BytesIO) -> str:
-        if not moderate_image(in_memory_image_stream):
+        if not self.moderation.moderate_image(in_memory_image_stream):
             raise ModerationError("Image is not safe")
         # TODO: pass the image model into the chain
         image_information = await describe_image_chain.ainvoke(in_memory_image_stream)
@@ -115,7 +116,7 @@ class AI:
         return image_description
 
     async def transcribe_audio(self, in_memory_audio_stream: io.BytesIO) -> str:
-        if not moderate_audio(in_memory_audio_stream):
+        if not self.moderation.moderate_audio(in_memory_audio_stream):
             raise ModerationError("Audio is not safe")
         # TODO: implement this
         # r = await openai.Audio.atranscribe(in_memory_audio_stream)
@@ -158,7 +159,7 @@ class AI:
         ]
 
     async def get_reply(self, user_input: str, system_prompt: str) -> str:
-        if not moderate_text(user_input):
+        if not self.moderation.moderate_text(user_input):
             raise ModerationError("Text is not safe")
         messages = self.compose_messages_openai(user_input, system_prompt)
         response = self.llm.chat.completions.create(
@@ -172,7 +173,7 @@ class AI:
     async def get_streaming_reply(
         self, user_input: str, system_prompt: str
     ) -> AsyncIterator[str]:
-        if not moderate_text(user_input):
+        if not self.moderation.moderate_text(user_input):
             raise ModerationError("Text is not safe")
         messages = self.compose_messages_openai(user_input, system_prompt)
         response = self.llm.chat.completions.create(
