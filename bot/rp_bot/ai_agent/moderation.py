@@ -4,6 +4,10 @@ from openai import OpenAI
 
 
 class Moderation:
+    def __init__(self):
+        # TODO: Pass the openai api key here
+        self.client = OpenAI()    
+
     def moderate_image(self, in_memory_image_stream: io.BytesIO) -> bool:
         """
         Moderates the image and returns True if the image is safe
@@ -24,9 +28,7 @@ class Moderation:
         """
         Moderates the text and returns True if the text is safe
         """
-        # TODO: moderation needs a class in order to use the right credentials
-        client = OpenAI()
-        response = client.moderations.create(
+        response = self.client.moderations.create(
             model="omni-moderation-latest",
             input=text,
         )
