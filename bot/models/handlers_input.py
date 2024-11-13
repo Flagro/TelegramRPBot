@@ -8,7 +8,6 @@ class Person(BaseModel):
     user_handle: str
     first_name: str
     last_name: str
-    is_group_admin: bool
 
 
 class Context(BaseModel):
@@ -17,6 +16,7 @@ class Context(BaseModel):
     thread_id: Optional[int]
     is_group: bool
     is_bot_mentioned: bool
+    is_group_admin: bool
     replied_to_user_handle: Optional[str] = None
 
 

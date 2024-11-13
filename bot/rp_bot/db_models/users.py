@@ -12,7 +12,6 @@ class Users(BaseDBModel):
 
     async def create_user_if_not_exists(self, person: Person) -> None:
         user_handle = person.user_handle
-        # TODO: pass the user id and other info
         # TODO: think about passing the whole person object
         await self.users.update_one(
             {"handle": user_handle},
@@ -34,7 +33,6 @@ class Users(BaseDBModel):
             user_handle=user_handle,
             first_name=user_first_name,
             last_name=user_last_name,
-            is_group_admin=False,  # TODO: handle this more gracefully
         )
 
     async def ban_user(self, user_handle: str, time_seconds: int) -> None:

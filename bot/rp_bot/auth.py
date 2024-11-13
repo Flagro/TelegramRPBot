@@ -32,7 +32,7 @@ class BaseRPBotPermission(ABC):
 
 class GroupAdmin(BaseRPBotPermission):
     async def check(self, person: Person, context: Context) -> bool:
-        return person.is_group_admin
+        return context.is_group_admin
 
 
 class AllowedUser(BaseRPBotPermission):

@@ -29,6 +29,7 @@ async def get_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Con
             thread_id=None,
             is_group=True,
             is_bot_mentioned=False,
+            is_group_admin=await is_group_admin(update, context),
             replied_to_user_handle=None,
         )
     else:
@@ -43,6 +44,7 @@ async def get_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Con
             thread_id=get_thread_id(update),
             is_group=True,
             is_bot_mentioned=bot_mentioned(update, context),
+            is_group_admin=await is_group_admin(update, context),
             replied_to_user_handle=replied_to_user_handle,
         )
 
@@ -53,14 +55,12 @@ async def get_person(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Pers
             user_handle="@" + update.callback_query.from_user.username,
             first_name=update.callback_query.from_user.first_name,
             last_name=update.callback_query.from_user.last_name,
-            is_group_admin=await is_group_admin(update, context),
         )
     else:
         return Person(
             user_handle="@" + update.message.from_user.username,
             first_name=update.message.from_user.first_name,
             last_name=update.message.from_user.last_name,
-            is_group_admin=await is_group_admin(update, context),
         )
 
 
