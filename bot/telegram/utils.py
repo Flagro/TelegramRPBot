@@ -69,8 +69,6 @@ async def get_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Mes
         return Message(
             message_text=update.callback_query.message.text,
             timestamp=update.callback_query.message.date,
-            in_file_image=None,
-            in_file_audio=None,
         )
     message = update.message.text
     is_bot_mentioned = bot_mentioned(update, context)
