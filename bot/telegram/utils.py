@@ -29,7 +29,7 @@ async def get_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Con
             thread_id=None,
             is_group=True,
             is_bot_mentioned=False,
-            is_group_admin=await is_group_admin(update, context),
+            is_group_admin=False,
             replied_to_user_handle=None,
         )
     else:
