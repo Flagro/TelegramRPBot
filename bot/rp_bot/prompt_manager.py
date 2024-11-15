@@ -71,10 +71,15 @@ class PromptManager:
         return f"Introduction of a user who requested the response: {user_introduction}"
 
     async def _compose_chat_history_prompt(self, user_input, context: Context) -> str:
+        messages_history = await self.db.dialogs.get_messages(context)
+        if len(messages_history) <= 1:
+            return (
+                "It's the first message in the chat.\n"
+                f"And the user just asked: {user_input}"
+            )
         # Take everything besides the last one since the last one is the current message
-        messages_history = (await self.db.dialogs.get_messages(context))[:-1]
         messages_history_prompt = "\n".join(
-            [f"{name}: {message}" for name, _, message in messages_history]
+            [f"{name}: {message}" for name, _, message in messages_history[:-1]]
         )
         return (
             "The conversation so far:\n"
