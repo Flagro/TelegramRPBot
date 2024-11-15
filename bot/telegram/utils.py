@@ -21,6 +21,15 @@ async def is_group_admin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     return any(admin.user.id == user_id for admin in chat_administrators)
 
 
+def is_group_chat(update: Update) -> bool:
+    if not update.effective_chat:
+        return False
+    return update.effective_chat.type in [
+        constants.ChatType.GROUP,
+        constants.ChatType.SUPERGROUP,
+    ]
+
+
 async def get_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Context:
     if is_callback(update):
         return Context(
@@ -37,7 +46,7 @@ async def get_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Con
             chat_id=update.message.chat_id,
             chat_name=update.message.chat.title,
             thread_id=get_thread_id(update),
-            is_group=True,  # TODO: implement group detection
+            is_group=is_group_chat(update),
             is_bot_mentioned=bot_mentioned(update, context),
             is_group_admin=await is_group_admin(update, context),
             replied_to_user_handle=replied_to_user_handle,
@@ -149,15 +158,6 @@ def min_char_diff_for_buffering(content: str, is_group_chat: bool) -> int:
     for char_diff, len_threshold in len_thresholds:
         if len(content) > len_threshold:
             return char_diff  # Always reachable since len is always > 0
-
-
-def is_group_chat(update: Update) -> bool:
-    if not update.effective_chat:
-        return False
-    return update.effective_chat.type in [
-        constants.ChatType.GROUP,
-        constants.ChatType.SUPERGROUP,
-    ]
 
 
 async def buffer_streaming_response(
