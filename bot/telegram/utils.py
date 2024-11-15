@@ -155,9 +155,12 @@ def min_char_diff_for_buffering(content: str, is_group_chat: bool) -> int:
     else:
         len_thresholds = [(90, 1000), (45, 200), (25, 50), (15, -1)]
 
+    min_char_diff = 10
     for char_diff, len_threshold in len_thresholds:
         if len(content) > len_threshold:
-            return char_diff  # Always reachable since len is always > 0
+            min_char_diff = char_diff
+            break
+    return min_char_diff
 
 
 async def buffer_streaming_response(
