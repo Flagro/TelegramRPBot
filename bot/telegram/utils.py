@@ -26,9 +26,6 @@ async def get_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Con
         return Context(
             chat_id=update.callback_query.message.chat.id,
             chat_name=update.callback_query.message.chat.title,
-            is_group=True,
-            is_bot_mentioned=False,
-            is_group_admin=False,
         )
     else:
         replied_to_user_handle = (
@@ -40,7 +37,7 @@ async def get_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Con
             chat_id=update.message.chat_id,
             chat_name=update.message.chat.title,
             thread_id=get_thread_id(update),
-            is_group=True,
+            is_group=True,  # TODO: implement group detection
             is_bot_mentioned=bot_mentioned(update, context),
             is_group_admin=await is_group_admin(update, context),
             replied_to_user_handle=replied_to_user_handle,
@@ -128,9 +125,7 @@ def get_thread_id(update: Update) -> Optional[int]:
     return None
 
 
-def get_bot_input(
-    update: Update, context: ContextTypes.DEFAULT_TYPE
-) -> BotInput:
+def get_bot_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -> BotInput:
     """
     Get the bot input from the update and context
     """
@@ -150,10 +145,10 @@ def min_char_diff_for_buffering(content: str, is_group_chat: bool) -> int:
         len_thresholds = [(180, 1000), (120, 200), (90, 50), (50, -1)]
     else:
         len_thresholds = [(90, 1000), (45, 200), (25, 50), (15, -1)]
-        
+
     for char_diff, len_threshold in len_thresholds:
         if len(content) > len_threshold:
-            return char_diff # Always reachable since len is always > 0
+            return char_diff  # Always reachable since len is always > 0
 
 
 def is_group_chat(update: Update) -> bool:
