@@ -17,7 +17,8 @@ class AI:
     def __init__(
         self, openai_api_key: str, ai_config: AIConfig, prompt_manager: PromptManager
     ):
-        self.moderation = Moderation(api_key=openai_api_key)
+        moderation_model = OpenAI(api_key=openai_api_key)
+        self.moderation = Moderation(model=moderation_model)
         self.ai_config = ai_config
         self.prompt_manager = prompt_manager
         self.llm = OpenAI(
