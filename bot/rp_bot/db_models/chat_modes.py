@@ -6,7 +6,7 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from .base_db_model import BaseDBModel
 from ...models.config import DefaultChatModes
-from ...models.handlers_input import Context
+from ...models.handlers_input import Context, Person
 
 
 class ChatModeResponse(BaseModel):
@@ -23,7 +23,9 @@ class ChatModes(BaseDBModel):
         self.chat_modes = db.chat_modes
         self.default_chat_modes = default_chat_modes
 
-    async def create_chat_modes_if_not_exist(self, context: Context) -> None:
+    async def create_chat_modes_if_not_exist(
+        self, person: Person, context: Context
+    ) -> None:
         for _, mode in self.default_chat_modes.default_chat_modes.items():
             self.chat_modes.update_one(
                 {"chat_id": context.chat_id, "mode_name": mode.name},

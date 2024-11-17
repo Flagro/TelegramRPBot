@@ -1,7 +1,7 @@
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from .base_db_model import BaseDBModel
-from ...models.handlers_input import Context
+from ...models.handlers_input import Person, Context
 
 
 class Chats(BaseDBModel):
@@ -10,7 +10,7 @@ class Chats(BaseDBModel):
         self.chats = db.chats
         self.default_language = default_language
 
-    async def create_chat_if_not_exists(self, context: Context) -> None:
+    async def create_if_not_exists(self, person: Person, context: Context) -> None:
         chat_id = context.chat_id
         await self.chats.update_one(
             {"chat_id": chat_id},

@@ -2,7 +2,7 @@ from datetime import datetime
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from .base_db_model import BaseDBModel
-from ...models.handlers_input import Person
+from ...models.handlers_input import Person, Context
 
 
 class Users(BaseDBModel):
@@ -10,7 +10,7 @@ class Users(BaseDBModel):
         super().__init__(db)
         self.users = db.users
 
-    async def create_user_if_not_exists(self, person: Person) -> None:
+    async def create_if_not_exists(self, person: Person, context: Context) -> None:
         user_handle = person.user_handle
         # TODO: think about passing the whole person object
         await self.users.update_one(
