@@ -44,7 +44,6 @@ class DB:
         ]
 
     async def create_if_not_exists(self, person: Person, context: Context) -> None:
-        await self.users.create_if_not_exists(person, context)
-        await self.chats.create_if_not_exists(person, context)
-        await self.chat_modes.create_if_not_exists(person, context)
+        for model in self.models:
+            await model.create_if_not_exists(person, context)
         await self.user_usage.update_usage_if_needed(person)
