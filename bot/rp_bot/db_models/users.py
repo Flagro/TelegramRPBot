@@ -52,7 +52,13 @@ class Users(BaseDBModel):
     async def unban_user(self, user_handle: str) -> None:
         # remove the banned field from the user
         await self.users.update_one(
-            {"handle": user_handle}, {"$unset": {"banned": "", "banned_until": ""}}
+            {"handle": user_handle},
+            {
+                "$unset": {
+                    "banned": "",
+                    "banned_until": "",
+                }
+            },
         )
 
     async def is_user_banned(self, user_handle: str) -> bool:
