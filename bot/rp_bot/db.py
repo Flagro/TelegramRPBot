@@ -1,7 +1,10 @@
+from typing import Optional, List
+
 from motor.motor_asyncio import AsyncIOMotorClient
-from typing import Optional
+
 from ..models.config import DefaultChatModes
 from ..models.handlers_input import Person, Context
+from .db_models.base_db_model import BaseDBModel
 from .db_models.chats import Chats
 from .db_models.user_facts import UserFacts
 from .db_models.user_introductions import UserIntroductions
@@ -33,7 +36,7 @@ class DB:
             db, last_n_messages_to_remember, last_n_messages_to_store
         )
         # TODO: deduplicate this
-        self.models = [
+        self.models: List[BaseDBModel] = [
             self.users,
             self.user_usage,
             self.chats,
