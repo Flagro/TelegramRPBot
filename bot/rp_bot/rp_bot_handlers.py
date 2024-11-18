@@ -56,6 +56,7 @@ class RPBotHandlerMixin(ABC):
 
     async def initialize_context(self, person: Person, context: Context) -> None:
         await self.db.create_if_not_exists(person, context)
+        await self.db.update_if_needed(person, context)
 
 
 class RPBotCommandHandler(RPBotHandlerMixin, BaseCommandHandler, ABC):

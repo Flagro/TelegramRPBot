@@ -46,5 +46,7 @@ class DB:
     async def create_if_not_exists(self, person: Person, context: Context) -> None:
         for model in self.models:
             await model.create_if_not_exists(person, context)
+
+    async def update_if_needed(self, person: Person) -> None:
         # TODO: unify update logic
         await self.user_usage.update_usage_if_needed(person)
