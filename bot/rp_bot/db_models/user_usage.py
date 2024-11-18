@@ -3,7 +3,7 @@ from datetime import datetime
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from .base_db_model import BaseDBModel
-from ...models.handlers_input import Person
+from ...models.handlers_input import Person, Context
 
 
 class UserUsageResponse(BaseModel):
@@ -18,7 +18,7 @@ class UserUsage(BaseDBModel):
         self.user_usage = db.user_usage
         self.default_usage_limit = default_usage_limit
 
-    async def update_usage_if_needed(self, person: Person) -> None:
+    async def update_if_needed(self, person: Person, context: Context) -> None:
         """
         Initialize user usage with 0 and last_reset with the current date.
         If the current date is after the last_reset date, reset the usage to 0.

@@ -49,4 +49,4 @@ class DB:
 
     async def update_if_needed(self, person: Person, context: Context) -> None:
         # TODO: unify update logic
-        await self.user_usage.update_usage_if_needed(person)
+        await self.user_usage.update_if_needed(person, context)
