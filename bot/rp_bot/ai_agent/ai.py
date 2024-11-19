@@ -1,6 +1,6 @@
 import tiktoken
 import io
-from typing import AsyncIterator, Literal, Optional
+from typing import AsyncIterator, Literal, Optional, List, Dict, Any
 from openai import OpenAI
 
 from ...models.config.ai_config import AIConfig, Model
@@ -144,16 +144,22 @@ class AI:
             {"role": "user", "content": user_input},
         ]
 
+    def create_response(
+        self, messages: List[Dict[str, str]], stream: bool = False
+    ) -> Any:
+        # TODO: Fix Any return type
+        return self.llm.chat.completions.create(
+            model=self._get_default_model("text").name,
+            messages=messages,
+            stream=stream,
+            temperature=self.ai_config.TextGeneration.temperature,
+        )
+
     async def get_reply(self, user_input: str, system_prompt: str) -> str:
         if not self.moderation.moderate_text(user_input):
             raise ModerationError("Text is not safe")
         messages = self.compose_messages_openai(user_input, system_prompt)
-        response = self.llm.chat.completions.create(
-            model=self._get_default_model("text").name,
-            messages=messages,
-            stream=False,
-            temperature=self.ai_config.TextGeneration.temperature,
-        )
+        response = self.create_response(messages)
         return response.choices[0].message.content
 
     async def get_streaming_reply(
@@ -162,12 +168,7 @@ class AI:
         if not self.moderation.moderate_text(user_input):
             raise ModerationError("Text is not safe")
         messages = self.compose_messages_openai(user_input, system_prompt)
-        response = self.llm.chat.completions.create(
-            model=self._get_default_model("text").name,
-            messages=messages,
-            stream=True,
-            temperature=self.ai_config.TextGeneration.temperature,
-        )
+        response = self.create_response(messages, stream=True)
         for chunk in response:
             chunk_text = chunk.choices[0].delta.content
             yield chunk_text
