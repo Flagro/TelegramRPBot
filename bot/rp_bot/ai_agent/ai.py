@@ -1,8 +1,7 @@
 import tiktoken
 import io
-from typing import AsyncIterator, Literal, Optional, List, Dict
+from typing import AsyncIterator, Literal, Optional
 from openai import OpenAI
-from langchain_core.messages import HumanMessage, SystemMessage
 
 from ...models.config.ai_config import AIConfig, Model
 from ...models.handlers_input import Message
@@ -137,20 +136,6 @@ class AI:
     @staticmethod
     def count_tokens(text: str) -> int:
         return tiktoken.count(text)
-
-    @staticmethod
-    def compose_messages_langchain(
-        openai_formatted_messages: List[Dict[str, str]]
-    ) -> list:
-        result = [
-            (
-                SystemMessage(content=message_dict["content"])
-                if message_dict["role"] == "system"
-                else HumanMessage(content=message_dict["content"])
-            )
-            for message_dict in openai_formatted_messages
-        ]
-        return result
 
     @staticmethod
     def compose_messages_openai(user_input: str, system_prompt: str) -> list:
