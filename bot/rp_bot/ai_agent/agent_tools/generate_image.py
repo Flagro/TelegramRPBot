@@ -4,6 +4,8 @@ from langchain_core.prompts import PromptTemplate
 from langchain_openai import OpenAI
 from langchain_core.runnables import chain
 
+from .base_tool import BaseTool
+
 
 @chain
 def generate_image(llm: OpenAI, prompt: str) -> str:
@@ -17,3 +19,7 @@ def generate_image(llm: OpenAI, prompt: str) -> str:
     image_chain = LLMChain(llm=llm, prompt=image_description_generation_prompt)
     image_url = DallEAPIWrapper().run(image_chain.run(prompt))
     return image_url
+
+
+class ImageGeneratorTool(BaseTool):
+    pass
