@@ -22,4 +22,8 @@ def generate_image(llm: OpenAI, prompt: str) -> str:
 
 
 class ImageGeneratorTool(BaseTool):
-    pass
+    def __init__(self, model: OpenAI):
+        super().__init__(model)
+
+    def generate_image(self, prompt: str) -> str:
+        return generate_image.ainvoke(self.client, prompt)
