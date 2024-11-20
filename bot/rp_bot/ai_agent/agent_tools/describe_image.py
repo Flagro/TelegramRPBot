@@ -5,6 +5,8 @@ from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.runnables import chain
 
+from .base_tool import BaseTool
+
 
 class ImageInformation(BaseModel):
     # TODO: move this to prompt manager
@@ -30,3 +32,11 @@ def describe_image_chain(in_memory_image_stream: io.BytesIO) -> ImageInformation
     return ImageInformation(
         image_description="an image", image_type="picture", main_objects=["image"]
     )
+
+
+class DescribeImageTool(BaseTool):
+    def __init__(self):
+        pass
+
+    def describe_image(self, in_memory_image_stream: io.BytesIO) -> ImageInformation:
+        return describe_image_chain.ainvoke(in_memory_image_stream)
