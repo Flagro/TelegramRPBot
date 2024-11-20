@@ -6,6 +6,7 @@ from langchain_core.pydantic_v1 import BaseModel, Field
 from ...db import DB
 from ...prompt_manager import PromptManager
 from ....models.handlers_input import Context
+from .base_tool import BaseTool
 
 
 class UserFact(BaseModel):
@@ -34,3 +35,13 @@ async def compsoe_facts_based_on_messages(
     prompt = "Generate a list of facts based on the messages in the chat."
     # TODO: generate a chat facts list here
     return []
+
+
+class CheckIfFactsNeededTool(BaseTool):
+    async def run(self, context: Context) -> bool:
+        return await check_if_facts_needed(context=context)
+
+
+class ComposeFactsBasedOnMessagesTool(BaseTool):
+    async def run(self, context: Context) -> ChatFacts:
+        return await compsoe_facts_based_on_messages(context=context)

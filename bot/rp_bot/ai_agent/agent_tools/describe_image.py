@@ -38,5 +38,5 @@ class DescribeImageTool(BaseTool):
     def __init__(self):
         pass
 
-    def describe_image(self, in_memory_image_stream: io.BytesIO) -> ImageInformation:
+    def run(self, in_memory_image_stream: io.BytesIO) -> ImageInformation:
         return describe_image_chain.ainvoke(in_memory_image_stream)
