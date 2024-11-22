@@ -23,8 +23,9 @@ class DescribeImageTool(BaseTool):
     def __init__(self):
         pass
 
-    def run(self, in_memory_image_stream: io.BytesIO) -> ImageInformation:
+    def run(self) -> ImageInformation:
         # Encode in base64:
+        in_memory_image_stream = self.message.in_memory_image_stream
         image_base64 = base64.b64encode(in_memory_image_stream.getvalue()).decode()
         parser = JsonOutputParser(pydantic_object=ImageInformation)
 

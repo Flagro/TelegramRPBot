@@ -19,7 +19,7 @@ class ChatFacts(BaseModel):
 
 
 class CheckIfFactsNeededTool(BaseTool):
-    async def run(self, context: Context) -> bool:
+    async def run(self) -> bool:
         prompt = "Check if the user prompt requires any facts to be generated."
         facts_needed = await self.llm.ainvoke(prompt)
         # TODO: finish this implementation
@@ -27,7 +27,7 @@ class CheckIfFactsNeededTool(BaseTool):
 
 
 class ComposeFactsBasedOnMessagesTool(BaseTool):
-    async def run(self, context: Context) -> ChatFacts:
+    async def run(self) -> ChatFacts:
         prompt = "Generate a list of facts based on the messages in the chat."
         # TODO: generate a chat facts list here
         return []
