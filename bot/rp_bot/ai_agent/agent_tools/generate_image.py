@@ -2,7 +2,6 @@ from langchain.chains import LLMChain
 from langchain_community.utilities.dalle_image_generator import DallEAPIWrapper
 from langchain_core.prompts import PromptTemplate
 from langchain_openai import OpenAI
-from langchain_core.runnables import chain
 
 from .base_tool import BaseTool
 

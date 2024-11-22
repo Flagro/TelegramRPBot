@@ -1,9 +1,7 @@
-import io
 import base64
 from typing import Literal, List
 from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain_core.output_parsers import JsonOutputParser
-from langchain_core.runnables import chain
 
 from .base_tool import BaseTool
 
