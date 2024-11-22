@@ -19,24 +19,19 @@ class ImageInformation(BaseModel):
     )
 
 
-@chain
-def describe_image_chain(in_memory_image_stream: io.BytesIO) -> ImageInformation:
-    # Encode in base64:
-    image_base64 = base64.b64encode(in_memory_image_stream.getvalue()).decode()
-    parser = JsonOutputParser(pydantic_object=ImageInformation)
-
-    # TODO: implement moderation
-    # TODO: implement image chain runnable
-    # TODO: pass the image model here
-
-    return ImageInformation(
-        image_description="an image", image_type="picture", main_objects=["image"]
-    )
-
-
 class DescribeImageTool(BaseTool):
     def __init__(self):
         pass
 
     def run(self, in_memory_image_stream: io.BytesIO) -> ImageInformation:
-        return describe_image_chain.ainvoke(in_memory_image_stream)
+        # Encode in base64:
+        image_base64 = base64.b64encode(in_memory_image_stream.getvalue()).decode()
+        parser = JsonOutputParser(pydantic_object=ImageInformation)
+
+        # TODO: implement moderation
+        # TODO: implement image chain runnable
+        # TODO: pass the image model here
+
+        return ImageInformation(
+            image_description="an image", image_type="picture", main_objects=["image"]
+        )

@@ -14,19 +14,14 @@ class EngageNeeded(BaseModel):
     )
 
 
-@chain
-def check_engage_needed(llm: OpenAI, prompt: str) -> bool:
-    """
-    Returns True if the prompt contains a question or a request for information.
-    """
-    parser = JsonOutputParser(pydantic_object=EngageNeeded)
-
-    # TODO: implement the chain
-    # engage_needed = ...
-
-    return False
-
-
 class CheckEngageNeededTool(BaseTool):
     def run(self, prompt: str) -> bool:
-        return check_engage_needed.ainvoke(self.client, prompt)
+        """
+        Returns True if the prompt contains a question or a request for information.
+        """
+        parser = JsonOutputParser(pydantic_object=EngageNeeded)
+
+        # TODO: implement the chain
+        # engage_needed = ...
+
+        return False
