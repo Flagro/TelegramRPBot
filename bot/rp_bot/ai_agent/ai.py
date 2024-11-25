@@ -7,7 +7,7 @@ from ...models.config.ai_config import AIConfig, Model
 from ...models.handlers_input import Message
 from ...models.base_moderation import ModerationError
 from ..prompt_manager import PromptManager
-from .agent_tools.describe_image import describe_image_chain
+from .ai_utils.describe_image import describe_image
 from .agent_tools.check_engage_needed import check_engage_needed
 from .moderation import Moderation
 
@@ -109,7 +109,7 @@ class AI:
         if not self.moderation.moderate_image(in_memory_image_stream):
             raise ModerationError("Image is not safe")
         # TODO: pass the image model into the chain
-        image_information = await describe_image_chain.ainvoke(in_memory_image_stream)
+        image_information = await describe_image(in_memory_image_stream)
         image_description = await self.prompt_manager.compose_image_description_prompt(
             image_information
         )

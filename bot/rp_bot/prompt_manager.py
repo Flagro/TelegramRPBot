@@ -2,7 +2,7 @@ from datetime import datetime
 
 from .db import DB
 from ..models.handlers_input import Person, Context, TranscribedMessage
-from .ai_agent.agent_tools.describe_image import ImageInformation
+from .ai_agent.ai_utils.describe_image import ImageInformation
 
 
 def _get_current_date_prompt() -> str:
