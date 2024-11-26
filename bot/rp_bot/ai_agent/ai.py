@@ -4,12 +4,12 @@ from typing import AsyncIterator, Literal, Optional, List, Dict, Any
 from openai import OpenAI
 
 from ...models.config.ai_config import AIConfig, Model
-from ...models.handlers_input import Message
+from ...models.handlers_input import Message, Person, Context
 from ...models.base_moderation import ModerationError
 from ..prompt_manager import PromptManager
 from .ai_utils.describe_image import describe_image
-from .agent_tools.check_engage_needed import check_engage_needed
 from .moderation import Moderation
+from .agent_tools.agent_toolkit import AIAgentToolkit
 
 
 class AI:
@@ -99,11 +99,13 @@ class AI:
             + image_generation_pixels * output_pixel_price
         )
 
-    async def engage_is_needed(self, message: Message) -> bool:
+    async def engage_is_needed(self, person: Person, context: Context, message: Message) -> bool:
         prompt = await self.prompt_manager.compose_engage_needed_prompt(
             message.message_text
         )
-        return await check_engage_needed.ainvoke(self.llm, prompt)
+        
+        toolkit = AIAgentToolkit(person, context, message)
+        return await toolkit.check_engage_needed.run(prompt)
 
     async def describe_image(self, in_memory_image_stream: io.BytesIO) -> str:
         if not self.moderation.moderate_image(in_memory_image_stream):
