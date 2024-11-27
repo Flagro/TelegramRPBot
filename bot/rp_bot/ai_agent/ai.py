@@ -105,7 +105,7 @@ class AI:
         prompt = await self.prompt_manager.compose_engage_needed_prompt(
             message.message_text
         )
-
+        # TODO: we should pass the OpenAI toolkit with all the models
         toolkit = AIAgentToolkit(person, context, message, self.llm)
         return await toolkit.check_engage_needed.run(prompt)
 
