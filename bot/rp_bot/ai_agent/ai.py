@@ -99,12 +99,14 @@ class AI:
             + image_generation_pixels * output_pixel_price
         )
 
-    async def engage_is_needed(self, person: Person, context: Context, message: Message) -> bool:
+    async def engage_is_needed(
+        self, person: Person, context: Context, message: Message
+    ) -> bool:
         prompt = await self.prompt_manager.compose_engage_needed_prompt(
             message.message_text
         )
-        
-        toolkit = AIAgentToolkit(person, context, message)
+
+        toolkit = AIAgentToolkit(person, context, message, self.llm)
         return await toolkit.check_engage_needed.run(prompt)
 
     async def describe_image(self, in_memory_image_stream: io.BytesIO) -> str:
