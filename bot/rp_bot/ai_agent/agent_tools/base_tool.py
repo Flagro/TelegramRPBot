@@ -1,19 +1,24 @@
 from abc import ABC, abstractmethod
 
-from openai import OpenAI
-
 from ....models.handlers_input import Person, Context, Message
+from ..models_toolkit import ModelsToolkit
 
 
 class BaseTool(ABC):
     name: str
     description: str
 
-    def __init__(self, person: Person, context: Context, message: Message, llm: OpenAI):
+    def __init__(
+        self,
+        person: Person,
+        context: Context,
+        message: Message,
+        models_toolkit: ModelsToolkit,
+    ):
         self.person = person
         self.context = context
         self.message = message
-        self.llm = llm
+        self.models_toolkit = models_toolkit
 
     @abstractmethod
     async def run(self, *args, **kwargs):

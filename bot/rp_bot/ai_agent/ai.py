@@ -71,7 +71,7 @@ class AI:
             message.message_text
         )
         # TODO: we should pass the OpenAI toolkit with all the models
-        toolkit = AIAgentToolkit(person, context, message, self.llm)
+        toolkit = AIAgentToolkit(person, context, message, self.models_toolkit)
         return await toolkit.check_engage_needed.run(prompt)
 
     async def describe_image(self, in_memory_image_stream: io.BytesIO) -> str:
