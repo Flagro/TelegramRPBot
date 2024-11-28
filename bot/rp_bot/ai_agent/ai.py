@@ -1,13 +1,14 @@
 import tiktoken
 import io
-from typing import AsyncIterator, Literal, Optional, List, Dict, Any
+from typing import AsyncIterator, List, Dict, Any
 from openai import OpenAI
 
-from ...models.config.ai_config import AIConfig, Model
+from ...models.config.ai_config import AIConfig
 from ...models.handlers_input import Message, Person, Context
 from ...models.base_moderation import ModerationError
 from ..prompt_manager import PromptManager
 from .ai_utils.describe_image import describe_image
+from .models_toolkit import ModelsToolkit
 from .moderation import Moderation
 from .agent_tools.agent_toolkit import AIAgentToolkit
 
@@ -20,43 +21,7 @@ class AI:
         self.moderation = Moderation(model=moderation_model)
         self.ai_config = ai_config
         self.prompt_manager = prompt_manager
-        self.llm = OpenAI(
-            api_key=openai_api_key, model=self._get_default_model("text").name
-        )
-        self.vision_model = OpenAI(
-            api_key=openai_api_key,
-            model=self._get_default_model("vision").name,
-        )
-        # TODO: fix this - this is not OpenAI object
-        self.image_generation_model = OpenAI(
-            api_key=openai_api_key,
-            model=self._get_default_model("image_generation").name,
-        )
-
-    def _get_default_model(
-        self, model_type: Literal["text", "vision", "image_generation"]
-    ) -> Optional[Model]:
-        params_dict = {
-            "text": {
-                "models_dict": self.ai_config.TextGeneration.Models,
-                "default_attr": "text_default",
-            },
-            "vision": {
-                "models_dict": self.ai_config.TextGeneration.Models,
-                "default_attr": "vision_default",
-            },
-            "image_generation": {
-                "models_dict": self.ai_config.ImageGeneration.Models,
-                "default_attr": "image_generation_default",
-            },
-        }
-        first_model = None
-        for model in params_dict[model_type]["models_dict"].values():
-            if getattr(model, params_dict[model_type]["default_attr"]):
-                return model
-            if first_model is None:
-                first_model = model
-        return first_model
+        self.models_toolkit = ModelsToolkit(openai_api_key, ai_config)
 
     def get_price(
         self,
