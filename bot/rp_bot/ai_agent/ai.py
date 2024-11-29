@@ -7,7 +7,7 @@ from ...models.config.ai_config import AIConfig
 from ...models.handlers_input import Message, Person, Context
 from ...models.base_moderation import ModerationError
 from ..prompt_manager import PromptManager
-from .ai_utils.describe_image import describe_image
+from .ai_utils.describe_image import DescribeImageUtililty
 from .models_toolkit import ModelsToolkit
 from .moderation import Moderation
 from .agent_tools.agent_toolkit import AIAgentToolkit
@@ -53,11 +53,18 @@ class AI:
         toolkit = AIAgentToolkit(person, context, message, self.models_toolkit)
         return await toolkit.check_engage_needed.run(prompt)
 
-    async def describe_image(self, in_memory_image_stream: io.BytesIO) -> str:
+    async def describe_image(
+        self,
+        person: Person,
+        context: Context,
+        message: Message,
+        in_memory_image_stream: io.BytesIO,
+    ) -> str:
+        # TODO: person, context, message likely not needed for utility functions
         if not self.moderation.moderate_image(in_memory_image_stream):
             raise ModerationError("Image is not safe")
-        # TODO: pass the image model into the chain
-        image_information = await describe_image(in_memory_image_stream)
+        utility = DescribeImageUtililty(person, context, message, self.models_toolkit)
+        image_information = await utility.run(in_memory_image_stream)
         image_description = await self.prompt_manager.compose_image_description_prompt(
             image_information
         )
