@@ -91,15 +91,14 @@ class AI:
         # return r["text"] or ""
         return ""
 
-    async def generate_image(self, prompt: str) -> str:
+    async def generate_image(
+        self, person: Person, context: Context, message: Message, prompt: str
+    ) -> str:
         """
         Returns the URL of the generated image
         """
-        # TODO: implement this
-        # r = await openai.Image.acreate(prompt=prompt, n=1, size="512x512")
-        # image_url = r.data[0].url
-        # return image_url
-        return ""
+        toolkit = AIAgentToolkit(person, context, message, self.models_toolkit)
+        return await toolkit.image_generator.run(prompt)
 
     @staticmethod
     def count_tokens(text: str) -> int:
