@@ -4,7 +4,8 @@ from typing import Literal, List
 from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain_core.output_parsers import JsonOutputParser
 
-from .base_tool import BaseTool
+from ..models_toolkit import ModelsToolkit
+from ....models.handlers_input import Person, Context, Message
 
 
 class ImageInformation(BaseModel):
@@ -30,3 +31,20 @@ async def describe_image(in_memory_image_stream: io.BytesIO) -> ImageInformation
     return ImageInformation(
         image_description="an image", image_type="picture", main_objects=["image"]
     )
+
+
+class DescribeImageUtililty:
+    def __init__(
+        self,
+        person: Person,
+        context: Context,
+        message: Message,
+        models_toolkit: ModelsToolkit,
+    ):
+        self.person = person
+        self.context = context
+        self.message = message
+        self.models_toolkit = models_toolkit
+
+    def run(self, in_memory_image_stream: io.BytesIO) -> ImageInformation:
+        return describe_image(in_memory_image_stream)
