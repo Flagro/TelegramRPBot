@@ -8,6 +8,7 @@ from ...models.handlers_input import Message, Person, Context
 from ...models.base_moderation import ModerationError
 from ..prompt_manager import PromptManager
 from .ai_utils.describe_image import DescribeImageUtililty
+from .ai_utils.describe_audio import DescribeAudioUtililty
 from .models_toolkit import ModelsToolkit
 from .moderation import Moderation
 from .agent_tools.agent_toolkit import AIAgentToolkit
@@ -70,13 +71,21 @@ class AI:
         )
         return image_description
 
-    async def transcribe_audio(self, in_memory_audio_stream: io.BytesIO) -> str:
+    async def transcribe_audio(
+        self,
+        person: Person,
+        context: Context,
+        message: Message,
+        in_memory_audio_stream: io.BytesIO,
+    ) -> str:
         if not self.moderation.moderate_audio(in_memory_audio_stream):
             raise ModerationError("Audio is not safe")
-        # TODO: implement this
-        # r = await openai.Audio.atranscribe(in_memory_audio_stream)
-        # return r["text"] or ""
-        return ""
+        utility = DescribeAudioUtililty(person, context, message, self.models_toolkit)
+        audio_information = await utility.run(in_memory_audio_stream)
+        audio_description = await self.prompt_manager.compose_audio_description_prompt(
+            audio_information
+        )
+        return audio_description
 
     async def generate_image(
         self, person: Person, context: Context, message: Message, prompt: str

@@ -22,7 +22,7 @@ async def describe_audio(in_memory_image_stream: io.BytesIO) -> AudioInformation
     )
 
 
-class DescribeImageUtililty:
+class DescribeAudioUtililty:
     def __init__(
         self,
         person: Person,
