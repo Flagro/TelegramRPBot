@@ -18,6 +18,13 @@ class ImageInformation(BaseModel):
         description="list of the main objects on the picture"
     )
 
+    def __str__(self):
+        return (
+            f"Image description: {self.image_description}, "
+            f"Image type: {self.image_type}, "
+            f"Main objects: {self.main_objects}"
+        )
+
 
 async def describe_image(in_memory_image_stream: io.BytesIO) -> ImageInformation:
     # Encode in base64:
