@@ -10,6 +10,9 @@ class AudioInformation(BaseModel):
     # TODO: move this to prompt manager
     audio_description: str = Field(description="a short description of the audio")
 
+    def __str__(self):
+        return self.audio_description
+
 
 async def describe_audio(in_memory_image_stream: io.BytesIO) -> AudioInformation:
     # Encode in base64:
