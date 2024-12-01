@@ -21,11 +21,12 @@ async def describe_audio(in_memory_image_stream: io.BytesIO) -> AudioInformation
 
     # TODO: implement moderation
 
-    return AudioInformation(
-        audio_description="an audio"
-    )
+    return AudioInformation(audio_description="an audio")
 
 
 class DescribeAudioUtililty(BaseUtility):
     def run(self, in_memory_image_stream: io.BytesIO) -> AudioInformation:
         return describe_audio(in_memory_image_stream)
+
+    async def arun(self, in_memory_image_stream: io.BytesIO) -> AudioInformation:
+        return await describe_audio(in_memory_image_stream)

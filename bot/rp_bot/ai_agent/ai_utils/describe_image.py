@@ -44,3 +44,6 @@ async def describe_image(in_memory_image_stream: io.BytesIO) -> ImageInformation
 class DescribeImageUtililty(BaseUtility):
     def run(self, in_memory_image_stream: io.BytesIO) -> ImageInformation:
         return describe_image(in_memory_image_stream)
+
+    async def arun(self, in_memory_image_stream: io.BytesIO) -> ImageInformation:
+        return await describe_image(in_memory_image_stream)
