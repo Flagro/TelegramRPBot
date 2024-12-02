@@ -21,7 +21,7 @@ class BaseTool(ABC):
         self.models_toolkit = models_toolkit
 
     @abstractmethod
-    async def run(self, *args, **kwargs):
+    def run(self, *args, **kwargs):
         pass
 
     async def arun(self, *args, **kwargs):
