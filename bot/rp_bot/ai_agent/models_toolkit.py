@@ -7,13 +7,13 @@ from ...models.config.ai_config import AIConfig, Model
 class ModelsToolkit:
     def __init__(self, openai_api_key: str, ai_config: AIConfig):
         self.ai_config = ai_config
-        llm = OpenAI(api_key=openai_api_key, model=self._get_default_model("text").name)
-        vision_model = OpenAI(
+        self.llm = OpenAI(api_key=openai_api_key, model=self._get_default_model("text").name)
+        self.vision_model = OpenAI(
             api_key=openai_api_key,
             model=self._get_default_model("vision").name,
         )
         # TODO: fix this - this is not OpenAI object
-        image_generation_model = OpenAI(
+        self.image_generation_model = OpenAI(
             api_key=openai_api_key,
             model=self._get_default_model("image_generation").name,
         )
