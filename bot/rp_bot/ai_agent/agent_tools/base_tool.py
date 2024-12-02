@@ -26,3 +26,20 @@ class BaseTool(ABC):
 
     async def arun(self, *args, **kwargs):
         raise NotImplementedError
+
+    async def ask_yes_no_question(self, question: str) -> bool:
+        llm = self.models_toolkit.llm
+        response = await llm.chat.completions.create(
+            model=self._get_default_model("text").name,
+            messages=[
+                {"role": "system", "content": question},
+            ],
+            stream=False,
+            temperature=self.ai_config.TextGeneration.temperature,
+        )
+        text_response = response.choices[0].message.content
+        if "yes" in text_response.lower():
+            return True
+        if "no" in text_response.lower():
+            return False
+        return False
