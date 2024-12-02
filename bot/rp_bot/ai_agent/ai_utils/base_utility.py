@@ -23,3 +23,6 @@ class BaseUtility(ABC):
     @abstractmethod
     async def run(self, *args, **kwargs):
         pass
+
+    async def arun(self, *args, **kwargs):
+        raise NotImplementedError
