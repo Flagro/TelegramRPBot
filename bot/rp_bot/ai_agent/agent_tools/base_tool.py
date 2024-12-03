@@ -30,7 +30,7 @@ class BaseTool(ABC):
     async def ask_yes_no_question(self, question: str) -> bool:
         llm = self.models_toolkit.llm
         response = await llm.chat.completions.create(
-            model=self._get_default_model("text").name,
+            model=self.models_toolkit._get_default_model("text").name,
             messages=[
                 {"role": "system", "content": question},
             ],
