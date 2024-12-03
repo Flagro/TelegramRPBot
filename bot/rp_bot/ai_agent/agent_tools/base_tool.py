@@ -35,7 +35,7 @@ class BaseTool(ABC):
                 {"role": "system", "content": question},
             ],
             stream=False,
-            temperature=self.ai_config.TextGeneration.temperature,
+            temperature=self.models_toolkit.ai_config.TextGeneration.temperature,
         )
         text_response = response.choices[0].message.content
         if "yes" in text_response.lower():
