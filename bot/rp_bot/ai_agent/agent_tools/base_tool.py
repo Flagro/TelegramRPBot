@@ -38,8 +38,9 @@ class BaseTool(ABC):
             temperature=self.models_toolkit.ai_config.TextGeneration.temperature,
         )
         text_response = response.choices[0].message.content
-        if "yes" in text_response.lower():
+        lower_response = text_response.lower()
+        if "yes" in lower_response:
             return True
-        if "no" in text_response.lower():
+        if "no" in lower_response:
             return False
         return False
