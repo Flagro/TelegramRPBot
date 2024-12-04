@@ -14,10 +14,10 @@ class ChatFacts(BaseModel):
 
 class CheckIfFactsNeededTool(BaseTool):
     async def run(self) -> bool:
+        # TODO: get prompt from PromptManager
         prompt = "Check if the user prompt requires any facts to be generated."
-        facts_needed = await self.llm.ainvoke(prompt)
-        # TODO: finish this implementation
-        return False
+        result = await self.ask_yes_no_question(prompt)
+        return result
 
 
 class ComposeFactsBasedOnMessagesTool(BaseTool):
