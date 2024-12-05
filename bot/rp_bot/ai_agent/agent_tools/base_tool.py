@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 from ....models.handlers_input import Person, Context, Message
 from ..models_toolkit import ModelsToolkit
+from ...prompt_manager import PromptManager
 
 
 class BaseTool(ABC):
@@ -14,6 +15,7 @@ class BaseTool(ABC):
         context: Context,
         message: Message,
         models_toolkit: ModelsToolkit,
+        prompt_manager: PromptManager,
     ):
         self.person = person
         self.context = context
