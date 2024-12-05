@@ -51,7 +51,9 @@ class AI:
         prompt = await self.prompt_manager.compose_engage_needed_prompt(
             message.message_text
         )
-        toolkit = AIAgentToolkit(person, context, message, self.models_toolkit)
+        toolkit = AIAgentToolkit(
+            person, context, message, self.models_toolkit, self.prompt_manager
+        )
         return await toolkit.check_engage_needed.run(prompt)
 
     async def describe_image(
@@ -93,7 +95,9 @@ class AI:
         """
         Returns the URL of the generated image
         """
-        toolkit = AIAgentToolkit(person, context, message, self.models_toolkit)
+        toolkit = AIAgentToolkit(
+            person, context, message, self.models_toolkit, self.prompt_manager
+        )
         return await toolkit.image_generator.run(prompt)
 
     @staticmethod
