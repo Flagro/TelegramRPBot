@@ -7,7 +7,9 @@ from ...models.config.ai_config import AIConfig, Model
 class ModelsToolkit:
     def __init__(self, openai_api_key: str, ai_config: AIConfig):
         self.ai_config = ai_config
-        self.llm = OpenAI(api_key=openai_api_key, model=self._get_default_model("text").name)
+        self.llm = OpenAI(
+            api_key=openai_api_key, model=self._get_default_model("text").name
+        )
         self.vision_model = OpenAI(
             api_key=openai_api_key,
             model=self._get_default_model("vision").name,
@@ -83,3 +85,25 @@ class ModelsToolkit:
             + image_pixels_count * input_pixel_price
             + image_generation_pixels * output_pixel_price
         )
+
+    async def get_response(self, question: str) -> bool:
+        llm = self.llm
+        response = await llm.chat.completions.create(
+            model=self.models_toolkit._get_default_model("text").name,
+            messages=[
+                {"role": "system", "content": question},
+            ],
+            stream=False,
+            temperature=self.models_toolkit.ai_config.TextGeneration.temperature,
+        )
+        text_response = response.choices[0].message.content
+        return text_response
+
+    async def ask_yes_no_question(self, question: str) -> bool:
+        text_response = await self.get_response(question)
+        lower_response = text_response.lower()
+        if "yes" in lower_response:
+            return True
+        if "no" in lower_response:
+            return False
+        return False
