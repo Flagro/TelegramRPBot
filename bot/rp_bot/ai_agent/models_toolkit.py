@@ -1,4 +1,4 @@
-from typing import Literal, Optional
+from typing import Literal, Optional, AsyncGenerator
 from openai import OpenAI
 
 from ...models.config.ai_config import AIConfig, Model
@@ -86,7 +86,7 @@ class ModelsToolkit:
             + image_generation_pixels * output_pixel_price
         )
 
-    async def get_response(self, question: str) -> bool:
+    async def get_response(self, question: str) -> str:
         llm = self.llm
         response = await llm.chat.completions.create(
             model=self.models_toolkit._get_default_model("text").name,
@@ -98,6 +98,19 @@ class ModelsToolkit:
         )
         text_response = response.choices[0].message.content
         return text_response
+
+    async def get_streaming_response(self, question: str) -> AsyncGenerator[str]:
+        llm = self.llm
+        response = await llm.chat.completions.create(
+            model=self.models_toolkit._get_default_model("text").name,
+            messages=[
+                {"role": "system", "content": question},
+            ],
+            stream=True,
+            temperature=self.models_toolkit.ai_config.TextGeneration.temperature,
+        )
+        async for message in response:
+            yield message.content
 
     async def ask_yes_no_question(self, question: str) -> bool:
         text_response = await self.get_response(question)
