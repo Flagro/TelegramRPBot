@@ -30,7 +30,6 @@ async def describe_image(in_memory_image_stream: io.BytesIO) -> ImageInformation
     image_base64 = base64.b64encode(in_memory_image_stream.getvalue()).decode()
     parser = JsonOutputParser(pydantic_object=ImageInformation)
 
-    # TODO: implement moderation
     # TODO: implement image chain runnable
     # TODO: pass the image model here
 
