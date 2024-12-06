@@ -17,8 +17,6 @@ async def describe_audio(in_memory_image_stream: io.BytesIO) -> AudioInformation
     # Encode in base64:
     parser = JsonOutputParser(pydantic_object=AudioInformation)
 
-    # TODO: implement moderation
-
     return AudioInformation(audio_description="an audio")
 
 
