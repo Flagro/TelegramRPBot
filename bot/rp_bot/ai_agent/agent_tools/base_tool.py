@@ -21,6 +21,7 @@ class BaseTool(ABC):
         self.context = context
         self.message = message
         self.models_toolkit = models_toolkit
+        self.prompt_manager = prompt_manager
 
     @abstractmethod
     def run(self, *args, **kwargs):
