@@ -94,8 +94,7 @@ class ModelsToolkit:
         ]
 
     async def get_response(self, question: str) -> str:
-        llm = self.llm
-        response = await llm.chat.completions.create(
+        response = await self.llm.chat.completions.create(
             model=self._get_default_model("text").name,
             messages=[
                 {"role": "system", "content": question},
@@ -107,8 +106,7 @@ class ModelsToolkit:
         return text_response
 
     async def get_streaming_response(self, question: str) -> AsyncGenerator[str]:
-        llm = self.llm
-        response = await llm.chat.completions.create(
+        response = await self.llm.chat.completions.create(
             model=self._get_default_model("text").name,
             messages=[
                 {"role": "system", "content": question},
