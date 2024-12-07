@@ -89,12 +89,12 @@ class ModelsToolkit:
     async def get_response(self, question: str) -> str:
         llm = self.llm
         response = await llm.chat.completions.create(
-            model=self.models_toolkit._get_default_model("text").name,
+            model=self._get_default_model("text").name,
             messages=[
                 {"role": "system", "content": question},
             ],
             stream=False,
-            temperature=self.models_toolkit.ai_config.TextGeneration.temperature,
+            temperature=self.ai_config.TextGeneration.temperature,
         )
         text_response = response.choices[0].message.content
         return text_response
@@ -102,12 +102,12 @@ class ModelsToolkit:
     async def get_streaming_response(self, question: str) -> AsyncGenerator[str]:
         llm = self.llm
         response = await llm.chat.completions.create(
-            model=self.models_toolkit._get_default_model("text").name,
+            model=self._get_default_model("text").name,
             messages=[
                 {"role": "system", "content": question},
             ],
             stream=True,
-            temperature=self.models_toolkit.ai_config.TextGeneration.temperature,
+            temperature=self.ai_config.TextGeneration.temperature,
         )
         async for message in response:
             yield message.content
