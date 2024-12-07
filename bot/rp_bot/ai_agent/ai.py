@@ -104,13 +104,6 @@ class AI:
     def count_tokens(text: str) -> int:
         return tiktoken.count(text)
 
-    @staticmethod
-    def compose_messages_openai(user_input: str, system_prompt: str) -> list:
-        return [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_input},
-        ]
-
     def create_response(
         self, messages: List[Dict[str, str]], stream: bool = False
     ) -> Any:

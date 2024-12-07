@@ -86,6 +86,13 @@ class ModelsToolkit:
             + image_generation_pixels * output_pixel_price
         )
 
+    @staticmethod
+    def compose_messages_openai(user_input: str, system_prompt: str) -> list:
+        return [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_input},
+        ]
+
     async def get_response(self, question: str) -> str:
         llm = self.llm
         response = await llm.chat.completions.create(
