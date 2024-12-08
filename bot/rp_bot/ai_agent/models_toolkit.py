@@ -1,7 +1,12 @@
 from typing import Literal, Optional, AsyncGenerator
 from openai import OpenAI
+from tenacity import retry, stop_after_attempt, retry_if_exception_type
 
 from ...models.config.ai_config import AIConfig, Model
+
+
+class YesOrNoInvalidResponse(Exception):
+    pass
 
 
 class ModelsToolkit:
@@ -117,6 +122,10 @@ class ModelsToolkit:
         async for message in response:
             yield message.content
 
+    @retry(
+        stop=stop_after_attempt(3),
+        retry=retry_if_exception_type(YesOrNoInvalidResponse),
+    )
     async def ask_yes_no_question(self, question: str) -> bool:
         text_response = await self.get_response(question)
         lower_response = text_response.lower()
@@ -124,4 +133,4 @@ class ModelsToolkit:
             return True
         if "no" in lower_response:
             return False
-        return False
+        raise YesOrNoInvalidResponse(f"Response: {text_response}")
