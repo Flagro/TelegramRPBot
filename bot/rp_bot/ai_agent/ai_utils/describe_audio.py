@@ -13,16 +13,13 @@ class AudioInformation(BaseModel):
         return self.audio_description
 
 
-async def describe_audio(in_memory_image_stream: io.BytesIO) -> AudioInformation:
-    # Encode in base64:
-    parser = JsonOutputParser(pydantic_object=AudioInformation)
-
-    return AudioInformation(audio_description="an audio")
-
-
 class DescribeAudioUtililty(BaseUtility):
     def run(self, in_memory_image_stream: io.BytesIO) -> AudioInformation:
-        return describe_audio(in_memory_image_stream)
+        # Encode in base64:
+        parser = JsonOutputParser(pydantic_object=AudioInformation)
+
+        return AudioInformation(audio_description="an audio")
 
     async def arun(self, in_memory_image_stream: io.BytesIO) -> AudioInformation:
-        return await describe_audio(in_memory_image_stream)
+        # TODO: make it non-blocking
+        return self.run(in_memory_image_stream)
