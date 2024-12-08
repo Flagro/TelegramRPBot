@@ -25,22 +25,19 @@ class ImageInformation(BaseModel):
         )
 
 
-async def describe_image(in_memory_image_stream: io.BytesIO) -> ImageInformation:
-    # Encode in base64:
-    image_base64 = base64.b64encode(in_memory_image_stream.getvalue()).decode()
-    parser = JsonOutputParser(pydantic_object=ImageInformation)
-
-    # TODO: implement image chain runnable
-    # TODO: pass the image model here
-
-    return ImageInformation(
-        image_description="an image", image_type="picture", main_objects=["image"]
-    )
-
-
 class DescribeImageUtililty(BaseUtility):
     def run(self, in_memory_image_stream: io.BytesIO) -> ImageInformation:
-        return describe_image(in_memory_image_stream)
+        # Encode in base64:
+        image_base64 = base64.b64encode(in_memory_image_stream.getvalue()).decode()
+        parser = JsonOutputParser(pydantic_object=ImageInformation)
+
+        # TODO: implement image chain runnable
+        # TODO: pass the image model here
+
+        return ImageInformation(
+            image_description="an image", image_type="picture", main_objects=["image"]
+        )
 
     async def arun(self, in_memory_image_stream: io.BytesIO) -> ImageInformation:
-        return await describe_image(in_memory_image_stream)
+        # TODO: make it non-blocking
+        return self.run(in_memory_image_stream)
