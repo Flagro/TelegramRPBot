@@ -118,7 +118,9 @@ class AI:
     async def get_reply(self, user_input: str, system_prompt: str) -> str:
         if not self.moderation.moderate_text(user_input):
             raise ModerationError("Text is not safe")
-        messages = self.compose_messages_openai(user_input, system_prompt)
+        messages = self.models_toolkit.compose_messages_openai(
+            user_input, system_prompt
+        )
         response = self.create_response(messages)
         return response.choices[0].message.content
 
@@ -127,7 +129,9 @@ class AI:
     ) -> AsyncIterator[str]:
         if not self.moderation.moderate_text(user_input):
             raise ModerationError("Text is not safe")
-        messages = self.compose_messages_openai(user_input, system_prompt)
+        messages = self.models_toolkit.compose_messages_openai(
+            user_input, system_prompt
+        )
         response = self.create_response(messages, stream=True)
         for chunk in response:
             chunk_text = chunk.choices[0].delta.content
