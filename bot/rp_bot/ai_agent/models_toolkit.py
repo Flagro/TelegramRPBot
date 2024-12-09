@@ -1,4 +1,4 @@
-from typing import Literal, Optional, AsyncGenerator
+from typing import Literal, Optional, AsyncGenerator, List, Dict
 from openai import OpenAI
 from tenacity import retry, stop_after_attempt, retry_if_exception_type
 
@@ -92,7 +92,9 @@ class ModelsToolkit:
         )
 
     @staticmethod
-    def compose_messages_openai(user_input: str, system_prompt: str) -> list:
+    def compose_messages_openai(
+        user_input: str, system_prompt: str
+    ) -> List[Dict[str, str]]:
         return [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_input},
