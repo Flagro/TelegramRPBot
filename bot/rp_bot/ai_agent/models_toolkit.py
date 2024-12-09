@@ -92,12 +92,18 @@ class ModelsToolkit:
         )
 
     @staticmethod
+    def compose_message_openai(
+        message_text: str, role: Literal["user", "system"] = "user"
+    ) -> Dict[str, str]:
+        return {"role": role, "content": message_text}
+
+    @staticmethod
     def compose_messages_openai(
         user_input: str, system_prompt: str
     ) -> List[Dict[str, str]]:
         return [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_input},
+            ModelsToolkit.compose_message_openai(system_prompt, role="system"),
+            ModelsToolkit.compose_message_openai(user_input, role="user"),
         ]
 
     async def get_response(self, question: str) -> str:
