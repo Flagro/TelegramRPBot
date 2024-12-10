@@ -97,6 +97,9 @@ class ModelsToolkit:
     ) -> List[Dict[str, str]]:
         return [{"role": role, "content": message_text}]
 
+    def get_default_temperature(self) -> float:
+        return self.ai_config.TextGeneration.temperature
+
     @staticmethod
     def compose_messages_openai(
         user_input: str, system_prompt: str
@@ -112,7 +115,7 @@ class ModelsToolkit:
                 {"role": "system", "content": question},
             ],
             stream=False,
-            temperature=self.ai_config.TextGeneration.temperature,
+            temperature=self.get_default_temperature(),
         )
         text_response = response.choices[0].message.content
         return text_response
@@ -124,7 +127,7 @@ class ModelsToolkit:
                 {"role": "system", "content": question},
             ],
             stream=True,
-            temperature=self.ai_config.TextGeneration.temperature,
+            temperature=self.get_default_temperature(),
         )
         async for message in response:
             yield message.content
