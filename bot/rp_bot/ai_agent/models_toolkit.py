@@ -109,7 +109,7 @@ class ModelsToolkit:
         ) + ModelsToolkit.compose_message_openai(user_input, role="user")
 
     async def get_response(self, question: str) -> str:
-        response = await self.llm.chat.completions.create(
+        response = self.llm.chat.completions.create(
             model=self._get_default_model("text").name,
             messages=[
                 {"role": "system", "content": question},
@@ -121,7 +121,7 @@ class ModelsToolkit:
         return text_response
 
     async def get_streaming_response(self, question: str) -> AsyncGenerator[str]:
-        response = await self.llm.chat.completions.create(
+        response = self.llm.chat.completions.create(
             model=self._get_default_model("text").name,
             messages=[
                 {"role": "system", "content": question},
