@@ -54,7 +54,7 @@ class AI:
         toolkit = AIAgentToolkit(
             person, context, message, self.models_toolkit, self.prompt_manager
         )
-        return await toolkit.check_engage_needed.run(prompt)
+        return await toolkit.check_engage_needed.arun(prompt)
 
     async def describe_image(
         self,
@@ -67,7 +67,7 @@ class AI:
         if not self.moderation.moderate_image(in_memory_image_stream):
             raise ModerationError("Image is not safe")
         utility = DescribeImageUtililty(person, context, message, self.models_toolkit)
-        image_information = await utility.run(in_memory_image_stream)
+        image_information = await utility.arun(in_memory_image_stream)
         image_description = await self.prompt_manager.compose_image_description_prompt(
             image_information
         )
@@ -83,7 +83,7 @@ class AI:
         if not self.moderation.moderate_audio(in_memory_audio_stream):
             raise ModerationError("Audio is not safe")
         utility = DescribeAudioUtililty(person, context, message, self.models_toolkit)
-        audio_information = await utility.run(in_memory_audio_stream)
+        audio_information = await utility.arun(in_memory_audio_stream)
         audio_description = await self.prompt_manager.compose_audio_description_prompt(
             audio_information
         )
@@ -98,7 +98,7 @@ class AI:
         toolkit = AIAgentToolkit(
             person, context, message, self.models_toolkit, self.prompt_manager
         )
-        return await toolkit.image_generator.run(prompt)
+        return await toolkit.image_generator.arun(prompt)
 
     @staticmethod
     def count_tokens(text: str) -> int:
