@@ -104,25 +104,13 @@ class AI:
     def count_tokens(text: str) -> int:
         return tiktoken.count(text)
 
-    def create_response(
-        self, messages: List[Dict[str, str]], stream: bool = False
-    ) -> Any:
-        # TODO: Fix Any return type
-        return self.llm.chat.completions.create(
-            model=self._get_default_model("text").name,
-            messages=messages,
-            stream=stream,
-            temperature=self.ai_config.TextGeneration.temperature,
-        )
-
     async def get_reply(self, user_input: str, system_prompt: str) -> str:
         if not self.moderation.moderate_text(user_input):
             raise ModerationError("Text is not safe")
         messages = self.models_toolkit.compose_messages_openai(
             user_input, system_prompt
         )
-        response = self.create_response(messages)
-        return response.choices[0].message.content
+        return await self.models_toolkit.get_response(messages)
 
     async def get_streaming_reply(
         self, user_input: str, system_prompt: str
@@ -132,7 +120,5 @@ class AI:
         messages = self.models_toolkit.compose_messages_openai(
             user_input, system_prompt
         )
-        response = self.create_response(messages, stream=True)
-        for chunk in response:
-            chunk_text = chunk.choices[0].delta.content
-            yield chunk_text
+        async for response in self.models_toolkit.get_streaming_response(messages):
+            yield response
