@@ -108,24 +108,22 @@ class ModelsToolkit:
             system_prompt, role="system"
         ) + ModelsToolkit.compose_message_openai(user_input, role="user")
 
-    async def get_response(self, question: str) -> str:
+    async def get_response(self, messages: List[Dict[str, str]]) -> str:
         response = self.llm.chat.completions.create(
             model=self._get_default_model("text").name,
-            messages=[
-                {"role": "system", "content": question},
-            ],
+            messages=messages,
             stream=False,
             temperature=self.get_default_temperature(),
         )
         text_response = response.choices[0].message.content
         return text_response
 
-    async def get_streaming_response(self, question: str) -> AsyncGenerator[str]:
+    async def get_streaming_response(
+        self, messages: List[Dict[str, str]]
+    ) -> AsyncGenerator[str]:
         response = self.llm.chat.completions.create(
             model=self._get_default_model("text").name,
-            messages=[
-                {"role": "system", "content": question},
-            ],
+            messages=messages,
             stream=True,
             temperature=self.get_default_temperature(),
         )
@@ -137,7 +135,7 @@ class ModelsToolkit:
         retry=retry_if_exception_type(YesOrNoInvalidResponse),
     )
     async def ask_yes_no_question(self, question: str) -> bool:
-        text_response = await self.get_response(question)
+        text_response = await self.get_response(self.compose_message_openai(question))
         lower_response = text_response.lower()
         if "yes" in lower_response:
             return True
