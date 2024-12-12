@@ -24,7 +24,7 @@ class MessageHandler(RPBotMessageHandler):
         # TODO: add proper check for image generation need
         image_generation_needed = False
 
-        total_price = self.ai.get_price(
+        total_price = self.ai.models_toolkit.get_price(
             token_len=token_len,
             audio_length=audio_length,
             image_pixels_count=image_pixels_count,

@@ -24,27 +24,6 @@ class AI:
         self.prompt_manager = prompt_manager
         self.models_toolkit = ModelsToolkit(openai_api_key, ai_config)
 
-    def get_price(
-        self,
-        token_len: int,
-        audio_length: int,
-        image_pixels_count: int,
-        image_generation_needed: bool,
-    ) -> float:
-        """
-        Returns the price of the AI services for the given
-        input parameters
-
-        Args:
-        token_len: the number of tokens in the input text
-        audio_length: the length of the audio in seconds
-        image_pixels_count: the number of pixels in the image
-        image_generation_needed: whether the image generation is needed
-        """
-        return self.models_toolkit.get_price(
-            token_len, audio_length, image_pixels_count, image_generation_needed
-        )
-
     async def engage_is_needed(
         self, person: Person, context: Context, message: Message
     ) -> bool:
