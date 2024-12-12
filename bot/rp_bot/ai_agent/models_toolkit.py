@@ -128,7 +128,7 @@ class ModelsToolkit:
             temperature=self.get_default_temperature(),
         )
         async for message in response:
-            yield message.content
+            yield message.choices[0].message.content
 
     @retry(
         stop=stop_after_attempt(3),
