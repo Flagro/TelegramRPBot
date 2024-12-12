@@ -65,6 +65,7 @@ class ModelsToolkit:
         token_len: the number of tokens in the input text
         audio_length: the length of the audio in seconds
         image_pixels_count: the number of pixels in the image
+        image_generation_needed: whether the image generation is needed
         """
         input_token_price = self._get_default_model("text").rate.input_token_price
         output_token_price = self._get_default_model("text").rate.output_token_price
