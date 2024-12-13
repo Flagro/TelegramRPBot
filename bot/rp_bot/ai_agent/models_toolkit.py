@@ -75,6 +75,10 @@ class ModelsToolkit:
         ).rate.output_pixel_price
 
         image_generation_dimensions = self.ai_config.ImageGeneration.output_image_size
+        if "x" not in image_generation_dimensions:
+            raise ValueError(
+                f"Invalid image generation dimensions: {image_generation_dimensions}"
+            )
         image_generation_dimensions_x, image_generation_dimensions_y = (
             image_generation_dimensions.split("x")
         )
