@@ -18,10 +18,11 @@ class ImageInformation(BaseModel):
     )
 
     def __str__(self):
+        main_objects_prompt = ", ".join(self.main_objects)
         return (
-            f"Image description: {self.image_description}, "
-            f"Image type: {self.image_type}, "
-            f"Main objects: {self.main_objects}"
+            f'Image description: "{self.image_description}", '
+            f'Image type: "{self.image_type}", '
+            f'Main objects: "{main_objects_prompt}"'
         )
 
 
