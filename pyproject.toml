@@ -15,7 +15,7 @@ python-decouple = "*"
 tenacity = "8.2.2"
 pydub = "^0.25.1"
 pydantic = "^2.7.4"
-omnimodkit = "0.0.2"
+omnimodkit = "0.0.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
