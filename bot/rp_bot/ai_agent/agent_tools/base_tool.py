@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
-
+from omnimodkit import ModelsToolkit
 from ....models.handlers_input import Person, Context, Message
-from ..models_toolkit import ModelsToolkit
 from ...prompt_manager import PromptManager
 
 

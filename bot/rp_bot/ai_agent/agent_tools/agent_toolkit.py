@@ -1,9 +1,9 @@
+from omnimodkit import ModelsToolkit
 from .autofact_generation import CheckIfFactsNeededTool, ComposeFactsBasedOnMessagesTool
 from .check_engage_needed import CheckEngageNeededTool
 from .generate_image import ImageGeneratorTool
 from .get_facts import GetChatFactsTool, GetUserFactsTool
 from .get_response import GetResponseTool
-from ..models_toolkit import ModelsToolkit
 from ...prompt_manager import PromptManager
 from ....models.handlers_input import Person, Context, Message
 
