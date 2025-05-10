@@ -37,8 +37,7 @@ class AI:
         message: Message,
         in_memory_image_stream: io.BytesIO,
     ) -> str:
-        utility = DescribeImageUtililty(person, context, message, self.models_toolkit)
-        image_information = await utility.arun(in_memory_image_stream)
+        image_information = self.models_toolkit.vision_model.run(in_memory_image_stream)
         image_description = await self.prompt_manager.compose_image_description_prompt(
             image_information
         )
@@ -51,8 +50,9 @@ class AI:
         message: Message,
         in_memory_audio_stream: io.BytesIO,
     ) -> str:
-        utility = DescribeAudioUtililty(person, context, message, self.models_toolkit)
-        audio_information = await utility.arun(in_memory_audio_stream)
+        audio_information = self.models_toolkit.audio_recognition_model.run(
+            in_memory_audio_stream
+        )
         audio_description = await self.prompt_manager.compose_audio_description_prompt(
             audio_information
         )
