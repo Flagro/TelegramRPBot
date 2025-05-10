@@ -8,7 +8,6 @@ from ...models.config.ai_config import AIConfig
 from ...models.handlers_input import Message, Person, Context
 from ...models.base_moderation import ModerationError
 from ..prompt_manager import PromptManager
-from .moderation import Moderation
 from .agent_tools.agent_toolkit import AIAgentToolkit
 
 
@@ -16,8 +15,6 @@ class AI:
     def __init__(
         self, openai_api_key: str, ai_config: AIConfig, prompt_manager: PromptManager
     ):
-        moderation_model = OpenAI(api_key=openai_api_key)
-        self.moderation = Moderation(model=moderation_model)
         self.ai_config = ai_config
         self.prompt_manager = prompt_manager
         self.models_toolkit = ModelsToolkit(openai_api_key, ai_config)
@@ -40,9 +37,6 @@ class AI:
         message: Message,
         in_memory_image_stream: io.BytesIO,
     ) -> str:
-        # TODO: person, context, message likely not needed for utility functions
-        if not self.moderation.moderate_image(in_memory_image_stream):
-            raise ModerationError("Image is not safe")
         utility = DescribeImageUtililty(person, context, message, self.models_toolkit)
         image_information = await utility.arun(in_memory_image_stream)
         image_description = await self.prompt_manager.compose_image_description_prompt(
@@ -57,8 +51,6 @@ class AI:
         message: Message,
         in_memory_audio_stream: io.BytesIO,
     ) -> str:
-        if not self.moderation.moderate_audio(in_memory_audio_stream):
-            raise ModerationError("Audio is not safe")
         utility = DescribeAudioUtililty(person, context, message, self.models_toolkit)
         audio_information = await utility.arun(in_memory_audio_stream)
         audio_description = await self.prompt_manager.compose_audio_description_prompt(
