@@ -4,7 +4,6 @@ from omnimodkit import ModelsToolkit
 
 from ...models.config.ai_config import AIConfig
 from ...models.handlers_input import Message, Person, Context
-from ...models.base_moderation import ModerationError
 from ..prompt_manager import PromptManager
 from .agent_tools.agent_toolkit import AIAgentToolkit
 

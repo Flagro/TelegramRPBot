@@ -2,6 +2,7 @@ import enum
 from abc import ABC, abstractmethod
 from typing import Tuple, List, AsyncIterator, Optional, Type
 from logging import Logger
+from omnimodkit.moderation import ModerationError
 
 from .handlers_input import Person, Context, Message
 from .handlers_response import (
@@ -9,7 +10,6 @@ from .handlers_response import (
     LocalizedCommandResponse,
 )
 from .base_auth import BasePermission
-from .base_moderation import ModerationError
 
 
 class BaseHandler(ABC):
