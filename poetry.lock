@@ -1416,18 +1416,6 @@ toml = ["tomli (>=2.0.1)"]
 yaml = ["pyyaml (>=6.0.1)"]
 
 [[package]]
-name = "pydub"
-version = "0.25.1"
-description = "Manipulate audio with an simple and easy high level interface"
-optional = false
-python-versions = "*"
-groups = ["main"]
-files = [
-    {file = "pydub-0.25.1-py2.py3-none-any.whl", hash = "sha256:65617e33033874b59d87db603aa1ed450633288aefead953b30bded59cb599a6"},
-    {file = "pydub-0.25.1.tar.gz", hash = "sha256:980a33ce9949cab2a569606b65674d748ecbca4f0796887fd6f46173a7b0d30f"},
-]
-
-[[package]]
 name = "pymongo"
 version = "4.8.0"
 description = "Python driver for MongoDB <http://www.mongodb.org>"
@@ -2106,4 +2094,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "aec817f7735a37d5ef6dce01a7c5b79b7f9414ab5da7234d31631cf7ff89ebf2"
+content-hash = "6b92b340438eb9c3a1ce7c51ba4476a502af6902c8ac6ae928483e9f6bffdc13"
