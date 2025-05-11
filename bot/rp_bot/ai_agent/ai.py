@@ -1,7 +1,5 @@
-import tiktoken
 import io
 from typing import AsyncIterator
-from openai import OpenAI
 from omnimodkit import ModelsToolkit
 
 from ...models.config.ai_config import AIConfig
@@ -64,30 +62,15 @@ class AI:
         """
         Returns the URL of the generated image
         """
-        toolkit = AIAgentToolkit(
-            person, context, message, self.models_toolkit, self.prompt_manager
-        )
-        return await toolkit.image_generator.arun(prompt)
-
-    @staticmethod
-    def count_tokens(text: str) -> int:
-        return tiktoken.count(text)
+        return await self.models_toolkit.image_generation_model.arun(prompt)
 
     async def get_reply(self, user_input: str, system_prompt: str) -> str:
-        if not self.moderation.moderate_text(user_input):
-            raise ModerationError("Text is not safe")
-        messages = self.models_toolkit.compose_messages_openai(
-            user_input, system_prompt
-        )
-        return await self.models_toolkit.get_response(messages)
+        return await self.models_toolkit.text_model(user_input, system_prompt)
 
     async def get_streaming_reply(
         self, user_input: str, system_prompt: str
     ) -> AsyncIterator[str]:
-        if not self.moderation.moderate_text(user_input):
-            raise ModerationError("Text is not safe")
-        messages = self.models_toolkit.compose_messages_openai(
+        async for response in self.models_toolkit.text_model.stream(
             user_input, system_prompt
-        )
-        async for response in self.models_toolkit.get_streaming_response(messages):
+        ):
             yield response
