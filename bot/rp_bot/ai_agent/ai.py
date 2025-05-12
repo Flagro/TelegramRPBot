@@ -35,9 +35,7 @@ class AI:
         in_memory_image_stream: io.BytesIO,
     ) -> str:
         image_information = self.models_toolkit.vision_model.run(in_memory_image_stream)
-        image_description = await self.prompt_manager.compose_image_description_prompt(
-            image_information
-        )
+        image_description = str(image_information)
         return image_description
 
     async def transcribe_audio(
@@ -50,9 +48,7 @@ class AI:
         audio_information = self.models_toolkit.audio_recognition_model.run(
             in_memory_audio_stream
         )
-        audio_description = await self.prompt_manager.compose_audio_description_prompt(
-            audio_information
-        )
+        audio_description = str(audio_information)
         return audio_description
 
     async def generate_image(
