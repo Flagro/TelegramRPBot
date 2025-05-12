@@ -1,7 +1,6 @@
 from omnimodkit import ModelsToolkit
 from .autofact_generation import CheckIfFactsNeededTool, ComposeFactsBasedOnMessagesTool
 from .check_engage_needed import CheckEngageNeededTool
-from .generate_image import ImageGeneratorTool
 from .get_facts import GetChatFactsTool, GetUserFactsTool
 from .get_response import GetResponseTool
 from ...prompt_manager import PromptManager
@@ -24,9 +23,6 @@ class AIAgentToolkit:
             person, context, message, models_toolkit, prompt_manager
         )
         self.check_engage_needed = CheckEngageNeededTool(
-            person, context, message, models_toolkit, prompt_manager
-        )
-        self.image_generator = ImageGeneratorTool(
             person, context, message, models_toolkit, prompt_manager
         )
         self.get_chat_facts = GetChatFactsTool(

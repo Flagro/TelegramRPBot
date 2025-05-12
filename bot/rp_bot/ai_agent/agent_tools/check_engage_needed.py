@@ -6,4 +6,4 @@ class CheckEngageNeededTool(BaseTool):
         """
         Returns True if the prompt contains a question or a request for information.
         """
-        return self.models_toolkit.ask_yes_no_question(prompt)
+        return self.models_toolkit.text_model.ask_yes_no_question(prompt)
