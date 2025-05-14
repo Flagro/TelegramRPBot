@@ -1,6 +1,7 @@
 import io
 from typing import AsyncIterator
 from omnimodkit import ModelsToolkit
+from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from ...models.config.ai_config import AIConfig
 from ...models.handlers_input import Message, Person, Context
@@ -10,11 +11,16 @@ from .agent_tools.agent_toolkit import AIAgentToolkit
 
 class AI:
     def __init__(
-        self, openai_api_key: str, ai_config: AIConfig, prompt_manager: PromptManager
+        self,
+        openai_api_key: str,
+        ai_config: AIConfig,
+        prompt_manager: PromptManager,
+        db: AsyncIOMotorDatabase,
     ):
         self.ai_config = ai_config
         self.prompt_manager = prompt_manager
         self.models_toolkit = ModelsToolkit(openai_api_key, ai_config)
+        self.db = db
 
     async def engage_is_needed(
         self, person: Person, context: Context, message: Message
@@ -23,7 +29,7 @@ class AI:
             message.message_text
         )
         toolkit = AIAgentToolkit(
-            person, context, message, self.models_toolkit, self.prompt_manager
+            person, context, message, self.db, self.models_toolkit, self.prompt_manager
         )
         return await toolkit.check_engage_needed.arun(prompt)
 
