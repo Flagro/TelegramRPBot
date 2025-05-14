@@ -51,6 +51,7 @@ def get_rp_bot(
         openai_api_key=openai_api_key,
         ai_config=ai_config,
         prompt_manager=prompt_manager,
+        db=db,
     )
     auth = Auth(
         allowed_handles=allowed_handles,
