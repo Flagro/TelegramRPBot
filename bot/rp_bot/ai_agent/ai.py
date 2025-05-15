@@ -6,7 +6,6 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from ...models.config.ai_config import AIConfig
 from ...models.handlers_input import Message, Person, Context
 from ..prompt_manager import PromptManager
-from .agent_tools.agent_toolkit import AIAgentToolkit
 
 
 class AI:

@@ -1,7 +1,6 @@
 from omnimodkit import ModelsToolkit
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from .autofact_generation import CheckIfFactsNeededTool, ComposeFactsBasedOnMessagesTool
-from .check_engage_needed import CheckEngageNeededTool
 from .get_facts import GetChatFactsTool, GetUserFactsTool
 from .get_response import GetResponseTool
 from ...prompt_manager import PromptManager
@@ -22,9 +21,6 @@ class AIAgentToolkit:
             person, context, message, db, models_toolkit, prompt_manager
         )
         self.compose_facts_based_on_messages = ComposeFactsBasedOnMessagesTool(
-            person, context, message, db, models_toolkit, prompt_manager
-        )
-        self.check_engage_needed = CheckEngageNeededTool(
             person, context, message, db, models_toolkit, prompt_manager
         )
         self.get_chat_facts = GetChatFactsTool(
