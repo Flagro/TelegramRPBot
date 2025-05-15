@@ -27,10 +27,7 @@ class AI:
         prompt = await self.prompt_manager.compose_engage_needed_prompt(
             message.message_text
         )
-        toolkit = AIAgentToolkit(
-            person, context, message, self.db, self.models_toolkit, self.prompt_manager
-        )
-        return await toolkit.check_engage_needed.arun(prompt)
+        return self.models_toolkit.text_model.ask_yes_no_question(prompt)
 
     async def describe_image(
         self,
