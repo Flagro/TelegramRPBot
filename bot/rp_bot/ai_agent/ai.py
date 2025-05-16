@@ -36,7 +36,9 @@ class AI:
         message: Message,
         in_memory_image_stream: io.BytesIO,
     ) -> str:
-        image_information = self.models_toolkit.vision_model.run(in_memory_image_stream)
+        image_information = await self.models_toolkit.vision_model.arun(
+            in_memory_image_stream
+        )
         image_description = str(image_information)
         return image_description
 
@@ -47,7 +49,7 @@ class AI:
         message: Message,
         in_memory_audio_stream: io.BytesIO,
     ) -> str:
-        audio_information = self.models_toolkit.audio_recognition_model.run(
+        audio_information = await self.models_toolkit.audio_recognition_model.arun(
             in_memory_audio_stream
         )
         audio_description = str(audio_information)
@@ -67,7 +69,7 @@ class AI:
     async def get_streaming_reply(
         self, user_input: str, system_prompt: str
     ) -> AsyncIterator[str]:
-        async for response in self.models_toolkit.text_model.stream(
+        async for response in self.models_toolkit.text_model.astream(
             user_input, system_prompt
         ):
             yield response
