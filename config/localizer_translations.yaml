@@ -15,6 +15,8 @@ LocalizerTranslations:
     english: "Introduce description text"
   fact_description:
     english: "Fact description text"
+  facts_description:
+    english: "Facts description text"
   clearfacts_description:
     english: "Clear facts description text"
   usage_description:
@@ -55,6 +57,8 @@ LocalizerTranslations:
     english: "Inappropriate introduction text"
   fact_added:
     english: "Fact {user_handle} added"
+  user_facts:
+    english: "User {user_handle} facts: {facts}"
   inappropriate_fact:
     english: "Inappropriate fact text"
   facts_cleared:
