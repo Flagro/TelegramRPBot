@@ -2,8 +2,6 @@ from datetime import datetime
 
 from .db import DB
 from ..models.handlers_input import Person, Context, TranscribedMessage
-from .ai_agent.ai_utils.describe_image import ImageInformation
-from .ai_agent.ai_utils.describe_audio import AudioInformation
 
 
 def _get_current_date_prompt() -> str:
@@ -41,16 +39,6 @@ class PromptManager:
             "engage after the user's input. "
             f"The user just said: {user_input}"
         )
-
-    async def compose_image_description_prompt(
-        self, image_information: ImageInformation
-    ) -> str:
-        return f"The description of the image is: {image_information}"
-
-    async def compose_audio_description_prompt(
-        self, audio_description: AudioInformation
-    ) -> str:
-        return f"The description of the audio is: {audio_description}"
 
     async def _compose_chat_mode_prompt(self, context: Context) -> str:
         chat_mode = await self.db.chat_modes.get_chat_mode(context)
