@@ -2,7 +2,6 @@ from omnimodkit import ModelsToolkit
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from .autofact_generation import CheckIfFactsNeededTool, ComposeFactsBasedOnMessagesTool
 from .get_facts import GetChatFactsTool, GetUserFactsTool
-from .get_response import GetResponseTool
 from ...prompt_manager import PromptManager
 from ....models.handlers_input import Person, Context, Message
 
@@ -27,8 +26,5 @@ class AIAgentToolkit:
             person, context, message, db, models_toolkit, prompt_manager
         )
         self.get_user_facts = GetUserFactsTool(
-            person, context, message, db, models_toolkit, prompt_manager
-        )
-        self.get_response = GetResponseTool(
             person, context, message, db, models_toolkit, prompt_manager
         )
