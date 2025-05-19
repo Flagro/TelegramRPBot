@@ -1,5 +1,6 @@
 from typing import List, Union, Type
 from logging import Logger
+from omnimodkit.ai_config import AIConfig
 from ..models.base_bot import BaseBot
 from .rp_bot_handlers import (
     RPBotCommandHandler,
@@ -18,7 +19,6 @@ from ..models.config import (
     BotConfig,
     DefaultChatModes,
     LocalizerTranslations,
-    AIConfig,
 )
 
 

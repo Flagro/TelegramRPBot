@@ -1,14 +1,13 @@
 import logging
 from decouple import config
 from pathlib import Path
-
+from omnimodkit.ai_config import AIConfig
 from bot.rp_bot.bot import get_rp_bot
 from bot.models.config import (
     TGConfig,
     BotConfig,
     DefaultChatModes,
     LocalizerTranslations,
-    AIConfig,
 )
 from bot.telegram.bot import TelegramBot
 

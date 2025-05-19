@@ -1,9 +1,9 @@
 import io
 from typing import AsyncIterator
 from omnimodkit import ModelsToolkit
+from omnimodkit.ai_config import AIConfig
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-from ...models.config.ai_config import AIConfig
 from ...models.handlers_input import Message, Person, Context
 from ..prompt_manager import PromptManager
 
