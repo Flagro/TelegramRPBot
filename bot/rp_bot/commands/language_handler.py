@@ -1,6 +1,5 @@
 from typing import List
 
-from ...models.base_handlers import CommandPriority
 from ...models.handlers_response import CommandResponse
 from ...models.handlers_input import Person, Context, Message
 from ..callbacks.set_chat_language_handler import CallbackHandler
@@ -11,7 +10,6 @@ from ..rp_bot_handlers import RPBotCommandHandler
 class CommandHandler(ShowChatLanguagesMixin, RPBotCommandHandler):
     permission_classes = CallbackHandler.permission_classes
     command = "language"
-    list_priority_order = CommandPriority.DEFAULT
 
     async def get_response(
         self, person: Person, context: Context, message: Message, args: List[str]

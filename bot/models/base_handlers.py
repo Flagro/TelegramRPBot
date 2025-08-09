@@ -150,7 +150,6 @@ class CommandPriority(enum.IntEnum):
 
 class BaseCommandHandler(BaseHandler, ABC):
     command: str = None
-    list_priority_order: CommandPriority = CommandPriority.DEFAULT
 
     def __str__(self) -> str:
         return f"Command Handler: {self.command}"
