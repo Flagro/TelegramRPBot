@@ -1,3 +1,4 @@
+import io
 from datetime import datetime
 from typing import Optional
 
@@ -23,8 +24,8 @@ class Context(BaseModel):
 class Message(BaseModel):
     message_text: str
     timestamp: datetime
-    in_file_image: Optional[str] = None
-    in_file_audio: Optional[str] = None
+    in_file_image: Optional[io.BytesIO] = None
+    in_file_audio: Optional[io.BytesIO] = None
 
 
 class BotInput(BaseModel):
