@@ -36,7 +36,7 @@ class AI:
         message: Message,
         in_memory_image_stream: io.BytesIO,
     ) -> str:
-        image_information = await self.models_toolkit.vision_model.arun(
+        image_information = await self.models_toolkit.vision_model.arun_default(
             in_memory_image_stream
         )
         image_description = str(image_information)
@@ -49,8 +49,10 @@ class AI:
         message: Message,
         in_memory_audio_stream: io.BytesIO,
     ) -> str:
-        audio_information = await self.models_toolkit.audio_recognition_model.arun(
-            in_memory_audio_stream
+        audio_information = (
+            await self.models_toolkit.audio_recognition_model.arun_default(
+                in_memory_audio_stream
+            )
         )
         audio_description = str(audio_information)
         return audio_description
@@ -61,15 +63,17 @@ class AI:
         """
         Returns the URL of the generated image
         """
-        return await self.models_toolkit.image_generation_model.arun(prompt)
+        return await self.models_toolkit.image_generation_model.arun_default(prompt)
 
     async def get_reply(self, user_input: str, system_prompt: str) -> str:
-        return await self.models_toolkit.text_model(user_input, system_prompt)
+        return await self.models_toolkit.text_model.arun_default(
+            user_input, system_prompt
+        )
 
     async def get_streaming_reply(
         self, user_input: str, system_prompt: str
     ) -> AsyncIterator[str]:
-        async for response in self.models_toolkit.text_model.astream(
+        async for response in self.models_toolkit.text_model.astream_default(
             user_input, system_prompt
         ):
             yield response
@@ -81,23 +85,9 @@ class AI:
         """
         Returns the price of the message
         """
-        # Estimate the response based on amount of facts in the group chat,
-        # the length of the message and wether or not it needs an image generation
-        # TODO: add proper check for audio length
-        audio_length = 100  # estimate for 100 seconds of audio
-
-        # TODO: add proper check for image size
-        image_pixels_count = 2048 * 2048  # 2048x2048 image
-
-        token_len = self.ai.count_tokens(message.message_text)
-
-        # TODO: add proper check for image generation need
-        image_generation_needed = False
-
-        total_price = self.models_toolkit.get_price(
-            token_len=token_len,
-            audio_length=audio_length,
-            image_pixels_count=image_pixels_count,
-            image_generation_needed=image_generation_needed,
+        # TODO: take into account the output as well
+        return self.models_toolkit.get_price(
+            input_text=message.message_text,
+            input_image=message.in_file_image,
+            input_audio=message.in_file_audio,
         )
-        return total_price
