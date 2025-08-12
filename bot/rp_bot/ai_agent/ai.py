@@ -91,3 +91,10 @@ class AI:
             input_image=message.in_file_image,
             input_audio=message.in_file_audio,
         )
+
+    async def estimate_price(self, message: Message) -> float:
+        """
+        Estimates the price of the message
+        """
+        # TODO: use modkit 0.0.6 estimate price functionality
+        return self.get_price(message)

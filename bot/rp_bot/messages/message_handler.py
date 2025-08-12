@@ -10,9 +10,6 @@ from ..rp_bot_handlers import RPBotMessageHandler
 class MessageHandler(RPBotMessageHandler):
     permission_classes = (AllowedUser, BotAdmin, NotBanned)
 
-    async def _estimate_reply_usage(self, context: Context, message: Message) -> int:
-        return self.ai.get_price(message)
-
     async def _get_user_usage(self, generated_message: str) -> int:
         return self.ai.count_tokens(generated_message) * 10
 
@@ -81,7 +78,7 @@ class MessageHandler(RPBotMessageHandler):
     async def is_usage_under_limit(
         self, person: Person, context: Context, transcribed_message: TranscribedMessage
     ) -> bool:
-        estimated_usage = await self._estimate_reply_usage(context, transcribed_message)
+        estimated_usage = await self.ai.estimate_price(transcribed_message)
         user_usage = await self.db.user_usage.get_user_usage(person)
         user_limit = await self.db.user_usage.get_user_usage_limit(person)
         return user_usage + estimated_usage < user_limit
