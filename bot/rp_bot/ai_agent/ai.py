@@ -98,3 +98,9 @@ class AI:
         """
         # TODO: use modkit 0.0.6 estimate price functionality
         return self.get_price(message)
+
+    def count_tokens(self, text: str) -> int:
+        """
+        Counts the number of tokens in a text string.
+        """
+        return self.models_toolkit.text_model.count_tokens(text)
