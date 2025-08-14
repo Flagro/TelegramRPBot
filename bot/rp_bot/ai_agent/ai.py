@@ -96,8 +96,11 @@ class AI:
         """
         Estimates the price of the message
         """
-        # TODO: use modkit 0.0.6 estimate price functionality
-        return self.get_price(message)
+        return self.models_toolkit.estimate_price(
+            input_text=message.message_text,
+            input_image=message.in_file_image,
+            input_audio=message.in_file_audio,
+        )
 
     def count_tokens(self, text: str) -> int:
         """
