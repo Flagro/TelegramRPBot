@@ -10,8 +10,12 @@ from ..rp_bot_handlers import RPBotMessageHandler
 class MessageHandler(RPBotMessageHandler):
     permission_classes = (AllowedUser, BotAdmin, NotBanned)
 
-    async def _get_user_usage(self, generated_message: str) -> int:
-        return self.ai.count_tokens(generated_message) * 10
+    async def _get_user_usage(
+        self, input_message: Message, generated_message: str
+    ) -> int:
+        return self.ai.get_price(
+            message=input_message,
+        )
 
     async def _get_transcribed_message(self, message: Message) -> TranscribedMessage:
         # Note that here the responsibility to pass NULL images and Audio is on the
@@ -104,9 +108,10 @@ class MessageHandler(RPBotMessageHandler):
         self,
         person: Person,
         context: Context,
+        message: Message,
         response_message: str,
     ) -> None:
-        user_usage = await self._get_user_usage(response_message)
+        user_usage = await self._get_user_usage(message, response_message)
         await self.db.user_usage.add_usage_points(person, user_usage)
         await self.db.dialogs.add_message_to_dialog(
             context,
@@ -143,7 +148,7 @@ class MessageHandler(RPBotMessageHandler):
         result = CommandResponse(
             text="message_response", kwargs={"response_text": response_message}
         )
-        await self.finish_get_reply(person, context, response_message)
+        await self.finish_get_reply(person, context, message, response_message)
         return result
 
     async def stream_get_response(
@@ -172,4 +177,4 @@ class MessageHandler(RPBotMessageHandler):
                 text="streaming_message_response",
                 kwargs={"response_text": response_message},
             )
-        await self.finish_get_reply(person, context, response_message)
+        await self.finish_get_reply(person, context, message, response_message)
