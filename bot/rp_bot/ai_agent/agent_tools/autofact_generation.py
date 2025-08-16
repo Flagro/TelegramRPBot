@@ -16,7 +16,7 @@ class CheckIfFactsNeededTool(BaseTool):
     async def run(self) -> bool:
         # TODO: get prompt from PromptManager
         prompt = "Check if the user prompt requires any facts to be generated."
-        result = await self.models_toolkit.text_model.ask_yes_no_question(prompt)
+        result = await self.models_toolkit.text_model.async_ask_yes_no_question(prompt)
         return result
 
 

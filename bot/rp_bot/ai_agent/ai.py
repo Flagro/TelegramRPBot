@@ -27,7 +27,7 @@ class AI:
         prompt = await self.prompt_manager.compose_engage_needed_prompt(
             message.message_text
         )
-        return await self.models_toolkit.text_model.ask_yes_no_question(prompt)
+        return await self.models_toolkit.text_model.async_ask_yes_no_question(prompt)
 
     async def describe_image(
         self,
