@@ -14,7 +14,6 @@ class ChatFacts(BaseModel):
 
 class CheckIfFactsNeededTool(BaseTool):
     async def run(self) -> bool:
-        # TODO: get prompt from PromptManager
         prompt = "Check if the user prompt requires any facts to be generated."
         result = await self.models_toolkit.text_model.async_ask_yes_no_question(prompt)
         return result
@@ -23,5 +22,8 @@ class CheckIfFactsNeededTool(BaseTool):
 class ComposeFactsBasedOnMessagesTool(BaseTool):
     async def run(self) -> ChatFacts:
         prompt = "Generate a list of facts based on the messages in the chat."
-        # TODO: generate a chat facts list here
-        return []
+        results: ChatFacts = await self.models_toolkit.text_model.run(
+            user_input=prompt,
+            pydantic_model=ChatFacts,
+        )
+        return results
