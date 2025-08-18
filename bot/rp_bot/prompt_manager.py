@@ -87,7 +87,8 @@ class PromptManager:
         context: Context,
         user_transcribed_message: TranscribedMessage,
     ) -> str:
-        current_date_prompt = _get_current_date_prompt()
+        current_date = _get_current_date_prompt()
+        current_date_prompt = f"Today's date and time is: {current_date}"
         user_input_prompt = await self._compose_user_input_prompt(
             transcribed_message=user_transcribed_message
         )
@@ -99,13 +100,15 @@ class PromptManager:
         user_introduction_prompt = await self._compose_user_introduction_prompt(
             initiator, context
         )
-        return (
-            f"Today's date and time is: {current_date_prompt}\n"
-            f"{user_input_prompt}\n"
-            f"{chat_history_prompt}\n"
-            f"{chat_facts_prompt}\n"
-            f"{user_facts_prompt}\n"
-            f"{user_introduction_prompt}\n"
+        return "\n".join(
+            [
+                current_date_prompt,
+                user_input_prompt,
+                chat_history_prompt,
+                chat_facts_prompt,
+                user_facts_prompt,
+                user_introduction_prompt,
+            ]
         )
 
     async def get_reply_system_prompt(self, context: Context) -> str:
