@@ -63,12 +63,14 @@ class AI:
         """
         Returns the URL of the generated image
         """
-        return await self.models_toolkit.image_generation_model.arun_default(prompt)
+        response = await self.models_toolkit.image_generation_model.arun_default(prompt)
+        return response.image_url
 
     async def get_reply(self, user_input: str, system_prompt: str) -> str:
-        return await self.models_toolkit.text_model.arun_default(
+        response = await self.models_toolkit.text_model.arun_default(
             user_input, system_prompt
         )
+        return response.text
 
     async def get_streaming_reply(
         self, user_input: str, system_prompt: str
@@ -76,7 +78,8 @@ class AI:
         async for response in self.models_toolkit.text_model.astream_default(
             user_input, system_prompt
         ):
-            yield response
+            if response is not None:
+                yield response.text_chunk
 
     async def get_price(
         self,
