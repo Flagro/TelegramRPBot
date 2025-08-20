@@ -54,7 +54,7 @@ class AI:
                 in_memory_audio_stream
             )
         )
-        audio_description = str(audio_information)
+        audio_description = audio_information.audio_description
         return audio_description
 
     async def generate_image(
