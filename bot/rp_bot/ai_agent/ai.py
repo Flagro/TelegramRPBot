@@ -6,6 +6,7 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from ...models.handlers_input import Message, Person, Context
 from ..prompt_manager import PromptManager
+from .agent_tools.agent_toolkit import AIAgentToolkit
 
 
 class AI:
@@ -20,6 +21,13 @@ class AI:
         self.prompt_manager = prompt_manager
         self.models_toolkit = ModelsToolkit(openai_api_key, ai_config)
         self.db = db
+
+    async def create_agent_toolkit(
+        self, person: Person, context: Context, message: Message
+    ) -> AIAgentToolkit:
+        return AIAgentToolkit(
+            self.models_toolkit, self.prompt_manager, self.db, person, context, message
+        )
 
     async def engage_is_needed(
         self, person: Person, context: Context, message: Message
