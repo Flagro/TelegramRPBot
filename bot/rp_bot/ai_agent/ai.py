@@ -92,13 +92,14 @@ class AI:
     async def get_price(
         self,
         message: Message,
+        generated_message: str,
     ) -> float:
         """
         Returns the price of the message
         """
-        # TODO: take into account the output as well
         return self.models_toolkit.get_price(
             input_text=message.message_text,
+            output_text=generated_message,
             input_image=message.in_file_image,
             input_audio=message.in_file_audio,
         )

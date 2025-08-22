@@ -14,7 +14,7 @@ class MessageHandler(RPBotMessageHandler):
         self, input_message: Message, generated_message: str
     ) -> int:
         return self.ai.get_price(
-            message=input_message,
+            message=input_message, generated_message=generated_message
         )
 
     async def _get_transcribed_message(self, message: Message) -> TranscribedMessage:
