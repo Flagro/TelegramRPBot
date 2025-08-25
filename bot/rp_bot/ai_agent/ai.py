@@ -74,21 +74,6 @@ class AI:
         response = await self.models_toolkit.image_generation_model.arun_default(prompt)
         return response.image_url
 
-    async def get_reply(self, user_input: str, system_prompt: str) -> str:
-        response = await self.models_toolkit.text_model.arun_default(
-            user_input, system_prompt
-        )
-        return response.text
-
-    async def get_streaming_reply(
-        self, user_input: str, system_prompt: str
-    ) -> AsyncIterator[str]:
-        async for response in self.models_toolkit.text_model.astream_default(
-            user_input, system_prompt
-        ):
-            if response is not None:
-                yield response.text_chunk
-
     async def get_price(
         self,
         message: Message,

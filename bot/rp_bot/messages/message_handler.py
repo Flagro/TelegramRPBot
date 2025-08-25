@@ -5,6 +5,7 @@ from ...models.handlers_response import CommandResponse
 from ...models.handlers_input import Person, Context, Message, TranscribedMessage
 from ..auth import AllowedUser, BotAdmin, NotBanned
 from ..rp_bot_handlers import RPBotMessageHandler
+from ..ai_agent.agent_tools.agent import AIAgent
 
 
 class MessageHandler(RPBotMessageHandler):
@@ -144,7 +145,15 @@ class MessageHandler(RPBotMessageHandler):
             person, context, transcribed_message
         )
         system_prompt = self.prompt_manager.get_reply_system_prompt(context)
-        response_message = await self.ai.get_reply(prompt, system_prompt)
+        ai_agent = AIAgent(
+            person,
+            context,
+            message,
+            self.db,
+            self.ai.models_toolkit,
+            self.prompt_manager,
+        )
+        response_message = await ai_agent.get_reply(prompt, system_prompt)
         result = CommandResponse(
             text="message_response", kwargs={"response_text": response_message}
         )
@@ -167,7 +176,15 @@ class MessageHandler(RPBotMessageHandler):
         )
         response_message = ""
         system_prompt = self.prompt_manager.get_reply_system_prompt(context)
-        async for response_message_chunk in self.ai.get_streaming_reply(
+        ai_agent = AIAgent(
+            person,
+            context,
+            message,
+            self.db,
+            self.ai.models_toolkit,
+            self.prompt_manager,
+        )
+        async for response_message_chunk in ai_agent.get_streaming_reply(
             prompt, system_prompt
         ):
             if not response_message_chunk:
