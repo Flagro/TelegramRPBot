@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
-
+from omnimodkit.models_toolkit import ModelsToolkit
 from .db import DB
-from ai_agent.ai import AI
 from .prompt_manager import PromptManager
 from .auth import Auth
 from .localizer import Localizer
@@ -20,7 +19,7 @@ class RPBotHandlerMixin(ABC):
     def __init__(
         self,
         db: DB,
-        ai: AI,
+        models_toolkit: ModelsToolkit,
         localizer: Localizer,
         prompt_manager: PromptManager,
         auth: Auth,
@@ -29,7 +28,7 @@ class RPBotHandlerMixin(ABC):
         **kwargs
     ):
         self.db = db
-        self.ai = ai
+        self.models_toolkit = models_toolkit
         self.localizer = localizer
         self.prompt_manager = prompt_manager
         self.auth = auth
@@ -48,7 +47,10 @@ class RPBotHandlerMixin(ABC):
         return result
 
     async def get_localized_text(
-        self, text: str, kwargs: Optional[dict] = None, context: Optional[Context] = None
+        self,
+        text: str,
+        kwargs: Optional[dict] = None,
+        context: Optional[Context] = None,
     ) -> Optional[str]:
         return await self.localizer.get_command_response(
             text=text, kwargs=kwargs, context=context

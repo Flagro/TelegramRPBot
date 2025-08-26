@@ -1,6 +1,7 @@
 from typing import List, Union, Type
 from logging import Logger
 from omnimodkit.ai_config import AIConfig
+from omnimodkit.models_toolkit import ModelsToolkit
 from ..models.base_bot import BaseBot
 from .rp_bot_handlers import (
     RPBotCommandHandler,
@@ -47,11 +48,9 @@ def get_rp_bot(
         default_language=bot_config.default_language,
     )
     prompt_manager = PromptManager(db=db)
-    ai = AI(
+    models_toolkit = ModelsToolkit(
         openai_api_key=openai_api_key,
         ai_config=ai_config,
-        prompt_manager=prompt_manager,
-        db=db,
     )
     auth = Auth(
         allowed_handles=allowed_handles,
@@ -60,7 +59,7 @@ def get_rp_bot(
     )
     return RPBot(
         db=db,
-        ai=ai,
+        models_toolkit=models_toolkit,
         localizer=localizer,
         prompt_manager=prompt_manager,
         auth=auth,
@@ -73,7 +72,7 @@ class RPBot(BaseBot):
     def __init__(
         self,
         db: DB,
-        ai: AI,
+        models_toolkit: ModelsToolkit,
         localizer: Localizer,
         prompt_manager: PromptManager,
         auth: Auth,
@@ -81,7 +80,7 @@ class RPBot(BaseBot):
         logger: Logger,
     ):
         self.db = db
-        self.ai = ai
+        self.models_toolkit = models_toolkit
         self.localizer = localizer
         self.prompt_manager = prompt_manager
         self.auth = auth
@@ -101,7 +100,7 @@ class RPBot(BaseBot):
         return [
             handler(
                 db=self.db,
-                ai=self.ai,
+                models_toolkit=self.models_toolkit,
                 localizer=self.localizer,
                 prompt_manager=self.prompt_manager,
                 auth=self.auth,

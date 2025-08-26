@@ -11,23 +11,44 @@ from ..ai_agent.agent_tools.agent import AIAgent
 class MessageHandler(RPBotMessageHandler):
     permission_classes = (AllowedUser, BotAdmin, NotBanned)
 
+    async def estimate_price(self, message: Message) -> float:
+        """
+        Estimates the price of the message
+        """
+        return self.models_toolkit.estimate_price(
+            input_text=message.message_text,
+            input_image=message.in_file_image,
+            input_audio=message.in_file_audio,
+        )
+
     async def _get_user_usage(
         self, input_message: Message, generated_message: str
     ) -> int:
-        return self.ai.get_price(
-            message=input_message, generated_message=generated_message
+        return self.models_toolkit.get_price(
+            input_text=input_message.message_text,
+            output_text=generated_message,
+            input_image=input_message.in_file_image,
+            input_audio=input_message.in_file_audio,
         )
 
     async def _get_transcribed_message(self, message: Message) -> TranscribedMessage:
         # Note that here the responsibility to pass NULL images and Audio is on the
         # outer level bot processing (TG bot or other bot)
         image_description = (
-            await self.ai.describe_image(message.in_file_image)
+            str(
+                await self.models_toolkit.vision_model.arun_default(
+                    message.in_file_image
+                )
+            )
             if message.in_file_image
             else None
         )
         voice_description = (
-            await self.ai.transcribe_audio(message.in_file_audio)
+            str(
+                await self.models_toolkit.audio_recognition_model.arun_default(
+                    message.in_file_audio
+                )
+            )
             if message.in_file_audio
             else None
         )
@@ -66,7 +87,12 @@ class MessageHandler(RPBotMessageHandler):
         autoengage_state = await self.db.chats.get_autoengage_state(context)
         engage_is_needed = False
         if autoengage_state:
-            engage_is_needed = await self.ai.engage_is_needed(message)
+            prompt = await self.prompt_manager.compose_engage_needed_prompt(
+                message.message_text
+            )
+            engage_is_needed = (
+                await self.models_toolkit.text_model.async_ask_yes_no_question(prompt)
+            )
         if not context.is_bot_mentioned and not engage_is_needed:
             self.logger.info(
                 f"Saving the message from {person.user_handle} in chat {context.chat_id} "
@@ -83,7 +109,7 @@ class MessageHandler(RPBotMessageHandler):
     async def is_usage_under_limit(
         self, person: Person, context: Context, transcribed_message: TranscribedMessage
     ) -> bool:
-        estimated_usage = await self.ai.estimate_price(transcribed_message)
+        estimated_usage = await self.estimate_price(transcribed_message)
         user_usage = await self.db.user_usage.get_user_usage(person)
         user_limit = await self.db.user_usage.get_user_usage_limit(person)
         return user_usage + estimated_usage < user_limit
@@ -150,7 +176,7 @@ class MessageHandler(RPBotMessageHandler):
             context,
             message,
             self.db,
-            self.ai.models_toolkit,
+            self.models_toolkit,
             self.prompt_manager,
         )
         response_message = await ai_agent.get_reply(prompt, system_prompt)
@@ -181,7 +207,7 @@ class MessageHandler(RPBotMessageHandler):
             context,
             message,
             self.db,
-            self.ai.models_toolkit,
+            self.models_toolkit,
             self.prompt_manager,
         )
         async for response_message_chunk in ai_agent.get_streaming_reply(
