@@ -1,11 +1,17 @@
 from typing import Optional, AsyncIterator, List
 from datetime import datetime
+from pydantic import BaseModel
 
 from ...models.handlers_response import CommandResponse
 from ...models.handlers_input import Person, Context, Message, TranscribedMessage
 from ..auth import AllowedUser, BotAdmin, NotBanned
 from ..rp_bot_handlers import RPBotMessageHandler
 from ..ai_agent.agent_tools.agent import AIAgent
+
+
+class MessageAnalysisResult(BaseModel):
+    engage_is_needed: bool
+    save_message_to_db: bool
 
 
 class MessageHandler(RPBotMessageHandler):
@@ -64,7 +70,7 @@ class MessageHandler(RPBotMessageHandler):
         person: Person,
         context: Context,
         message: Message,
-    ) -> Optional[Message]:
+    ) -> MessageAnalysisResult:
         conversation_tracker_enabled = (
             await self.db.chats.get_conversation_tracker_state(context)
         )
@@ -75,15 +81,10 @@ class MessageHandler(RPBotMessageHandler):
             self.logger.info(
                 f"Ignoring message from {person.user_handle} in chat {context.chat_id}"
             )
-            return None
-        # TODO: message transcribing might be costly, so we need to check price
-        # before transcribing and saving the message
-        user_transcribed_message = await self._get_transcribed_message(message)
-        await self.db.dialogs.add_message_to_dialog(
-            context=context,
-            person=person,
-            transcribed_message=user_transcribed_message,
-        )
+            return MessageAnalysisResult(
+                engage_is_needed=False,
+                save_message_to_db=False,
+            )
         autoengage_state = await self.db.chats.get_autoengage_state(context)
         engage_is_needed = False
         if autoengage_state:
@@ -98,13 +99,15 @@ class MessageHandler(RPBotMessageHandler):
                 f"Saving the message from {person.user_handle} in chat {context.chat_id} "
                 "as context for future responses and not generating a response"
             )
-            return None
-        if not context.is_bot_mentioned and engage_is_needed:
+        elif not context.is_bot_mentioned and engage_is_needed:
             self.logger.info(
                 f"Engaging with the message from {person.user_handle} in chat {context.chat_id} "
                 "as the agent detected a question or a request for information"
             )
-        return message
+        return MessageAnalysisResult(
+            engage_is_needed=engage_is_needed or context.is_bot_mentioned,
+            save_message_to_db=True,
+        )
 
     async def is_usage_under_limit(
         self, person: Person, context: Context, transcribed_message: TranscribedMessage
@@ -160,15 +163,25 @@ class MessageHandler(RPBotMessageHandler):
         message: Message,
         args: List[str],
     ) -> Optional[CommandResponse]:
-        transcribed_message = await self.prepare_get_reply(person, context, message)
-        if not transcribed_message:
+        message_analysis_result = await self.prepare_get_reply(person, context, message)
+        if message_analysis_result.save_message_to_db:
+            await self.db.dialogs.add_message_to_dialog(
+                context=context,
+                person=person,
+                # TODO: it might be worth it to save image and audio descriptions
+                transcribed_message=TranscribedMessage(
+                    message_text=message.message_text,
+                    timestamp=message.timestamp,
+                ),
+            )
+        if not message_analysis_result.engage_is_needed:
             return None
 
-        if not self.is_usage_under_limit(person, context, transcribed_message):
+        if not self.is_usage_under_limit(person, context, message):
             return await self.get_usage_over_limit_response(person)
 
         prompt = await self.get_prompt_from_transcribed_message(
-            person, context, transcribed_message
+            person, context, message
         )
         system_prompt = self.prompt_manager.get_reply_system_prompt(context)
         ai_agent = AIAgent(
@@ -189,16 +202,25 @@ class MessageHandler(RPBotMessageHandler):
     async def stream_get_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> AsyncIterator[CommandResponse]:
-        transcribed_message = await self.prepare_get_reply(person, context, message)
-        if not transcribed_message:
+        message_analysis_result = await self.prepare_get_reply(person, context, message)
+        if message_analysis_result.save_message_to_db:
+            await self.db.dialogs.add_message_to_dialog(
+                context=context,
+                person=person,
+                transcribed_message=TranscribedMessage(
+                    message_text=message.message_text,
+                    timestamp=message.timestamp,
+                ),
+            )
+        if not message_analysis_result.engage_is_needed:
             return
 
-        if not self.is_usage_under_limit(person, context, transcribed_message):
+        if not self.is_usage_under_limit(person, context, message):
             yield await self.get_usage_over_limit_response(person)
             return
 
         prompt = await self.get_prompt_from_transcribed_message(
-            person, context, transcribed_message
+            person, context, message
         )
         response_message = ""
         system_prompt = self.prompt_manager.get_reply_system_prompt(context)
