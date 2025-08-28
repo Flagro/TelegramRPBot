@@ -164,16 +164,20 @@ class MessageHandler(RPBotMessageHandler):
         args: List[str],
     ) -> Optional[CommandResponse]:
         message_analysis_result = await self.prepare_get_reply(person, context, message)
-        if message_analysis_result.save_message_to_db:
+        if (
+            message_analysis_result.save_message_to_db
+            and not message_analysis_result.engage_is_needed
+        ):
+            # Save message without transcribing to save resources
             await self.db.dialogs.add_message_to_dialog(
                 context=context,
                 person=person,
-                # TODO: it might be worth it to save image and audio descriptions
                 transcribed_message=TranscribedMessage(
                     message_text=message.message_text,
                     timestamp=message.timestamp,
                 ),
             )
+            return None
         if not message_analysis_result.engage_is_needed:
             return None
 
@@ -192,6 +196,14 @@ class MessageHandler(RPBotMessageHandler):
             self.models_toolkit,
             self.prompt_manager,
         )
+        await self.db.dialogs.add_message_to_dialog(
+            context=context,
+            person=person,
+            transcribed_message=TranscribedMessage(
+                message_text=message.message_text,
+                timestamp=message.timestamp,
+            ),
+        )
         response_message = await ai_agent.get_reply(prompt, system_prompt)
         result = CommandResponse(
             text="message_response", kwargs={"response_text": response_message}
@@ -203,7 +215,11 @@ class MessageHandler(RPBotMessageHandler):
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> AsyncIterator[CommandResponse]:
         message_analysis_result = await self.prepare_get_reply(person, context, message)
-        if message_analysis_result.save_message_to_db:
+        if (
+            message_analysis_result.save_message_to_db
+            and not message_analysis_result.engage_is_needed
+        ):
+            # Save message without transcribing to save resources
             await self.db.dialogs.add_message_to_dialog(
                 context=context,
                 person=person,
@@ -212,6 +228,7 @@ class MessageHandler(RPBotMessageHandler):
                     timestamp=message.timestamp,
                 ),
             )
+            return None
         if not message_analysis_result.engage_is_needed:
             return
 
@@ -242,4 +259,12 @@ class MessageHandler(RPBotMessageHandler):
                 text="streaming_message_response",
                 kwargs={"response_text": response_message},
             )
+        await self.db.dialogs.add_message_to_dialog(
+            context=context,
+            person=person,
+            transcribed_message=TranscribedMessage(
+                message_text=message.message_text,
+                timestamp=message.timestamp,
+            ),
+        )
         await self.finish_get_reply(person, context, message, response_message)
