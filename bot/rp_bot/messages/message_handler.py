@@ -163,53 +163,14 @@ class MessageHandler(RPBotMessageHandler):
         message: Message,
         args: List[str],
     ) -> Optional[CommandResponse]:
-        message_analysis_result = await self.prepare_get_reply(person, context, message)
-        if (
-            message_analysis_result.save_message_to_db
-            and not message_analysis_result.engage_is_needed
+        last_command_response = None
+        async for command_response in self.stream_get_response(
+            person, context, message, args
         ):
-            # Save message without transcribing to save resources
-            await self.db.dialogs.add_message_to_dialog(
-                context=context,
-                person=person,
-                transcribed_message=TranscribedMessage(
-                    message_text=message.message_text,
-                    timestamp=message.timestamp,
-                ),
-            )
-            return None
-        if not message_analysis_result.engage_is_needed:
-            return None
-
-        if not self.is_usage_under_limit(person, context, message):
-            return await self.get_usage_over_limit_response(person)
-
-        prompt = await self.get_prompt_from_transcribed_message(
-            person, context, message
-        )
-        system_prompt = self.prompt_manager.get_reply_system_prompt(context)
-        ai_agent = AIAgent(
-            person,
-            context,
-            message,
-            self.db,
-            self.models_toolkit,
-            self.prompt_manager,
-        )
-        await self.db.dialogs.add_message_to_dialog(
-            context=context,
-            person=person,
-            transcribed_message=TranscribedMessage(
-                message_text=message.message_text,
-                timestamp=message.timestamp,
-            ),
-        )
-        response_message = await ai_agent.get_reply(prompt, system_prompt)
-        result = CommandResponse(
-            text="message_response", kwargs={"response_text": response_message}
-        )
-        await self.finish_get_reply(person, context, message, response_message)
-        return result
+            if not command_response:
+                continue
+            last_command_response = command_response
+        return last_command_response
 
     async def stream_get_response(
         self, person: Person, context: Context, message: Message, args: List[str]
