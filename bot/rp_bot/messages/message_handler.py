@@ -1,17 +1,11 @@
 from typing import Optional, AsyncIterator, List
 from datetime import datetime
-from pydantic import BaseModel
 
 from ...models.handlers_response import CommandResponse
 from ...models.handlers_input import Person, Context, Message, TranscribedMessage
 from ..auth import AllowedUser, BotAdmin, NotBanned
 from ..rp_bot_handlers import RPBotMessageHandler
 from ..ai_agent.agent_tools.agent import AIAgent
-
-
-class MessageAnalysisResult(BaseModel):
-    engage_is_needed: bool
-    save_message_to_db: bool
 
 
 class MessageHandler(RPBotMessageHandler):
@@ -65,50 +59,6 @@ class MessageHandler(RPBotMessageHandler):
             voice_description=voice_description,
         )
 
-    async def prepare_get_reply(
-        self,
-        person: Person,
-        context: Context,
-        message: Message,
-    ) -> MessageAnalysisResult:
-        conversation_tracker_enabled = (
-            await self.db.chats.get_conversation_tracker_state(context)
-        )
-        chat_is_started = await self.db.chats.chat_is_started(context)
-        if not chat_is_started or (
-            not conversation_tracker_enabled and not context.is_bot_mentioned
-        ):
-            self.logger.info(
-                f"Ignoring message from {person.user_handle} in chat {context.chat_id}"
-            )
-            return MessageAnalysisResult(
-                engage_is_needed=False,
-                save_message_to_db=False,
-            )
-        autoengage_state = await self.db.chats.get_autoengage_state(context)
-        engage_is_needed = False
-        if autoengage_state:
-            prompt = await self.prompt_manager.compose_engage_needed_prompt(
-                message.message_text
-            )
-            engage_is_needed = (
-                await self.models_toolkit.text_model.async_ask_yes_no_question(prompt)
-            )
-        if not context.is_bot_mentioned and not engage_is_needed:
-            self.logger.info(
-                f"Saving the message from {person.user_handle} in chat {context.chat_id} "
-                "as context for future responses and not generating a response"
-            )
-        elif not context.is_bot_mentioned and engage_is_needed:
-            self.logger.info(
-                f"Engaging with the message from {person.user_handle} in chat {context.chat_id} "
-                "as the agent detected a question or a request for information"
-            )
-        return MessageAnalysisResult(
-            engage_is_needed=engage_is_needed or context.is_bot_mentioned,
-            save_message_to_db=True,
-        )
-
     async def is_usage_under_limit(
         self, person: Person, context: Context, transcribed_message: TranscribedMessage
     ) -> bool:
@@ -134,28 +84,6 @@ class MessageHandler(RPBotMessageHandler):
         )
         return prompt
 
-    async def finish_get_reply(
-        self,
-        person: Person,
-        context: Context,
-        message: Message,
-        response_message: str,
-    ) -> None:
-        user_usage = await self._get_user_usage(message, response_message)
-        await self.db.user_usage.add_usage_points(person, user_usage)
-        await self.db.dialogs.add_message_to_dialog(
-            context,
-            "bot",
-            TranscribedMessage(
-                message_text=response_message,
-                timestamp=datetime.now(),
-            ),
-        )
-        self.logger.info(
-            f"Generated a response for the message from {person.user_handle} in chat {context.chat_id}"
-            f"with usage of {user_usage}"
-        )
-
     async def get_response(
         self,
         person: Person,
@@ -175,11 +103,34 @@ class MessageHandler(RPBotMessageHandler):
     async def stream_get_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> AsyncIterator[CommandResponse]:
-        message_analysis_result = await self.prepare_get_reply(person, context, message)
-        if (
-            message_analysis_result.save_message_to_db
-            and not message_analysis_result.engage_is_needed
+        # Prepare and analyze the message (formerly prepare_get_reply logic)
+        conversation_tracker_enabled = (
+            await self.db.chats.get_conversation_tracker_state(context)
+        )
+        chat_is_started = await self.db.chats.chat_is_started(context)
+        if not chat_is_started or (
+            not conversation_tracker_enabled and not context.is_bot_mentioned
         ):
+            self.logger.info(
+                f"Ignoring message from {person.user_handle} in chat {context.chat_id}"
+            )
+            return
+
+        autoengage_state = await self.db.chats.get_autoengage_state(context)
+        engage_is_needed = False
+        if autoengage_state:
+            prompt = await self.prompt_manager.compose_engage_needed_prompt(
+                message.message_text
+            )
+            engage_is_needed = (
+                await self.models_toolkit.text_model.async_ask_yes_no_question(prompt)
+            )
+
+        # Determine if we should engage or just save to DB
+        should_engage = engage_is_needed or context.is_bot_mentioned
+        save_message_to_db = True
+
+        if save_message_to_db and not should_engage:
             # Save message without transcribing to save resources
             await self.db.dialogs.add_message_to_dialog(
                 context=context,
@@ -189,9 +140,20 @@ class MessageHandler(RPBotMessageHandler):
                     timestamp=message.timestamp,
                 ),
             )
-            return None
-        if not message_analysis_result.engage_is_needed:
+            self.logger.info(
+                f"Saving the message from {person.user_handle} in chat {context.chat_id} "
+                "as context for future responses and not generating a response"
+            )
             return
+
+        if not should_engage:
+            return
+
+        if not context.is_bot_mentioned and engage_is_needed:
+            self.logger.info(
+                f"Engaging with the message from {person.user_handle} in chat {context.chat_id} "
+                "as the agent detected a question or a request for information"
+            )
 
         if not self.is_usage_under_limit(person, context, message):
             yield await self.get_usage_over_limit_response(person)
@@ -220,6 +182,8 @@ class MessageHandler(RPBotMessageHandler):
                 text="streaming_message_response",
                 kwargs={"response_text": response_message},
             )
+
+        # Save the user's message to dialog
         await self.db.dialogs.add_message_to_dialog(
             context=context,
             person=person,
@@ -228,4 +192,19 @@ class MessageHandler(RPBotMessageHandler):
                 timestamp=message.timestamp,
             ),
         )
-        await self.finish_get_reply(person, context, message, response_message)
+
+        # Finish processing (formerly finish_get_reply logic)
+        user_usage = await self._get_user_usage(message, response_message)
+        await self.db.user_usage.add_usage_points(person, user_usage)
+        await self.db.dialogs.add_message_to_dialog(
+            context,
+            "bot",
+            TranscribedMessage(
+                message_text=response_message,
+                timestamp=datetime.now(),
+            ),
+        )
+        self.logger.info(
+            f"Generated a response for the message from {person.user_handle} in chat {context.chat_id} "
+            f"with usage of {user_usage}"
+        )
