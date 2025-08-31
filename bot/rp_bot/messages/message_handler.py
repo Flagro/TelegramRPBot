@@ -177,13 +177,12 @@ class MessageHandler(RPBotMessageHandler):
         ):
             if not response_message_chunk:
                 continue
-            response_message += response_message_chunk
+            response_message = response_message_chunk.total_text
             yield CommandResponse(
                 text="streaming_message_response",
                 kwargs={"response_text": response_message},
             )
 
-        # Save the user's message to dialog
         await self.db.dialogs.add_message_to_dialog(
             context=context,
             person=person,
@@ -193,7 +192,6 @@ class MessageHandler(RPBotMessageHandler):
             ),
         )
 
-        # Finish processing (formerly finish_get_reply logic)
         user_usage = await self._get_user_usage(message, response_message)
         await self.db.user_usage.add_usage_points(person, user_usage)
         await self.db.dialogs.add_message_to_dialog(
