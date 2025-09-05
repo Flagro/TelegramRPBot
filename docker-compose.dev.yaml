@@ -1,23 +1,12 @@
 services:
-  bot:
-    build: .
-    restart: always
-    container_name: telegram_rp_bot
-    env_file:
-      - .env
-    depends_on:
-      - mongodb
-    networks:
-      - internal
-
   mongodb:
     image: mongo:8.0
     command:
       - "--auth"
       - "--bind_ip_all"
       - "--setParameter=enableLocalhostAuthBypass=false"
-    restart: always
-    container_name: telegram_rp_bot_mongo
+    restart: unless-stopped
+    container_name: telegram_rp_bot_mongo_dev
     ports:
       - "127.0.0.1:27017:27017"
     environment:
@@ -27,14 +16,8 @@ services:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - mongo_data:/data/db
+      - mongo_data_dev:/data/db
       - ./init/01-init-app-user.js:/docker-entrypoint-initdb.d/01-init-app-user.js:ro
-    networks:
-      - internal
 
 volumes:
-  mongo_data:
-
-networks:
-  internal:
-    driver: bridge
+  mongo_data_dev:
