@@ -22,7 +22,7 @@ class Localizer:
         if context is None:
             language = self.default_language
         else:
-            language = self.db.chats.get_language(context)
+            language = await self.db.chats.get_language(context)
         if text not in self.translations.translations:
             return None
         localizer_translation = self.translations.translations[text]

@@ -48,8 +48,8 @@ class DB:
 
     async def create_if_not_exists(self, person: Person, context: Context) -> None:
         for model in self.models:
-            await model.create_if_not_exists(person, context)
+            await model.create_if_not_exists(context=context, person=person)
 
     async def update_if_needed(self, person: Person, context: Context) -> None:
         for model in self.models:
-            await model.update_if_needed(person, context)
+            await model.update_if_needed(person=person, context=context)

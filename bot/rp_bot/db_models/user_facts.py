@@ -26,7 +26,7 @@ class UserFacts(BaseDBModel):
         facts = await self.user_facts.find_one(
             {"chat_id": context.chat_id, "user_handle": person.user_handle}
         )
-        return facts.get("facts", [])
+        return facts.get("facts", []) if facts else []
 
     async def get_facts_for_user_handle(
         self, context: Context, user_handle: str
@@ -43,7 +43,7 @@ class UserFacts(BaseDBModel):
         facts = await self.user_facts.find_one(
             {"chat_id": context.chat_id, "user_handle": user_handle}
         )
-        return facts.get("facts", [])
+        return facts.get("facts", []) if facts else []
 
     async def add_fact(self, context: Context, person: Person, fact: str) -> None:
         await self.user_facts.update_one(

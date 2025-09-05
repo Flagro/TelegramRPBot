@@ -7,8 +7,8 @@ from pydantic import BaseModel, ConfigDict
 
 class Person(BaseModel):
     user_handle: str
-    first_name: str
-    last_name: str
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
 
 
 class Context(BaseModel):

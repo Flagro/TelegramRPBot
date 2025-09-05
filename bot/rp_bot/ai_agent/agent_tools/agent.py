@@ -38,7 +38,7 @@ class AIAgent:
     ) -> AsyncIterator[AIAgentStreamingResponse]:
         total_text = ""
         async for response in self.models_toolkit.text_model.astream_default(
-            user_input, system_prompt
+            user_input=user_input, system_prompt=system_prompt
         ):
             total_text += response.text_chunk
             if response is not None:

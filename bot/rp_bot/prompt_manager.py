@@ -114,7 +114,7 @@ class PromptManager:
     async def get_reply_system_prompt(self, context: Context) -> str:
         chat_name = context.chat_name
         chat_mode_prompt = await self._compose_chat_mode_prompt(context)
-        chat_language = self.db.chats.get_language(context)
+        chat_language = await self.db.chats.get_language(context)
         return (
             "You are a helpful assistant. "
             f"You are currently in the chat: {chat_name}. "

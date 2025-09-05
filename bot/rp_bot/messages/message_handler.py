@@ -77,7 +77,11 @@ class MessageHandler(RPBotMessageHandler):
     async def get_prompt_from_transcribed_message(
         self, person: Person, context: Context, transcribed_message: TranscribedMessage
     ) -> str:
-        prompt = await self.prompt_manager.compose_prompt(transcribed_message, context)
+        prompt = await self.prompt_manager.compose_prompt(
+            initiator=person,
+            context=context,
+            user_transcribed_message=transcribed_message,
+        )
         self.logger.info(
             "Using AI to generate a response to the message from "
             f"{person.user_handle} in chat {context.chat_id}"
@@ -155,15 +159,20 @@ class MessageHandler(RPBotMessageHandler):
                 "as the agent detected a question or a request for information"
             )
 
-        if not self.is_usage_under_limit(person, context, message):
+        if not await self.is_usage_under_limit(person, context, message):
             yield await self.get_usage_over_limit_response(person)
             return
 
         prompt = await self.get_prompt_from_transcribed_message(
-            person, context, message
+            person,
+            context,
+            TranscribedMessage(
+                message_text=message.message_text,
+                timestamp=message.timestamp,
+            ),
         )
         response_message = ""
-        system_prompt = self.prompt_manager.get_reply_system_prompt(context)
+        system_prompt = await self.prompt_manager.get_reply_system_prompt(context)
         ai_agent = AIAgent(
             person,
             context,

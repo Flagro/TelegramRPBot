@@ -25,9 +25,7 @@ class ChatModes(BaseDBModel):
         self.chat_modes = db.chat_modes
         self.default_chat_modes = default_chat_modes
 
-    async def create_chat_modes_if_not_exist(
-        self, person: Person, context: Context
-    ) -> None:
+    async def create_if_not_exists(self, context: Context, person: Person) -> None:
         for _, mode in self.default_chat_modes.default_chat_modes.items():
             self.chat_modes.update_one(
                 {"chat_id": context.chat_id, "mode_name": mode.name},
@@ -53,7 +51,9 @@ class ChatModes(BaseDBModel):
             # find the first mode by default
             chat_data = await self.chat_modes.find_one({"chat_id": chat_id})
         return ChatModeResponse(
-            chat_data["_id"], chat_data["mode_name"], chat_data["mode_description"]
+            id=chat_data["_id"],
+            mode_name=chat_data["mode_name"],
+            mode_description=chat_data["mode_description"],
         )
 
     async def get_mode_name_by_id(self, context: Context, mode_id: str) -> str:

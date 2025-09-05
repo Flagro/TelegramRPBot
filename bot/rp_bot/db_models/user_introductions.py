@@ -22,4 +22,4 @@ class UserIntroductions(BaseDBModel):
         introduction = await self.user_introductions.find_one(
             {"chat_id": context.chat_id, "user_handle": person.user_handle}
         )
-        return introduction.get("introduction", "")
+        return introduction.get("introduction", "") if introduction else ""
