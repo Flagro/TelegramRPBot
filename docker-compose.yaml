@@ -14,7 +14,7 @@ services:
     image: mongo:8.0
     command:
       - "--auth"
-      - "--bind_ip=127.0.0.1,::1"
+      - "--bind_ip_all"
       - "--setParameter=enableLocalhostAuthBypass=false"
     restart: always
     container_name: telegram_rp_bot_mongo
@@ -28,6 +28,7 @@ services:
       APP_PASS: ${APP_PASS}
     volumes:
       - mongo_data:/data/db
+      - ./init/01-init-app-user.js:/docker-entrypoint-initdb.d/01-init-app-user.js:ro
     networks:
       - internal
 
