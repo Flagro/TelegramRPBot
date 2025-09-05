@@ -1,6 +1,6 @@
 import io
 from typing import AsyncIterator, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from omnimodkit import ModelsToolkit
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from .agent_toolkit import AIAgentToolkit
@@ -9,6 +9,8 @@ from ....models.handlers_input import Person, Context, Message
 
 
 class AIAgentStreamingResponse(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     text_chunk: str = Field(default="")
     total_text: str = Field(default="")
     image_url: Optional[str] = Field(default=None)

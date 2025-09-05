@@ -1,8 +1,8 @@
 import io
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class Person(BaseModel):
@@ -13,7 +13,7 @@ class Person(BaseModel):
 
 class Context(BaseModel):
     chat_id: int
-    chat_name: str
+    chat_name: Optional[str] = None
     thread_id: Optional[int] = None
     is_group: bool = True
     is_bot_mentioned: bool = False
@@ -22,6 +22,8 @@ class Context(BaseModel):
 
 
 class Message(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     message_text: str
     timestamp: datetime
     in_file_image: Optional[io.BytesIO] = None
@@ -32,7 +34,7 @@ class BotInput(BaseModel):
     person: Person
     context: Context
     message: Message
-    args: Optional[str] = None
+    args: Optional[List[str]] = None
 
 
 class TranscribedMessage(BaseModel):

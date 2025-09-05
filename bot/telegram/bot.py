@@ -110,7 +110,7 @@ class TelegramBot:
         """
         Handles the update and sends the response back to the user.
         """
-        bot_input = get_bot_input(update, context)
+        bot_input = await get_bot_input(update, context)
         await self.push_state(update, context, "sending_text")
 
         if bot_handler.streamable and self.telegram_bot_config.enable_message_streaming:
@@ -215,7 +215,7 @@ class TelegramBot:
             chat_id=chat_id,
             text=text,
             reply_to_message_id=reply_message_id,
-            photo=image_url,
+            # photo=image_url,
             parse_mode=parse_mode,
             reply_markup=markup,
         )

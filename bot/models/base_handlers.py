@@ -79,7 +79,9 @@ class BaseHandler(ABC):
         user_handle = person.user_handle
         chat_id = context.chat_id
         message_details = (
-            f" with message of length {len(message.text)}" if message.text else ""
+            f" with message of length {len(message.message_text)}"
+            if message.message_text
+            else ""
         )
         args_prompt = " with args: " + " ".join(args) if args else ""
         self.logger.info(
@@ -150,6 +152,7 @@ class CommandPriority(enum.IntEnum):
 
 class BaseCommandHandler(BaseHandler, ABC):
     command: str = None
+    list_priority_order: CommandPriority = CommandPriority.DEFAULT
 
     def __str__(self) -> str:
         return f"Command Handler: {self.command}"

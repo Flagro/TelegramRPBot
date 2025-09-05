@@ -17,6 +17,11 @@ async def is_group_admin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     chat_id = update.effective_chat.id
     user_id = update.effective_user.id
 
+    # In private chats, the user is effectively the "admin" of their own chat
+    if update.effective_chat.type == constants.ChatType.PRIVATE:
+        return True
+
+    # For group chats, check actual administrators
     chat_administrators = await context.bot.get_chat_administrators(chat_id)
     return any(admin.user.id == user_id for admin in chat_administrators)
 
@@ -134,15 +139,15 @@ def get_thread_id(update: Update) -> Optional[int]:
     return None
 
 
-def get_bot_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -> BotInput:
+async def get_bot_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -> BotInput:
     """
     Get the bot input from the update and context
     """
     return BotInput(
-        person=get_person(update, context),
-        context=get_context(update, context),
-        message=get_message(update, context),
-        args=get_args(update, context),
+        person=await get_person(update, context),
+        context=await get_context(update, context),
+        message=await get_message(update, context),
+        args=await get_args(update, context),
     )
 
 

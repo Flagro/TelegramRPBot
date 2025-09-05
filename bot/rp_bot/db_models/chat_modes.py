@@ -1,5 +1,5 @@
 from typing import List
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
@@ -10,6 +10,8 @@ from ...models.handlers_input import Context, Person
 
 
 class ChatModeResponse(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     id: ObjectId
     mode_name: str
     mode_description: str

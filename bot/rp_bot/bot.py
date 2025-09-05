@@ -11,7 +11,6 @@ from .rp_bot_handlers import (
 from .commands import handlers as command_handlers
 from .callbacks import handlers as callback_handlers
 from .messages import handlers as message_handlers
-from .ai_agent.ai import AI
 from .db import DB
 from .auth import Auth
 from .prompt_manager import PromptManager
