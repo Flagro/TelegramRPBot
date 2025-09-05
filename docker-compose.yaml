@@ -1,6 +1,6 @@
-version: "3.8"
 services:
   bot:
+    build: .
     restart: always
     container_name: telegram_rp_bot
     env_file:
@@ -11,12 +11,21 @@ services:
       - internal
 
   mongodb:
-    image: mongo:latest
+    image: mongo:8.0
+    command:
+      - "--auth"
+      - "--bind_ip=127.0.0.1,::1"
+      - "--setParameter=enableLocalhostAuthBypass=false"
     restart: always
     container_name: telegram_rp_bot_mongo
+    ports:
+      - "127.0.0.1:27017:27017"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+      MONGO_INITDB_ROOT_USERNAME: ${DB_ADMIN_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_ADMIN_PASSWORD}
+      APP_DB: ${DB_NAME}
+      APP_USER: ${APP_USER:-botuser}
+      APP_PASS: ${APP_PASS}
     volumes:
       - mongo_data:/data/db
     networks:
