@@ -37,7 +37,7 @@ class MessageHandler(RPBotMessageHandler):
         image_description = (
             str(
                 await self.models_toolkit.vision_model.arun_default(
-                    message.in_file_image
+                    in_memory_image_stream=message.in_file_image
                 )
             )
             if message.in_file_image
@@ -46,7 +46,7 @@ class MessageHandler(RPBotMessageHandler):
         voice_description = (
             str(
                 await self.models_toolkit.audio_recognition_model.arun_default(
-                    message.in_file_audio
+                    in_memory_audio_stream=message.in_file_audio
                 )
             )
             if message.in_file_audio
@@ -62,13 +62,13 @@ class MessageHandler(RPBotMessageHandler):
     async def is_usage_under_limit(
         self, person: Person, context: Context, transcribed_message: TranscribedMessage
     ) -> bool:
-        estimated_usage = await self.estimate_price(transcribed_message)
-        user_usage = await self.db.user_usage.get_user_usage(person)
-        user_limit = await self.db.user_usage.get_user_usage_limit(person)
+        estimated_usage = await self.estimate_price(message=transcribed_message)
+        user_usage = await self.db.user_usage.get_user_usage(person=person)
+        user_limit = await self.db.user_usage.get_user_usage_limit(person=person)
         return user_usage + estimated_usage < user_limit
 
     async def get_usage_over_limit_response(self, person: Person) -> CommandResponse:
-        usage_limit = await self.db.user_usage.get_user_usage_limit(person)
+        usage_limit = await self.db.user_usage.get_user_usage_limit(person=person)
         return CommandResponse(
             text="usage_limit_exceeded",
             kwargs={"user_handle": person.user_handle, "usage_limit": usage_limit},
@@ -97,7 +97,7 @@ class MessageHandler(RPBotMessageHandler):
     ) -> Optional[CommandResponse]:
         last_command_response = None
         async for command_response in self.stream_get_response(
-            person, context, message, args
+            person=person, context=context, message=message, args=args
         ):
             if not command_response:
                 continue
@@ -109,9 +109,9 @@ class MessageHandler(RPBotMessageHandler):
     ) -> AsyncIterator[CommandResponse]:
         # Prepare and analyze the message (formerly prepare_get_reply logic)
         conversation_tracker_enabled = (
-            await self.db.chats.get_conversation_tracker_state(context)
+            await self.db.chats.get_conversation_tracker_state(context=context)
         )
-        chat_is_started = await self.db.chats.chat_is_started(context)
+        chat_is_started = await self.db.chats.chat_is_started(context=context)
         if not chat_is_started or (
             not conversation_tracker_enabled and not context.is_bot_mentioned
         ):
@@ -120,14 +120,16 @@ class MessageHandler(RPBotMessageHandler):
             )
             return
 
-        autoengage_state = await self.db.chats.get_autoengage_state(context)
+        autoengage_state = await self.db.chats.get_autoengage_state(context=context)
         engage_is_needed = False
         if autoengage_state:
             prompt = await self.prompt_manager.compose_engage_needed_prompt(
-                message.message_text
+                user_input=message.message_text
             )
             engage_is_needed = (
-                await self.models_toolkit.text_model.async_ask_yes_no_question(prompt)
+                await self.models_toolkit.text_model.async_ask_yes_no_question(
+                    question=prompt
+                )
             )
 
         # Determine if we should engage or just save to DB
@@ -159,30 +161,34 @@ class MessageHandler(RPBotMessageHandler):
                 "as the agent detected a question or a request for information"
             )
 
-        if not await self.is_usage_under_limit(person, context, message):
-            yield await self.get_usage_over_limit_response(person)
+        if not await self.is_usage_under_limit(
+            person=person, context=context, transcribed_message=message
+        ):
+            yield await self.get_usage_over_limit_response(person=person)
             return
 
         prompt = await self.get_prompt_from_transcribed_message(
-            person,
-            context,
-            TranscribedMessage(
+            person=person,
+            context=context,
+            transcribed_message=TranscribedMessage(
                 message_text=message.message_text,
                 timestamp=message.timestamp,
             ),
         )
         response_message = ""
-        system_prompt = await self.prompt_manager.get_reply_system_prompt(context)
+        system_prompt = await self.prompt_manager.get_reply_system_prompt(
+            context=context
+        )
         ai_agent = AIAgent(
-            person,
-            context,
-            message,
-            self.db,
-            self.models_toolkit,
-            self.prompt_manager,
+            person=person,
+            context=context,
+            message=message,
+            db=self.db,
+            models_toolkit=self.models_toolkit,
+            prompt_manager=self.prompt_manager,
         )
         async for response_message_chunk in ai_agent.get_streaming_reply(
-            prompt, system_prompt
+            user_input=prompt, system_prompt=system_prompt
         ):
             if not response_message_chunk:
                 continue
@@ -201,12 +207,14 @@ class MessageHandler(RPBotMessageHandler):
             ),
         )
 
-        user_usage = await self._get_user_usage(message, response_message)
-        await self.db.user_usage.add_usage_points(person, user_usage)
+        user_usage = await self._get_user_usage(
+            input_message=message, generated_message=response_message
+        )
+        await self.db.user_usage.add_usage_points(person=person, points=user_usage)
         await self.db.dialogs.add_message_to_dialog(
-            context,
-            "bot",
-            TranscribedMessage(
+            context=context,
+            person="bot",
+            transcribed_message=TranscribedMessage(
                 message_text=response_message,
                 timestamp=datetime.now(),
             ),
