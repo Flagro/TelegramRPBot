@@ -5,7 +5,7 @@ from omnimodkit import ModelsToolkit
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from .agent_toolkit import AIAgentToolkit
 from ...prompt_manager import PromptManager
-from ....models.handlers_input import Person, Context, Message
+from ....models.handlers_input import Person, Context, Message, TranscribedMessage
 
 
 class AIAgentStreamingResponse(BaseModel):
@@ -28,17 +28,34 @@ class AIAgent:
         models_toolkit: ModelsToolkit,
         prompt_manager: PromptManager,
     ):
+        self.person = person
+        self.context = context
+        self.message = message
+        self.db = db
+        self.models_toolkit = models_toolkit
+        self.prompt_manager = prompt_manager
         self.toolkit = AIAgentToolkit(
             person, context, message, db, models_toolkit, prompt_manager
         )
         self.models_toolkit = models_toolkit
 
-    async def get_streaming_reply(
-        self, user_input: str, system_prompt: str
+    async def astream(
+        self,
     ) -> AsyncIterator[AIAgentStreamingResponse]:
+        prompt = await self.prompt_manager.get_prompt_from_transcribed_message(
+            person=self.person,
+            context=self.context,
+            transcribed_message=TranscribedMessage(
+                message_text=self.message.message_text,
+                timestamp=self.message.timestamp,
+            ),
+        )
+        system_prompt = await self.prompt_manager.get_reply_system_prompt(
+            context=self.context
+        )
         total_text = ""
         async for response in self.models_toolkit.text_model.astream_default(
-            user_input=user_input, system_prompt=system_prompt
+            user_input=prompt, system_prompt=system_prompt
         ):
             total_text += response.text_chunk
             if response is not None:

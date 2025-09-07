@@ -167,18 +167,6 @@ class MessageHandler(RPBotMessageHandler):
             yield await self.get_usage_over_limit_response(person=person)
             return
 
-        prompt = await self.get_prompt_from_transcribed_message(
-            person=person,
-            context=context,
-            transcribed_message=TranscribedMessage(
-                message_text=message.message_text,
-                timestamp=message.timestamp,
-            ),
-        )
-        response_message = ""
-        system_prompt = await self.prompt_manager.get_reply_system_prompt(
-            context=context
-        )
         ai_agent = AIAgent(
             person=person,
             context=context,
@@ -187,9 +175,8 @@ class MessageHandler(RPBotMessageHandler):
             models_toolkit=self.models_toolkit,
             prompt_manager=self.prompt_manager,
         )
-        async for response_message_chunk in ai_agent.get_streaming_reply(
-            user_input=prompt, system_prompt=system_prompt
-        ):
+        response_message = ""
+        async for response_message_chunk in ai_agent.astream():
             if not response_message_chunk:
                 continue
             response_message = response_message_chunk.total_text
