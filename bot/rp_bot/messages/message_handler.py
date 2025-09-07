@@ -21,16 +21,6 @@ class MessageHandler(RPBotMessageHandler):
             input_audio=message.in_file_audio,
         )
 
-    async def _get_user_usage(
-        self, input_message: Message, generated_message: str
-    ) -> int:
-        return self.models_toolkit.get_price(
-            input_text=input_message.message_text,
-            output_text=generated_message,
-            input_image=input_message.in_file_image,
-            input_audio=input_message.in_file_audio,
-        )
-
     async def _get_transcribed_message(self, message: Message) -> TranscribedMessage:
         # Note that here the responsibility to pass NULL images and Audio is on the
         # outer level bot processing (TG bot or other bot)
@@ -175,14 +165,13 @@ class MessageHandler(RPBotMessageHandler):
             models_toolkit=self.models_toolkit,
             prompt_manager=self.prompt_manager,
         )
-        response_message = ""
-        async for response_message_chunk in ai_agent.astream():
-            if not response_message_chunk:
+        agent_response = None
+        async for agent_response in ai_agent.astream():
+            if not agent_response.text_chunk:
                 continue
-            response_message = response_message_chunk.total_text
             yield CommandResponse(
                 text="streaming_message_response",
-                kwargs={"response_text": response_message},
+                kwargs={"response_text": agent_response.total_text},
             )
 
         await self.db.dialogs.add_message_to_dialog(
@@ -193,20 +182,23 @@ class MessageHandler(RPBotMessageHandler):
                 timestamp=message.timestamp,
             ),
         )
-
-        user_usage = await self._get_user_usage(
-            input_message=message, generated_message=response_message
-        )
-        await self.db.user_usage.add_usage_points(person=person, points=user_usage)
-        await self.db.dialogs.add_message_to_dialog(
-            context=context,
-            person="bot",
-            transcribed_message=TranscribedMessage(
-                message_text=response_message,
-                timestamp=datetime.now(),
-            ),
-        )
-        self.logger.info(
-            f"Generated a response for the message from {person.user_handle} in chat {context.chat_id} "
-            f"with usage of {user_usage}"
-        )
+        if agent_response:
+            await self.db.user_usage.add_usage_points(
+                person=person, points=agent_response.price
+            )
+            await self.db.dialogs.add_message_to_dialog(
+                context=context,
+                person="bot",
+                transcribed_message=TranscribedMessage(
+                    message_text=agent_response.total_text,
+                    timestamp=datetime.now(),
+                ),
+            )
+            self.logger.info(
+                f"Generated a response for the message from {person.user_handle} in chat {context.chat_id} "
+                f"with usage of {agent_response.price}"
+            )
+        else:
+            self.logger.info(
+                f"No response generated for the message from {person.user_handle} in chat {context.chat_id}"
+            )
