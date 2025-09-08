@@ -17,6 +17,8 @@ class AIAgentStreamingResponse(BaseModel):
     audio_bytes: Optional[io.BytesIO] = Field(default=None)
     price: float = Field(default=0.0)
 
+    transcribed_user_message: TranscribedMessage = Field(default=None)
+
 
 class AIAgent:
     def __init__(
@@ -39,16 +41,42 @@ class AIAgent:
         )
         self.models_toolkit = models_toolkit
 
+    async def _get_transcribed_message(self) -> TranscribedMessage:
+        # Note that here the responsibility to pass NULL images and Audio is on the
+        # outer level bot processing (TG bot or other bot)
+        image_description = (
+            str(
+                await self.models_toolkit.vision_model.arun_default(
+                    in_memory_image_stream=self.message.in_file_image
+                )
+            )
+            if self.message.in_file_image
+            else None
+        )
+        voice_description = (
+            str(
+                await self.models_toolkit.audio_recognition_model.arun_default(
+                    in_memory_audio_stream=self.message.in_file_audio
+                )
+            )
+            if self.message.in_file_audio
+            else None
+        )
+        return TranscribedMessage(
+            message_text=self.message.message_text,
+            timestamp=self.message.timestamp,
+            image_description=image_description,
+            voice_description=voice_description,
+        )
+
     async def astream(
         self,
     ) -> AsyncIterator[AIAgentStreamingResponse]:
+        transcribed_user_message = await self._get_transcribed_message()
         prompt = await self.prompt_manager.get_prompt_from_transcribed_message(
             person=self.person,
             context=self.context,
-            transcribed_message=TranscribedMessage(
-                message_text=self.message.message_text,
-                timestamp=self.message.timestamp,
-            ),
+            transcribed_message=transcribed_user_message,
         )
         system_prompt = await self.prompt_manager.get_reply_system_prompt(
             context=self.context
@@ -65,4 +93,5 @@ class AIAgent:
                     image_url=None,
                     audio_bytes=None,
                     price=0.0,
+                    transcribed_user_message=transcribed_user_message,
                 )

@@ -21,34 +21,6 @@ class MessageHandler(RPBotMessageHandler):
             input_audio=message.in_file_audio,
         )
 
-    async def _get_transcribed_message(self, message: Message) -> TranscribedMessage:
-        # Note that here the responsibility to pass NULL images and Audio is on the
-        # outer level bot processing (TG bot or other bot)
-        image_description = (
-            str(
-                await self.models_toolkit.vision_model.arun_default(
-                    in_memory_image_stream=message.in_file_image
-                )
-            )
-            if message.in_file_image
-            else None
-        )
-        voice_description = (
-            str(
-                await self.models_toolkit.audio_recognition_model.arun_default(
-                    in_memory_audio_stream=message.in_file_audio
-                )
-            )
-            if message.in_file_audio
-            else None
-        )
-        return TranscribedMessage(
-            message_text=message.message_text,
-            timestamp=message.timestamp,
-            image_description=image_description,
-            voice_description=voice_description,
-        )
-
     async def is_usage_under_limit(
         self, person: Person, context: Context, transcribed_message: TranscribedMessage
     ) -> bool:
