@@ -36,20 +36,6 @@ class MessageHandler(RPBotMessageHandler):
             kwargs={"user_handle": person.user_handle, "usage_limit": usage_limit},
         )
 
-    async def get_prompt_from_transcribed_message(
-        self, person: Person, context: Context, transcribed_message: TranscribedMessage
-    ) -> str:
-        prompt = await self.prompt_manager.compose_prompt(
-            initiator=person,
-            context=context,
-            user_transcribed_message=transcribed_message,
-        )
-        self.logger.info(
-            "Using AI to generate a response to the message from "
-            f"{person.user_handle} in chat {context.chat_id}"
-        )
-        return prompt
-
     async def get_response(
         self,
         person: Person,
@@ -136,6 +122,11 @@ class MessageHandler(RPBotMessageHandler):
             db=self.db,
             models_toolkit=self.models_toolkit,
             prompt_manager=self.prompt_manager,
+            logger=self.logger,
+        )
+        self.logger.info(
+            "Using AI to generate a response to the message from "
+            f"{person.user_handle} in chat {context.chat_id}"
         )
         agent_response = None
         async for agent_response in ai_agent.astream():

@@ -1,4 +1,5 @@
 import io
+from logging import Logger
 from typing import AsyncIterator, Optional
 from pydantic import BaseModel, Field, ConfigDict
 from omnimodkit import ModelsToolkit
@@ -29,6 +30,7 @@ class AIAgent:
         db: AsyncIOMotorDatabase,
         models_toolkit: ModelsToolkit,
         prompt_manager: PromptManager,
+        logger: Logger,
     ):
         self.person = person
         self.context = context
@@ -40,6 +42,7 @@ class AIAgent:
             person, context, message, db, models_toolkit, prompt_manager
         )
         self.models_toolkit = models_toolkit
+        self.logger = logger
 
     async def _get_transcribed_message(self) -> TranscribedMessage:
         # Note that here the responsibility to pass NULL images and Audio is on the
@@ -73,10 +76,10 @@ class AIAgent:
         self,
     ) -> AsyncIterator[AIAgentStreamingResponse]:
         transcribed_user_message = await self._get_transcribed_message()
-        prompt = await self.prompt_manager.get_prompt_from_transcribed_message(
-            person=self.person,
+        prompt = await self.prompt_manager.compose_prompt(
+            initiator=self.person,
             context=self.context,
-            transcribed_message=transcribed_user_message,
+            user_transcribed_message=transcribed_user_message,
         )
         system_prompt = await self.prompt_manager.get_reply_system_prompt(
             context=self.context
