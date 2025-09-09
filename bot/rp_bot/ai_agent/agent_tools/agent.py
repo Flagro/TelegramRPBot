@@ -185,6 +185,21 @@ class AIAgent:
             voice_description=voice_description,
         )
 
+    def _compose_user_input(
+        self,
+        user_input: Optional[str] = None,
+        image_description: Optional[str] = None,
+        audio_description: Optional[str] = None,
+    ) -> str:
+        prompts = []
+        if user_input:
+            prompts.append(user_input)
+        if image_description:
+            prompts.append(image_description)
+        if audio_description:
+            prompts.append(audio_description)
+        return "\n".join(prompts)
+
     async def astream(
         self,
     ) -> AsyncIterator[AIAgentStreamingResponse]:
@@ -283,10 +298,11 @@ class AIAgent:
         """
         Asynchronously run the OmniModel with the provided inputs and return the output.
         """
-        user_input = await self._aget_user_input(
+        transcribed_user_message = await self._get_transcribed_message()
+        user_input = self._compose_user_input(
             user_input=user_input,
-            in_memory_image_stream=in_memory_image_stream,
-            in_memory_audio_stream=in_memory_audio_stream,
+            image_description=transcribed_user_message.image_description,
+            audio_description=transcribed_user_message.voice_description,
         )
 
         # Determine the output type based on the input data
