@@ -222,17 +222,14 @@ class AIAgent:
         """
         return self.models_toolkit.can_use_model(model_type)
 
-    def _get_allowed_output_types(self, is_streaming: bool = False) -> List[type]:
+    def _get_allowed_output_types(self) -> List[type]:
         """
         Get the list of allowed output type classes based on allowed_models.
         """
         allowed_types = []
 
         if self._can_use_model("text"):
-            if is_streaming:
-                allowed_types.append(TextStreamingResponse)
-            else:
-                allowed_types.append(TextResponse)
+            allowed_types.append(TextStreamingResponse)
 
         if self._can_use_model("image_generation"):
             allowed_types.append(ImageResponse)
@@ -241,25 +238,17 @@ class AIAgent:
             allowed_types.append(AudioResponse)
 
         if self._can_use_model("text") and self._can_use_model("image_generation"):
-            if is_streaming:
-                allowed_types.append(TextWithImageStreamingResponse)
-            else:
-                allowed_types.append(TextWithImageResponse)
+            allowed_types.append(TextWithImageStreamingResponse)
 
         return allowed_types
 
-    def _create_dynamic_output_type_model(
-        self, is_streaming: bool = False
-    ) -> Type[AIAgentResponseOutputTypeModel]:
+    def _create_dynamic_output_type_model(self) -> Type[AIAgentResponseOutputTypeModel]:
         """
         Create a dynamic output type model based on allowed models.
         """
-        allowed_types = self._get_allowed_output_types(is_streaming=is_streaming)
+        allowed_types = self._get_allowed_output_types()
 
-        if is_streaming:
-            union_types = allowed_types or [TextStreamingResponse]
-        else:
-            union_types = allowed_types or [TextResponse]
+        union_types = allowed_types or [TextStreamingResponse]
 
         if len(union_types) == 1:
             union_type = union_types[0]
@@ -295,9 +284,7 @@ class AIAgent:
         )
 
         # Determine the output type based on the input data
-        dynamic_output_type_model = self._create_dynamic_output_type_model(
-            is_streaming=True
-        )
+        dynamic_output_type_model = self._create_dynamic_output_type_model()
         output_type_model: AIAgentResponseOutputTypeModel = (
             await self.models_toolkit.text_model.arun(
                 system_prompt=system_prompt,
