@@ -22,7 +22,7 @@ from omnimodkit.models_toolkit import ModelsToolkit, AvailableModelType
 from omnimodkit.base_toolkit_model import OpenAIMessage
 
 
-class OutputTypeModel(Protocol):
+class AIAgentResponseOutputTypeModel(Protocol):
     """Protocol for dynamically created models with output_type field."""
 
     output_type: Union[type, object]
@@ -83,7 +83,7 @@ class TextWithImageStreamingResponse(BaseModel):
     )
 
 
-class OmniModelOutput(BaseModel):
+class AIAgentStreamingResponse(BaseModel):
     model_config = ConfigDict(
         arbitrary_types_allowed=True,
     )
@@ -120,17 +120,6 @@ class OmniModelOutput(BaseModel):
         default=None,
         description="Total price of the model response based on input and output.",
     )
-
-
-class AIAgentStreamingResponse(BaseModel):
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-
-    text_chunk: str = Field(default="")
-    total_text: str = Field(default="")
-    image_url: Optional[str] = Field(default=None)
-    audio_bytes: Optional[io.BytesIO] = Field(default=None)
-    price: float = Field(default=0.0)
-
     transcribed_user_message: TranscribedMessage = Field(default=None)
 
 
@@ -261,7 +250,7 @@ class AIAgent:
 
     def _create_dynamic_output_type_model(
         self, is_streaming: bool = False
-    ) -> Type[OutputTypeModel]:
+    ) -> Type[AIAgentResponseOutputTypeModel]:
         """
         Create a dynamic output type model based on allowed models.
         """
@@ -277,15 +266,15 @@ class AIAgent:
         else:
             union_type = Union[tuple(union_types)]
 
-        DynamicOmniModelOutputType = create_model(
-            "DynamicOmniModelOutputType",
+        DynamicAIAgentStreamingResponseType = create_model(
+            "DynamicAIAgentStreamingResponseType",
             output_type=(
                 union_type,
                 Field(description="Type of output expected from the model."),
             ),
         )
 
-        return DynamicOmniModelOutputType
+        return DynamicAIAgentStreamingResponseType
 
     async def astream_template(
         self,
@@ -294,7 +283,7 @@ class AIAgent:
         communication_history: Optional[List[OpenAIMessage]] = None,
         in_memory_image_stream: Optional[io.BytesIO] = None,
         in_memory_audio_stream: Optional[io.BytesIO] = None,
-    ) -> AsyncGenerator[OmniModelOutput, None]:
+    ) -> AsyncGenerator[AIAgentStreamingResponse, None]:
         """
         Asynchronously run the OmniModel with the provided inputs and return the output.
         """
@@ -309,11 +298,13 @@ class AIAgent:
         dynamic_output_type_model = self._create_dynamic_output_type_model(
             is_streaming=True
         )
-        output_type_model: OutputTypeModel = await self.models_toolkit.text_model.arun(
-            system_prompt=system_prompt,
-            pydantic_model=dynamic_output_type_model,
-            user_input=user_input,
-            communication_history=communication_history,
+        output_type_model: AIAgentResponseOutputTypeModel = (
+            await self.models_toolkit.text_model.arun(
+                system_prompt=system_prompt,
+                pydantic_model=dynamic_output_type_model,
+                user_input=user_input,
+                communication_history=communication_history,
+            )
         )
         output_type = output_type_model.output_type
 
@@ -330,7 +321,7 @@ class AIAgent:
                     communication_history=communication_history,
                 )
             )
-            final_response = OmniModelOutput(
+            final_response = AIAgentStreamingResponse(
                 image_url=image_response.image_url,
                 image_description=output_type.image_description_to_generate,
             )
@@ -346,7 +337,7 @@ class AIAgent:
                     communication_history=communication_history,
                 )
             )
-            final_response = OmniModelOutput(
+            final_response = AIAgentStreamingResponse(
                 audio_bytes=audio_response.audio_bytes,
                 audio_description=output_type.audio_description_to_generate,
             )
@@ -376,13 +367,13 @@ class AIAgent:
             ):
                 if chunk.text_chunk:
                     total_text += chunk.text_chunk
-                    yield OmniModelOutput(
+                    yield AIAgentStreamingResponse(
                         is_final_response=False,
                         total_text=total_text,
                         text_new_chunk=chunk.text_chunk,
                     )
             image_response = await image_response_task
-            final_response = OmniModelOutput(
+            final_response = AIAgentStreamingResponse(
                 total_text=total_text,
                 image_url=image_response.image_url,
                 image_description=output_type.image_description_to_generate,
@@ -395,12 +386,14 @@ class AIAgent:
                 communication_history=communication_history,
             ):
                 total_text += chunk.text_chunk
-                yield OmniModelOutput(
+                yield AIAgentStreamingResponse(
                     is_final_response=False,
                     total_text=total_text,
                     text_new_chunk=chunk.text_chunk,
                 )
-            final_response = OmniModelOutput(total_text=total_text, text_new_chunk="")
+            final_response = AIAgentStreamingResponse(
+                total_text=total_text, text_new_chunk=""
+            )
         else:
             raise ValueError("Unexpected output type received from the model.")
         yield self.inject_price(
@@ -414,7 +407,7 @@ class AIAgent:
 
     def get_price(
         self,
-        output: OmniModelOutput,
+        output: AIAgentStreamingResponse,
         user_input: Optional[str] = None,
         system_prompt: Optional[str] = None,
         communication_history: Optional[List[OpenAIMessage]] = None,
@@ -484,15 +477,15 @@ class AIAgent:
 
     def inject_price(
         self,
-        output: OmniModelOutput,
+        output: AIAgentStreamingResponse,
         user_input: Optional[str] = None,
         system_prompt: Optional[str] = None,
         communication_history: Optional[List[OpenAIMessage]] = None,
         in_memory_image_stream: Optional[io.BytesIO] = None,
         in_memory_audio_stream: Optional[io.BytesIO] = None,
-    ) -> OmniModelOutput:
+    ) -> AIAgentStreamingResponse:
         """
-        Inject the price into the OmniModelOutput based on the input and output.
+        Inject the price into the AIAgentStreamingResponse based on the input and output.
         """
         output.total_price = self.get_price(
             output=output,
