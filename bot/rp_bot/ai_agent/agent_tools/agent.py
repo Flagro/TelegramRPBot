@@ -1,13 +1,4 @@
 import io
-from logging import Logger
-from typing import AsyncIterator, Optional
-from pydantic import BaseModel, Field, ConfigDict
-from omnimodkit import ModelsToolkit
-from motor.motor_asyncio import AsyncIOMotorDatabase
-from .agent_toolkit import AIAgentToolkit
-from ...prompt_manager import PromptManager
-from ....models.handlers_input import Person, Context, Message, TranscribedMessage
-import io
 import asyncio
 from typing import (
     Optional,
@@ -17,9 +8,15 @@ from typing import (
     Protocol,
     Type,
 )
+from logging import Logger
 from pydantic import BaseModel, Field, ConfigDict, create_model
+from omnimodkit import ModelsToolkit
 from omnimodkit.models_toolkit import ModelsToolkit, AvailableModelType
 from omnimodkit.base_toolkit_model import OpenAIMessage
+from motor.motor_asyncio import AsyncIOMotorDatabase
+from .agent_toolkit import AIAgentToolkit
+from ...prompt_manager import PromptManager
+from ....models.handlers_input import Person, Context, Message, TranscribedMessage
 
 
 class AIAgentResponseOutputTypeModel(Protocol):
@@ -189,33 +186,6 @@ class AIAgent:
             prompts.append(audio_description)
         return "\n".join(prompts)
 
-    async def astream(
-        self,
-    ) -> AsyncIterator[AIAgentStreamingResponse]:
-        transcribed_user_message = await self._get_transcribed_message()
-        prompt = await self.prompt_manager.compose_prompt(
-            initiator=self.person,
-            context=self.context,
-            user_transcribed_message=transcribed_user_message,
-        )
-        system_prompt = await self.prompt_manager.get_reply_system_prompt(
-            context=self.context
-        )
-        total_text = ""
-        async for response in self.models_toolkit.text_model.astream_default(
-            user_input=prompt, system_prompt=system_prompt
-        ):
-            total_text += response.text_chunk
-            if response is not None:
-                yield AIAgentStreamingResponse(
-                    text_chunk=response.text_chunk,
-                    total_text=total_text,
-                    image_url=None,
-                    audio_bytes=None,
-                    price=0.0,
-                    transcribed_user_message=transcribed_user_message,
-                )
-
     def _can_use_model(self, model_type: AvailableModelType) -> bool:
         """
         Check if a specific model type is allowed.
@@ -265,23 +235,20 @@ class AIAgent:
 
         return DynamicAIAgentStreamingResponseType
 
-    async def astream_template(
-        self,
-        user_input: Optional[str] = None,
-        system_prompt: Optional[str] = None,
-        communication_history: Optional[List[OpenAIMessage]] = None,
-        in_memory_image_stream: Optional[io.BytesIO] = None,
-        in_memory_audio_stream: Optional[io.BytesIO] = None,
-    ) -> AsyncGenerator[AIAgentStreamingResponse, None]:
+    async def astream(self) -> AsyncGenerator[AIAgentStreamingResponse, None]:
         """
         Asynchronously run the OmniModel with the provided inputs and return the output.
         """
         transcribed_user_message = await self._get_transcribed_message()
-        user_input = self._compose_user_input(
-            user_input=user_input,
-            image_description=transcribed_user_message.image_description,
-            audio_description=transcribed_user_message.voice_description,
+        user_input = await self.prompt_manager.compose_prompt(
+            initiator=self.person,
+            context=self.context,
+            user_transcribed_message=transcribed_user_message,
         )
+        system_prompt = await self.prompt_manager.get_reply_system_prompt(
+            context=self.context
+        )
+        communication_history = None  # TODO: Add communication history
 
         # Determine the output type based on the input data
         dynamic_output_type_model = self._create_dynamic_output_type_model()
@@ -385,11 +352,9 @@ class AIAgent:
             raise ValueError("Unexpected output type received from the model.")
         yield self.inject_price(
             output=final_response,
-            user_input=user_input,
+            transcribed_user_message=transcribed_user_message,
             system_prompt=system_prompt,
             communication_history=communication_history,
-            in_memory_image_stream=in_memory_image_stream,
-            in_memory_audio_stream=in_memory_audio_stream,
         )
 
     def get_price(
@@ -431,55 +396,22 @@ class AIAgent:
             output_audio=output_audio,
         )
 
-    def estimate_price(
-        self,
-        user_input: Optional[str] = None,
-        system_prompt: Optional[str] = None,
-        communication_history: Optional[List[OpenAIMessage]] = None,
-        in_memory_image_stream: Optional[io.BytesIO] = None,
-        in_memory_audio_stream: Optional[io.BytesIO] = None,
-    ) -> float:
-        """
-        Estimate the price of the model based on input and output text, image, and audio.
-        """
-        total_input_text = (
-            (user_input or "")
-            + (system_prompt or "")
-            + "\n".join([msg["text"] for msg in communication_history or []])
-        )
-
-        input_image = in_memory_image_stream if self._can_use_model("vision") else None
-        input_audio = (
-            in_memory_audio_stream if self._can_use_model("audio_recognition") else None
-        )
-
-        return self.models_toolkit.estimate_price(
-            input_text=total_input_text,
-            input_image=input_image,
-            input_audio=input_audio,
-            enable_text_output=self._can_use_model("text"),
-            enable_image_generation=self._can_use_model("image_generation"),
-            enable_audio_generation=self._can_use_model("audio_generation"),
-        )
-
     def inject_price(
         self,
         output: AIAgentStreamingResponse,
-        user_input: Optional[str] = None,
+        transcribed_user_message: TranscribedMessage,
         system_prompt: Optional[str] = None,
         communication_history: Optional[List[OpenAIMessage]] = None,
-        in_memory_image_stream: Optional[io.BytesIO] = None,
-        in_memory_audio_stream: Optional[io.BytesIO] = None,
     ) -> AIAgentStreamingResponse:
         """
         Inject the price into the AIAgentStreamingResponse based on the input and output.
         """
         output.total_price = self.get_price(
             output=output,
-            user_input=user_input,
+            user_input=transcribed_user_message.message_text,
             system_prompt=system_prompt,
             communication_history=communication_history,
-            in_memory_image_stream=in_memory_image_stream,
-            in_memory_audio_stream=in_memory_audio_stream,
+            in_memory_image_stream=transcribed_user_message.image_description,
+            in_memory_audio_stream=transcribed_user_message.voice_description,
         )
         return output
