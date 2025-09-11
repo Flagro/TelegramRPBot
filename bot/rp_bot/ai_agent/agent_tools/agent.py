@@ -357,31 +357,35 @@ class AIAgent:
             communication_history=communication_history,
         )
 
-    def get_price(
+    def inject_price(
         self,
         output: AIAgentStreamingResponse,
-        user_input: Optional[str] = None,
+        transcribed_user_message: TranscribedMessage,
         system_prompt: Optional[str] = None,
         communication_history: Optional[List[OpenAIMessage]] = None,
-        in_memory_image_stream: Optional[io.BytesIO] = None,
-        in_memory_audio_stream: Optional[io.BytesIO] = None,
-    ) -> float:
+    ) -> AIAgentStreamingResponse:
         """
-        Get the price of the model based on input and output text, image, and audio.
+        Inject the price into the AIAgentStreamingResponse based on the input and output.
         """
         total_input_text = (
-            (user_input or "")
+            (transcribed_user_message.message_text or "")
             + (system_prompt or "")
             + "\n".join([msg["text"] for msg in communication_history or []])
         )
 
         # Only calculate prices for allowed models
-        input_image = in_memory_image_stream if self._can_use_model("vision") else None
+        input_image = (
+            transcribed_user_message.image_description
+            if self._can_use_model("vision")
+            else None
+        )
         output_image_url = (
             output.image_url if self._can_use_model("image_generation") else None
         )
         input_audio = (
-            in_memory_audio_stream if self._can_use_model("audio_recognition") else None
+            transcribed_user_message.voice_description
+            if self._can_use_model("audio_recognition")
+            else None
         )
         output_audio = (
             output.audio_bytes if self._can_use_model("audio_generation") else None
@@ -395,23 +399,3 @@ class AIAgent:
             input_audio=input_audio,
             output_audio=output_audio,
         )
-
-    def inject_price(
-        self,
-        output: AIAgentStreamingResponse,
-        transcribed_user_message: TranscribedMessage,
-        system_prompt: Optional[str] = None,
-        communication_history: Optional[List[OpenAIMessage]] = None,
-    ) -> AIAgentStreamingResponse:
-        """
-        Inject the price into the AIAgentStreamingResponse based on the input and output.
-        """
-        output.total_price = self.get_price(
-            output=output,
-            user_input=transcribed_user_message.message_text,
-            system_prompt=system_prompt,
-            communication_history=communication_history,
-            in_memory_image_stream=transcribed_user_message.image_description,
-            in_memory_audio_stream=transcribed_user_message.voice_description,
-        )
-        return output
