@@ -1,5 +1,6 @@
 import io
 import asyncio
+from datetime import datetime
 from typing import (
     Optional,
     Union,
@@ -235,6 +236,30 @@ class AIAgent:
 
         return DynamicAIAgentStreamingResponseType
 
+    async def _compose_history_message(
+        self,
+        user_handle: str,
+        is_bot: bool,
+        message_date: datetime,
+        message: TranscribedMessage,
+    ) -> OpenAIMessage:
+        if is_bot:
+            return OpenAIMessage(role="assistant", content=message.message_text)
+        else:
+            return OpenAIMessage(role="user", content=message.message_text)
+
+    async def _get_communication_history(self) -> List[OpenAIMessage]:
+        messages = await self.db.dialogs.get_messages(self.context)
+        return [
+            await self._compose_history_message(
+                user_handle=name,
+                is_bot=is_bot,
+                message_date=message_date,
+                message=message,
+            )
+            for name, is_bot, message_date, message in messages
+        ]
+
     async def astream(self) -> AsyncGenerator[AIAgentStreamingResponse, None]:
         """
         Asynchronously run the OmniModel with the provided inputs and return the output.
@@ -248,7 +273,9 @@ class AIAgent:
         system_prompt = await self.prompt_manager.get_reply_system_prompt(
             context=self.context
         )
-        communication_history = None  # TODO: Add communication history
+        # TODO: add communication history
+        communication_history = None
+        # communication_history = await self._get_communication_history()
 
         # Determine the output type based on the input data
         dynamic_output_type_model = self._create_dynamic_output_type_model()
