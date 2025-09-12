@@ -273,9 +273,8 @@ class AIAgent:
         system_prompt = await self.prompt_manager.get_reply_system_prompt(
             context=self.context
         )
-        # TODO: add communication history
+        # Explicit communication history confuses the structured output generation
         communication_history = None
-        # communication_history = await self._get_communication_history()
 
         # Determine the output type based on the input data
         dynamic_output_type_model = self._create_dynamic_output_type_model()
