@@ -130,7 +130,7 @@ class MessageHandler(RPBotMessageHandler):
         )
         agent_response = None
         async for agent_response in ai_agent.astream():
-            if not agent_response.text_chunk:
+            if agent_response is None or not agent_response.text_new_chunk:
                 continue
             yield CommandResponse(
                 text="streaming_message_response",
