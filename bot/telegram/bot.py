@@ -146,19 +146,33 @@ class TelegramBot:
         result: LocalizedCommandResponse,
         update: Update,
         context: CallbackContext,
-        first_message_id: str,
+        first_message_id: Optional[str],
     ) -> str:
         latest_text_response = result.localized_text
-        if latest_text_response or result.keyboard:
+        if latest_text_response or result.keyboard or result.image_url:
             if first_message_id is None:
                 return await self.process_result(result, update, context)
             else:
-                await context.bot.edit_message_text(
-                    chat_id=update.effective_chat.id,
-                    message_id=first_message_id,
-                    text=latest_text_response,
-                    reply_markup=result.keyboard,
-                )
+                # Note: Telegram doesn't support editing message media in text messages
+                # If there's an image, we need to send a new message
+                if result.image_url:
+                    # Send new message with image separately
+                    await self.send_message(
+                        context=context,
+                        chat_id=update.effective_chat.id,
+                        text=None,
+                        image_url=result.image_url,
+                        reply_message_id=update.effective_message.message_id,
+                        keyboard=None,
+                    )
+                    return first_message_id
+                else:
+                    await context.bot.edit_message_text(
+                        chat_id=update.effective_chat.id,
+                        message_id=first_message_id,
+                        text=latest_text_response,
+                        reply_markup=result.keyboard,
+                    )
         return first_message_id
 
     async def process_result(
@@ -171,6 +185,7 @@ class TelegramBot:
             context=context,
             chat_id=update.effective_chat.id,
             text=result.localized_text,
+            image_url=result.image_url,
             reply_message_id=update.effective_message.message_id,
             keyboard=result.keyboard,
         )
@@ -211,11 +226,22 @@ class TelegramBot:
                 button_action=keyboard.button_action,
             )
         )
-        return await context.bot.send_message(
-            chat_id=chat_id,
-            text=text,
-            reply_to_message_id=reply_message_id,
-            # photo=image_url,
-            parse_mode=parse_mode,
-            reply_markup=markup,
-        )
+
+        # If there's an image URL, send photo with caption
+        if image_url:
+            return await context.bot.send_photo(
+                chat_id=chat_id,
+                photo=image_url,
+                caption=text,
+                reply_to_message_id=reply_message_id,
+                parse_mode=parse_mode,
+                reply_markup=markup,
+            )
+        else:
+            return await context.bot.send_message(
+                chat_id=chat_id,
+                text=text,
+                reply_to_message_id=reply_message_id,
+                parse_mode=parse_mode,
+                reply_markup=markup,
+            )

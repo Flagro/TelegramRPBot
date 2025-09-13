@@ -128,14 +128,18 @@ class MessageHandler(RPBotMessageHandler):
             "Using AI to generate a response to the message from "
             f"{person.user_handle} in chat {context.chat_id}"
         )
+        response = None
         agent_response = None
         async for agent_response in ai_agent.astream():
-            if agent_response is None or not agent_response.text_new_chunk:
+            if agent_response is None:
                 continue
-            yield CommandResponse(
+            response = CommandResponse(
                 text="streaming_message_response",
-                kwargs={"response_text": agent_response.total_text},
+                image_url=agent_response.image_url,
+                audio_bytes=agent_response.audio_bytes,
+                kwargs={"response_text": agent_response.total_text or ""},
             )
+            yield response
 
         await self.db.dialogs.add_message_to_dialog(
             context=context,

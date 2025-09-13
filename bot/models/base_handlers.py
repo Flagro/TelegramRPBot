@@ -69,7 +69,10 @@ class BaseHandler(ABC):
             )
         )
         return LocalizedCommandResponse(
-            localized_text=localized_text, keyboard=command_response.keyboard
+            localized_text=localized_text,
+            keyboard=command_response.keyboard,
+            image_url=command_response.image_url,
+            audio_bytes=command_response.audio_bytes,
         )
 
     async def _log_handler_request(

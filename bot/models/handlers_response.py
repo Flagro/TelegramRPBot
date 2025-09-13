@@ -24,4 +24,6 @@ class LocalizedCommandResponse(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     localized_text: Optional[str] = None
+    image_url: Optional[str] = None
+    audio_bytes: Optional[io.BytesIO] = None
     keyboard: Optional[KeyboardResponse] = None

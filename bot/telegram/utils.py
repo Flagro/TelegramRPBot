@@ -184,5 +184,4 @@ async def buffer_streaming_response(
             current_response = None
             i = 0
             last_response_len = len(chunk.localized_text)
-    if i:
-        yield current_response
+    yield current_response
