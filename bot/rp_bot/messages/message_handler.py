@@ -9,7 +9,7 @@ from ..ai_agent.agent_tools.agent import AIAgent
 
 
 class MessageHandler(RPBotMessageHandler):
-    permission_classes = (AllowedUser, BotAdmin, NotBanned)
+    permission_classes = (AllowedUser, NotBanned)
 
     async def estimate_price(self, message: Message) -> float:
         """

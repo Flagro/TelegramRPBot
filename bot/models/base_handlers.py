@@ -97,7 +97,7 @@ class BaseHandler(ABC):
     ) -> LocalizedCommandResponse:
         await self.initialize_context(person, context)
         if not await self.is_authenticated(person, context):
-            return self.get_localized_response(
+            return await self.get_localized_response(
                 CommandResponse(text="not_authenticated"), context
             )
         await self._log_handler_request(person, context, message, args)

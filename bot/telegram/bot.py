@@ -111,7 +111,6 @@ class TelegramBot:
         Handles the update and sends the response back to the user.
         """
         bot_input = await get_bot_input(update, context)
-        await self.push_state(update, context, "sending_text")
 
         if bot_handler.streamable and self.telegram_bot_config.enable_message_streaming:
             first_message_id = None
@@ -130,6 +129,9 @@ class TelegramBot:
                 is_group_chat(update=update),
             ):
                 if result is not None:
+                    # Determine appropriate state based on content and push it
+                    await self.push_state(update, context, result)
+
                     # Track the final media and keyboard for sending after streaming
                     if result.image_url:
                         final_image_url = result.image_url
@@ -178,6 +180,8 @@ class TelegramBot:
                 args=bot_input.args,
             )
             if result is not None:
+                # Push state based on content type for non-streaming responses
+                await self.push_state(update, context, result)
                 await self.process_result(result, update, context)
 
     async def process_stream_result(
@@ -240,12 +244,33 @@ class TelegramBot:
         )
         return message.message_id
 
+    def _determine_push_state(
+        self, result: LocalizedCommandResponse
+    ) -> Optional[Literal["sending_text", "sending_image", "sending_audio"]]:
+        """
+        Determine the appropriate push state based on the content in the response.
+        Returns None if no content is present to push.
+        """
+        # Priority: audio > image > text (matching send_message logic)
+        if result.audio_bytes:
+            return "sending_audio"
+        elif result.image_url:
+            return "sending_image"
+        elif result.localized_text and result.localized_text.strip():
+            return "sending_text"
+        else:
+            # No meaningful content to push
+            return None
+
     async def push_state(
         self,
         update: Update,
         context: CallbackContext,
-        state: Literal["sending_text", "sending_image", "sending_audio"],
+        result: LocalizedCommandResponse,
     ) -> None:
+        state = self._determine_push_state(result)
+        if not state:
+            return
         action_map = {
             "sending_text": "typing",
             "sending_image": "upload_photo",

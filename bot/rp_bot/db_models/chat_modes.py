@@ -38,7 +38,11 @@ class ChatModes(BaseDBModel):
         chat_modes = []
         async for doc in cursor:
             chat_modes.append(
-                ChatModeResponse(doc["_id"], doc["mode_name"], doc["mode_description"])
+                ChatModeResponse(
+                    id=doc["_id"],
+                    mode_name=doc["mode_name"],
+                    mode_description=doc["mode_description"],
+                )
             )
         return chat_modes
 

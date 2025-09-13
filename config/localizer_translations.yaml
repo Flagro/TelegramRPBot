@@ -55,6 +55,8 @@ LocalizerTranslations:
     english: "Introduction {user_handle} added"
   inappropriate_introduction:
     english: "Inappropriate introduction text"
+  invalid_fact_args:
+    english: "Invalid fact arguments. Usage: /fact [@tg_handle] [fact text]"
   fact_added:
     english: "Fact {user_handle} added"
   user_facts:

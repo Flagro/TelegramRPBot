@@ -13,7 +13,11 @@ class CommandHandler(RPBotCommandHandler):
     async def get_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
+        if not args or len(args) < 2:
+            return CommandResponse(text="invalid_fact_args")
         facts_user_handle = args[0]
+        if not facts_user_handle.startswith("@"):
+            facts_user_handle = "@" + facts_user_handle
         facts = " ".join(args[1:])
         try:
             await self.db.user_facts.add_fact(context, facts_user_handle, facts)

@@ -15,6 +15,8 @@ class PromptManager:
 
     async def _compose_user_input_prompt(
         self,
+        person: Person,
+        context: Context,
         transcribed_message: TranscribedMessage,
     ) -> str:
         # TODO: also add user name and context details
@@ -31,12 +33,16 @@ class PromptManager:
                 f"{transcribed_message.voice_description}"
             )
             result.append(voice_prompt)
-        return " ".join(result)
+        message_prompt = " ".join(result)
+        return f"The user {person.user_handle} just said: {message_prompt}"
 
     async def compose_engage_needed_prompt(self, user_input: str) -> str:
         return (
             "Your task is to determine wether or not we can somehow "
             "engage after the user's input. "
+            "Note that engagement is expensive and should be used only when necessary like "
+            "explicit question for a bot or a request for general knowledge or when user is actively "
+            "engaged in the conversation with the bot."
             f"The user just said: {user_input}"
         )
 
@@ -67,19 +73,12 @@ class PromptManager:
     async def _compose_chat_history_prompt(self, user_input, context: Context) -> str:
         messages_history = await self.db.dialogs.get_messages(context)
         if len(messages_history) <= 1:
-            return (
-                "It's the first message in the chat.\n"
-                f"And the user just asked: {user_input}"
-            )
+            return "It's the first message in the chat.\n"
         # Take everything besides the last one since the last one is the current message
         messages_history_prompt = "\n".join(
             [f"{name}: {message}" for name, _, message in messages_history[:-1]]
         )
-        return (
-            "The conversation so far:\n"
-            f"{messages_history_prompt}\n\n"
-            f"And the user just asked: {user_input}"
-        )
+        return "The conversation so far:\n" f"{messages_history_prompt}\n\n"
 
     async def compose_prompt(
         self,
@@ -90,7 +89,9 @@ class PromptManager:
         current_date = _get_current_date_prompt()
         current_date_prompt = f"Today's date and time is: {current_date}"
         user_input_prompt = await self._compose_user_input_prompt(
-            transcribed_message=user_transcribed_message
+            person=initiator,
+            context=context,
+            transcribed_message=user_transcribed_message,
         )
         chat_history_prompt = await self._compose_chat_history_prompt(
             user_input_prompt, context

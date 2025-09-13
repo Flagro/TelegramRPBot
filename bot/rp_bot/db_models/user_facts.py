@@ -45,9 +45,11 @@ class UserFacts(BaseDBModel):
         )
         return facts.get("facts", []) if facts else []
 
-    async def add_fact(self, context: Context, person: Person, fact: str) -> None:
+    async def add_fact(
+        self, context: Context, facts_user_handle: str, fact: str
+    ) -> None:
         await self.user_facts.update_one(
-            {"chat_id": context.chat_id, "user_handle": person.user_handle},
+            {"chat_id": context.chat_id, "user_handle": facts_user_handle},
             {"$push": {"facts": fact}},
             upsert=True,
         )

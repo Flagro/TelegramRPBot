@@ -40,6 +40,8 @@ async def get_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Con
         return Context(
             chat_id=update.callback_query.message.chat.id,
             chat_name=update.callback_query.message.chat.title,
+            is_group=is_group_chat(update),
+            is_group_admin=await is_group_admin(update, context),
         )
     else:
         replied_to_user_handle = (

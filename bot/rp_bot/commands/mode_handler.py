@@ -16,7 +16,7 @@ class CommandHandler(ShowChatModesMixin, RPBotCommandHandler):
     ) -> CommandResponse:
         return CommandResponse(
             text="choose_mode",
-            keyboard=self._get_chat_modes_keyboard(
+            keyboard=await self._get_chat_modes_keyboard(
                 db=self.db,
                 context=context,
                 callback_action=CallbackHandler.callback_action,
