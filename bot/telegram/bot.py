@@ -13,7 +13,7 @@ from telegram.constants import ParseMode
 
 import logging
 import asyncio
-from typing import Literal, Optional
+from typing import Literal, Optional, Tuple
 from functools import partial
 
 from .utils import (
@@ -115,6 +115,10 @@ class TelegramBot:
 
         if bot_handler.streamable and self.telegram_bot_config.enable_message_streaming:
             first_message_id = None
+            final_image_url = None
+            final_keyboard = None
+            last_sent_text = None  # Track last sent text to avoid duplicate edits
+
             async for result in buffer_streaming_response(
                 bot_handler.stream_handle(
                     person=bot_input.person,
@@ -125,12 +129,42 @@ class TelegramBot:
                 is_group_chat(update=update),
             ):
                 if result is not None:
-                    first_message_id = await self.process_stream_result(
-                        result, update, context, first_message_id
+                    # Track the final image and keyboard for sending after streaming
+                    if result.image_url:
+                        final_image_url = result.image_url
+                    if result.keyboard:
+                        final_keyboard = result.keyboard
+
+                    # Stream only text updates (ignore image during streaming)
+                    first_message_id, last_sent_text = await self.process_stream_result(
+                        result, update, context, first_message_id, last_sent_text
                     )
                     await asyncio.sleep(
                         self.telegram_bot_config.stream_buffer_sleep_time
                     )
+
+            # After streaming is complete, send image as separate message if needed
+            if final_image_url:
+                await self.send_message(
+                    context=context,
+                    chat_id=update.effective_chat.id,
+                    text=None,
+                    image_url=final_image_url,
+                    reply_message_id=update.effective_message.message_id,
+                    keyboard=final_keyboard,
+                )
+            # If no image but there's a final keyboard, update the last message
+            elif final_keyboard and first_message_id:
+                markup = get_paginated_list_keyboard(
+                    value_id_to_name=final_keyboard.modes_dict,
+                    callback=final_keyboard.callback,
+                    button_action=final_keyboard.button_action,
+                )
+                await context.bot.edit_message_reply_markup(
+                    chat_id=update.effective_chat.id,
+                    message_id=first_message_id,
+                    reply_markup=markup,
+                )
         else:
             result = await bot_handler.handle(
                 person=bot_input.person,
@@ -147,33 +181,41 @@ class TelegramBot:
         update: Update,
         context: CallbackContext,
         first_message_id: Optional[str],
-    ) -> str:
+        last_sent_text: Optional[str] = None,
+    ) -> Tuple[Optional[str], Optional[str]]:
         latest_text_response = result.localized_text
-        if latest_text_response or result.keyboard or result.image_url:
+
+        # Only process text updates during streaming (ignore images and keyboards)
+        if latest_text_response:
             if first_message_id is None:
-                return await self.process_result(result, update, context)
+                # Send initial text message (without image/keyboard for streaming)
+                message = await self.send_message(
+                    context=context,
+                    chat_id=update.effective_chat.id,
+                    text=latest_text_response,
+                    image_url=None,  # No image during streaming
+                    reply_message_id=update.effective_message.message_id,
+                    keyboard=None,  # No keyboard during streaming
+                )
+                return message.message_id, latest_text_response
             else:
-                # Note: Telegram doesn't support editing message media in text messages
-                # If there's an image, we need to send a new message
-                if result.image_url:
-                    # Send new message with image separately
-                    await self.send_message(
-                        context=context,
-                        chat_id=update.effective_chat.id,
-                        text=None,
-                        image_url=result.image_url,
-                        reply_message_id=update.effective_message.message_id,
-                        keyboard=None,
-                    )
-                    return first_message_id
+                # Only update if text content has actually changed
+                if latest_text_response != last_sent_text:
+                    try:
+                        await context.bot.edit_message_text(
+                            chat_id=update.effective_chat.id,
+                            message_id=first_message_id,
+                            text=latest_text_response,
+                            reply_markup=None,  # No keyboard during streaming
+                        )
+                        return first_message_id, latest_text_response
+                    except Exception as e:
+                        self.logger.debug(f"Message edit failed: {e}")
+                        return first_message_id, last_sent_text
                 else:
-                    await context.bot.edit_message_text(
-                        chat_id=update.effective_chat.id,
-                        message_id=first_message_id,
-                        text=latest_text_response,
-                        reply_markup=result.keyboard,
-                    )
-        return first_message_id
+                    # Content is the same, no need to update
+                    return first_message_id, last_sent_text
+        return first_message_id, last_sent_text
 
     async def process_result(
         self,
