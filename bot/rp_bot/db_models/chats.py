@@ -71,7 +71,7 @@ class Chats(BaseDBModel):
             context
         )
         new_conversation_tracker_state = not old_conversation_tracker_state
-        await self.chat_modes.update_one(
+        await self.chats.update_one(
             {"chat_id": context.chat_id},
             {"$set": {"conversation_tracker": new_conversation_tracker_state}},
         )
@@ -86,7 +86,7 @@ class Chats(BaseDBModel):
     async def switch_auto_fact(self, context: Context) -> bool:
         old_auto_fact_state = await self.get_auto_fact_state(context)
         new_auto_fact_state = not old_auto_fact_state
-        await self.chat_modes.update_one(
+        await self.chats.update_one(
             {"chat_id": context.chat_id},
             {"$set": {"auto_fact": new_auto_fact_state}},
         )
@@ -101,7 +101,7 @@ class Chats(BaseDBModel):
     async def switch_autoengage(self, context: Context) -> bool:
         old_autoengage_state = await self.get_autoengage_state(context)
         new_autoengage_state = not old_autoengage_state
-        await self.chat_modes.update_one(
+        await self.chats.update_one(
             {"chat_id": context.chat_id},
             {"$set": {"autoengage": new_autoengage_state}},
         )

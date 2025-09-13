@@ -12,7 +12,7 @@ PyYAML = "6.0"
 motor = "*"
 python-decouple = "*"
 pydantic = "^2.7.4"
-omnimodkit = "0.0.7"
+omnimodkit = "0.0.8"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
