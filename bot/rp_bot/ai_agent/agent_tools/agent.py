@@ -36,7 +36,7 @@ class TextStreamingResponse(BaseModel):
 class AudioResponse(BaseModel):
     audio_description_to_generate: str = Field(
         default="",
-        description="Description of the generated audio.",
+        description="Description of the generated audio in the language of the user.",
     )
 
 

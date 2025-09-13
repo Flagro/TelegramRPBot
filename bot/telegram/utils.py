@@ -84,13 +84,15 @@ async def get_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Mes
     # get image and audio in memory
     image = None
     if is_bot_mentioned and update.message.photo:
-        image = get_file_in_memory(update.message.photo[-1].file_id, context)
+        image = await get_file_in_memory(update.message.photo[-1].file_id, context)
+        image.name = "image.png"
 
     voice = None
     if is_bot_mentioned and update.message.voice:
-        voice = get_file_in_memory(update.message.voice.file_id, context)
+        voice = await get_file_in_memory(update.message.voice.file_id, context)
+        voice.name = "audio.wav"
     return Message(
-        message_text=message,
+        message_text=message or "",
         timestamp=update.message.date,
         in_file_image=image,
         in_file_audio=voice,
@@ -124,10 +126,10 @@ async def get_file_in_memory(
     file_id: str, context: ContextTypes.DEFAULT_TYPE
 ) -> io.BytesIO:
     file = await context.bot.getFile(file_id)
-    file_stream = io.BytesIO()
-    await file.download(out=file_stream)
-    file_stream.seek(0)
-    return file_stream
+    file_bytes = await file.download_as_bytearray()
+    bytes_io = io.BytesIO(file_bytes)
+    bytes_io.seek(0)
+    return bytes_io
 
 
 def get_thread_id(update: Update) -> Optional[int]:
