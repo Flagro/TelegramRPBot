@@ -38,7 +38,7 @@ class BotInput(BaseModel):
 
 
 class TranscribedMessage(BaseModel):
-    message_text: str
+    message_text: Optional[str] = None
     timestamp: datetime
     image_description: Optional[str] = None
     voice_description: Optional[str] = None

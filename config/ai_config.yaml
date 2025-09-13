@@ -15,7 +15,7 @@ AIConfig:
           input_pixel_price: 0.0001
 
   image_generation:
-    output_image_size: "512x512"
+    output_image_size: "1024x1024"
     models:
       dall-e-3:
         name: "dall-e-3"

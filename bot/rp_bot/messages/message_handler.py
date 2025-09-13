@@ -147,19 +147,21 @@ class MessageHandler(RPBotMessageHandler):
         )
         if agent_response:
             await self.db.user_usage.add_usage_points(
-                person=person, points=agent_response.price
+                person=person, points=agent_response.total_price
             )
             await self.db.dialogs.add_message_to_dialog(
                 context=context,
                 person="bot",
                 transcribed_message=TranscribedMessage(
                     message_text=agent_response.total_text,
+                    image_description=agent_response.image_description,
+                    voice_description=agent_response.audio_description,
                     timestamp=datetime.now(),
                 ),
             )
             self.logger.info(
                 f"Generated a response for the message from {person.user_handle} in chat {context.chat_id} "
-                f"with usage of {agent_response.price}"
+                f"with usage of {agent_response.total_price}"
             )
         else:
             self.logger.info(

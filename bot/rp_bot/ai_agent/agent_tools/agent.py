@@ -417,7 +417,7 @@ class AIAgent:
             output.audio_bytes if self._can_use_model("audio_generation") else None
         )
 
-        return self.models_toolkit.get_price(
+        price = self.models_toolkit.get_price(
             input_text=total_input_text,
             output_text=output.total_text,
             input_image=input_image,
@@ -425,3 +425,6 @@ class AIAgent:
             input_audio=input_audio,
             output_audio=output_audio,
         )
+        modified_response = output
+        modified_response.total_price = price
+        return modified_response
