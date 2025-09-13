@@ -116,6 +116,7 @@ class TelegramBot:
         if bot_handler.streamable and self.telegram_bot_config.enable_message_streaming:
             first_message_id = None
             final_image_url = None
+            final_audio_bytes = None
             final_keyboard = None
             last_sent_text = None  # Track last sent text to avoid duplicate edits
 
@@ -129,13 +130,15 @@ class TelegramBot:
                 is_group_chat(update=update),
             ):
                 if result is not None:
-                    # Track the final image and keyboard for sending after streaming
+                    # Track the final media and keyboard for sending after streaming
                     if result.image_url:
                         final_image_url = result.image_url
+                    if result.audio_bytes:
+                        final_audio_bytes = result.audio_bytes
                     if result.keyboard:
                         final_keyboard = result.keyboard
 
-                    # Stream only text updates (ignore image during streaming)
+                    # Stream only text updates (ignore media during streaming)
                     first_message_id, last_sent_text = await self.process_stream_result(
                         result, update, context, first_message_id, last_sent_text
                     )
@@ -143,17 +146,19 @@ class TelegramBot:
                         self.telegram_bot_config.stream_buffer_sleep_time
                     )
 
-            # After streaming is complete, send image as separate message if needed
-            if final_image_url:
+            # After streaming is complete, send media as separate message if needed
+            # Priority: audio > image
+            if final_audio_bytes or final_image_url:
                 await self.send_message(
                     context=context,
                     chat_id=update.effective_chat.id,
                     text=None,
                     image_url=final_image_url,
+                    audio_bytes=final_audio_bytes,
                     reply_message_id=update.effective_message.message_id,
                     keyboard=final_keyboard,
                 )
-            # If no image but there's a final keyboard, update the last message
+            # If no media but there's a final keyboard, update the last message
             elif final_keyboard and first_message_id:
                 markup = get_paginated_list_keyboard(
                     value_id_to_name=final_keyboard.modes_dict,
@@ -193,7 +198,8 @@ class TelegramBot:
                     context=context,
                     chat_id=update.effective_chat.id,
                     text=latest_text_response,
-                    image_url=None,  # No image during streaming
+                    image_url=None,  # No media during streaming
+                    audio_bytes=None,  # No media during streaming
                     reply_message_id=update.effective_message.message_id,
                     keyboard=None,  # No keyboard during streaming
                 )
@@ -228,6 +234,7 @@ class TelegramBot:
             chat_id=update.effective_chat.id,
             text=result.localized_text,
             image_url=result.image_url,
+            audio_bytes=result.audio_bytes,
             reply_message_id=update.effective_message.message_id,
             keyboard=result.keyboard,
         )
@@ -255,6 +262,7 @@ class TelegramBot:
         chat_id: int,
         text: Optional[str] = None,
         image_url: Optional[str] = None,
+        audio_bytes: Optional[object] = None,
         reply_message_id: Optional[int] = None,
         parse_mode: ParseMode = ParseMode.HTML,
         keyboard: Optional[KeyboardResponse] = None,
@@ -269,8 +277,17 @@ class TelegramBot:
             )
         )
 
-        # If there's an image URL, send photo with caption
-        if image_url:
+        # Priority order: audio > image > text
+        if audio_bytes:
+            return await context.bot.send_audio(
+                chat_id=chat_id,
+                audio=audio_bytes,
+                caption=text,
+                reply_to_message_id=reply_message_id,
+                parse_mode=parse_mode,
+                reply_markup=markup,
+            )
+        elif image_url:
             return await context.bot.send_photo(
                 chat_id=chat_id,
                 photo=image_url,

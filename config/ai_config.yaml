@@ -35,6 +35,18 @@ AIConfig:
           input_audio_price_per_second: 0.0001
           output_token_price: 1
 
+  audio_generation:
+    max_input_tokens: 2000
+    voice: "alloy"
+    models:
+      text-to-speech:
+        name: "gpt-4o-mini-tts"
+        temperature: 0.7
+        is_default: true
+        rate:
+          input_token_price: 0.0001
+          output_audio_second_price: 0.0001
+
   vision:
     models:
       gpt-4o:
