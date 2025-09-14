@@ -106,7 +106,7 @@ class BaseHandler(ABC):
         except ModerationError as moderation_error:
             response = CommandResponse(
                 text="message_moderation_failed",
-                kwargs={"moderation_reason": str(moderation_error)},
+                kwargs={"moderation_reason": "openai moderation checker"},
             )
         if response is None:
             return None
@@ -129,7 +129,7 @@ class BaseHandler(ABC):
         except ModerationError as moderation_error:
             chunk = CommandResponse(
                 text="message_moderation_failed",
-                kwargs={"moderation_reason": str(moderation_error)},
+                kwargs={"moderation_reason": "openai moderation checker"},
             )
             yield await self.get_localized_response(chunk, context)
             return

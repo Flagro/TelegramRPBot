@@ -1138,14 +1138,14 @@ files = [
 
 [[package]]
 name = "omnimodkit"
-version = "0.0.8"
+version = "0.0.9"
 description = "Get structured output from multimodal AI models and integrate them into multitool agents"
 optional = false
 python-versions = "<4.0,>=3.10"
 groups = ["main"]
 files = [
-    {file = "omnimodkit-0.0.8-py3-none-any.whl", hash = "sha256:4354a21790ddee75428fc9f8cd00519795794a82c1b42c2e8238809f83e753c9"},
-    {file = "omnimodkit-0.0.8.tar.gz", hash = "sha256:27226a90b330f227280659f3b4a983d206091e3a21473a46472fe65e80857ea7"},
+    {file = "omnimodkit-0.0.9-py3-none-any.whl", hash = "sha256:80cfe72a691e5c6e8996ea8b1d41ccac4e785c4397f20754b69086dfb8332bda"},
+    {file = "omnimodkit-0.0.9.tar.gz", hash = "sha256:b46cd1c500e62e464663d587ea92a636d0d6b9a12fd70705c6db09f4e217feb3"},
 ]
 
 [package.dependencies]
@@ -2094,4 +2094,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "e789bacd348087c7076a3ed0d81409c3a21ba7b13099ddae9e990e41cfab0564"
+content-hash = "21e261da4ec45397566b2db2eb9402ef5921916a7e047006d03147d37182485b"
