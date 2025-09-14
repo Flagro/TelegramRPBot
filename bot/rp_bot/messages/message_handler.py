@@ -72,7 +72,12 @@ class MessageHandler(RPBotMessageHandler):
         engage_is_needed = False
         if autoengage_state:
             prompt = await self.prompt_manager.compose_engage_needed_prompt(
-                user_input=message.message_text
+                initiator=person,
+                context=context,
+                user_transcribed_message=TranscribedMessage(
+                    message_text=message.message_text,
+                    timestamp=message.timestamp,
+                ),
             )
             engage_is_needed = (
                 await self.models_toolkit.text_model.async_ask_yes_no_question(

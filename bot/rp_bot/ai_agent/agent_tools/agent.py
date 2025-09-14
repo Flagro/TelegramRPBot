@@ -8,6 +8,7 @@ from typing import (
     List,
     Protocol,
     Type,
+    Literal,
 )
 from logging import Logger
 from pydantic import BaseModel, Field, ConfigDict, create_model
@@ -37,6 +38,18 @@ class AudioResponse(BaseModel):
     audio_text_to_generate: str = Field(
         default="",
         description="Audio text to generate.",
+    )
+    voice: Literal["alloy", "echo", "fable", "onyx", "nova", "shimmer"] = Field(
+        default="alloy",
+        description=(
+            "Use alloy by default. However if user requests something specific, choose according to the following personas:\n"
+            "alloy - warm, clear, and versatile; a balanced voice that adapts easily to formal or casual settings.\n"
+            "echo - energetic and bright, with an expressive, youthful enthusiasm that makes conversations feel lively.\n"
+            "fable - calm, narrative, and a bit whimsical; sounds like a storyteller guiding listeners through ideas.\n"
+            "onyx - deep, confident, and steady; conveys authority and composure without being harsh.\n"
+            "nova - friendly, approachable, and modern; upbeat and easygoing, like chatting with a helpful companion.\n"
+            "shimmer - gentle, melodic, and slightly playful; soothing with a touch of sparkle, making interactions feel engaging and pleasant.",
+        ),
     )
 
 
@@ -265,6 +278,7 @@ class AIAgent:
                 await self.models_toolkit.audio_generation_model.arun_default(
                     system_prompt=system_prompt,
                     user_input=output_type.audio_text_to_generate,
+                    voice=output_type.voice,
                     communication_history=communication_history,
                 )
             )
