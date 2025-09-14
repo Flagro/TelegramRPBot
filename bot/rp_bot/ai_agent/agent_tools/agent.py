@@ -34,9 +34,9 @@ class TextStreamingResponse(BaseModel):
 
 
 class AudioResponse(BaseModel):
-    audio_description_to_generate: str = Field(
+    audio_text_to_generate: str = Field(
         default="",
-        description="Description of the generated audio in the language of the user.",
+        description="Audio text to generate.",
     )
 
 
@@ -264,13 +264,13 @@ class AIAgent:
             audio_response = (
                 await self.models_toolkit.audio_generation_model.arun_default(
                     system_prompt=system_prompt,
-                    user_input=output_type.audio_description_to_generate,
+                    user_input=output_type.audio_text_to_generate,
                     communication_history=communication_history,
                 )
             )
             final_response = AIAgentStreamingResponse(
                 audio_bytes=audio_response.audio_bytes,
-                audio_description=output_type.audio_description_to_generate,
+                audio_description=output_type.audio_text_to_generate,
             )
         elif isinstance(output_type, TextWithImageStreamingResponse):
             if not self._can_use_model("image_generation"):
