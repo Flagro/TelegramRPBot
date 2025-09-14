@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Tuple
 
 from .db import DB
 from ..models.handlers_input import Person, Context, TranscribedMessage
@@ -6,7 +7,7 @@ from ..models.handlers_input import Person, Context, TranscribedMessage
 
 def _get_current_date_prompt() -> str:
     date_prompt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    return date_prompt
+    return date_prompt + " (UTC)"
 
 
 class PromptManager:
@@ -75,7 +76,7 @@ class PromptManager:
 
     async def compose_user_facts_prompt(self, person: Person, context: Context) -> str:
         user_facts = await self.db.user_facts.get_user_facts(context, person)
-        return "The following facts are known about you:\n" + "\n".join(user_facts)
+        return "The following facts are known about the user:\n" + "\n".join(user_facts)
 
     async def _compose_user_introduction_prompt(
         self, person: Person, context: Context
@@ -85,13 +86,37 @@ class PromptManager:
         )
         return f"Introduction of a user who requested the response: {user_introduction}"
 
+    def _compose_message_history_prompt(
+        self, message_tuple: Tuple[str, bool, TranscribedMessage]
+    ) -> str:
+        name, is_bot, transcribed_message = message_tuple
+        message_date = transcribed_message.timestamp
+        result = [transcribed_message.message_text or ""]
+        if transcribed_message.image_description:
+            image_prompt = (
+                "The text description of the image is: "
+                f"{transcribed_message.image_description}"
+            )
+            result.append(image_prompt)
+        if transcribed_message.voice_description:
+            voice_prompt = (
+                "The text description of the attached voice audio is: "
+                f"{transcribed_message.voice_description}"
+            )
+            result.append(voice_prompt)
+        message_prompt = ". ".join(result)
+        return f"{name} ({message_date.strftime('%Y-%m-%d %H:%M:%S')} UTC): {message_prompt}"
+
     async def _compose_chat_history_prompt(self, user_input, context: Context) -> str:
         messages_history = await self.db.dialogs.get_messages(context)
-        if len(messages_history) <= 1:
+        if len(messages_history) == 0:
             return "It's the first message in the chat.\n"
         # Take everything besides the last one since the last one is the current message
         messages_history_prompt = "\n".join(
-            [f"{name}: {message}" for name, _, message in messages_history[:-1]]
+            [
+                self._compose_message_history_prompt(message_tuple)
+                for message_tuple in messages_history[:-1]
+            ]
         )
         return "The conversation so far:\n" f"{messages_history_prompt}\n\n"
 
@@ -141,6 +166,7 @@ class PromptManager:
             "Please note that user provides all the chat facts, personalities, and history for each message in the chat, "
             "along with it's message, so do not use these facts unless user's query is about them "
             "or they are absolutely relevant to compose the response. "
+            "Note the distance between messages in the chat, consider all messages within an hour to be part of the same conversation. "
             "Keep your responses natural and concise to maintain a natural conversation flow. "
             "but do not hesitate to answer in another language if user's query is in another language. "
         )

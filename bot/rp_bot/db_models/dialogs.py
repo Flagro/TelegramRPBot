@@ -23,7 +23,7 @@ class Dialogs(BaseDBModel):
 
     async def get_messages(
         self, context: Context
-    ) -> List[Tuple[str, bool, datetime, TranscribedMessage]]:
+    ) -> List[Tuple[str, bool, TranscribedMessage]]:
         """Get the last N messages from the dialog
 
         Args:
@@ -31,7 +31,7 @@ class Dialogs(BaseDBModel):
             last_n (int, optional): amount of messages. Defaults to 10.
 
         Returns:
-            List[Tuple[str, bool, datetime, TranscribedMessage]]: list of tuples with user_handle, is_bot and message
+            List[Tuple[str, bool, TranscribedMessage]]: list of tuples with user_handle, is_bot and message
         """
         cursor = (
             self.dialogs.find({"chat_id": context.chat_id})
