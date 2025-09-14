@@ -3,7 +3,7 @@ from datetime import datetime
 
 from ...models.handlers_response import CommandResponse
 from ...models.handlers_input import Person, Context, Message, TranscribedMessage
-from ..auth import AllowedUser, BotAdmin, NotBanned
+from ..auth import AllowedUser, NotBanned
 from ..rp_bot_handlers import RPBotMessageHandler
 from ..ai_agent.agent_tools.agent import AIAgent
 

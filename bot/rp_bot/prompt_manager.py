@@ -36,14 +36,29 @@ class PromptManager:
         message_prompt = " ".join(result)
         return f"The user {person.user_handle} just said: {message_prompt}"
 
-    async def compose_engage_needed_prompt(self, user_input: str) -> str:
+    async def compose_engage_needed_prompt(
+        self,
+        initiator: Person,
+        context: Context,
+        user_transcribed_message: TranscribedMessage,
+    ) -> str:
+        user_input = await self._compose_user_input_prompt(
+            person=initiator,
+            context=context,
+            transcribed_message=user_transcribed_message,
+        )
+        chat_mode_prompt = await self._compose_chat_mode_prompt(context)
         return (
             "Your task is to determine wether or not we can somehow "
             "engage after the user's input. "
             "Note that engagement is expensive and should be used only when necessary like "
             "explicit question for a bot or a request for general knowledge or when user is actively "
             "engaged in the conversation with the bot."
-            f"The user just said: {user_input}"
+            f"{user_input}\n\n"
+            "Please note the current chat mode is: "
+            f"{chat_mode_prompt}"
+            "Use it to balance the engagement according to chat mode's "
+            "usefulness, funniness and other factors."
         )
 
     async def _compose_chat_mode_prompt(self, context: Context) -> str:
