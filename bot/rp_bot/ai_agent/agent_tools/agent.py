@@ -28,6 +28,11 @@ class AIAgentResponseOutputTypeModel(Protocol):
 
 
 class TextStreamingResponse(BaseModel):
+    """
+    The most common output type - use it by default.
+    By selecting this output type, the text generation will be used.
+    """
+
     text_response: bool = Field(
         default=False,
         description="Indicates if the response is a text response.",
@@ -35,9 +40,14 @@ class TextStreamingResponse(BaseModel):
 
 
 class AudioResponse(BaseModel):
+    """
+    By selecting this output type, the audio generation will be used.
+    Use this output type only when excplitily requested.
+    """
+
     audio_text_to_generate: str = Field(
         default="",
-        description="Audio text to generate.",
+        description="Audio text to generate in the language of the user.",
     )
     voice: Literal["alloy", "echo", "fable", "onyx", "nova", "shimmer"] = Field(
         default="alloy",
@@ -54,13 +64,19 @@ class AudioResponse(BaseModel):
 
 
 class TextWithImageStreamingResponse(BaseModel):
+    """
+    By selecting this output type, the text generation will be used along with image generation.
+    Note that the image generation is expensive and should be used only when explicitly requested
+    or when it corresponds to the agent's personality.
+    """
+
     text_generation_needed: bool = Field(
         default=False,
         description="Indicates if text generation is needed.",
     )
     image_description_to_generate: str = Field(
         default="",
-        description="Description of the generated image.",
+        description="Description of the generated image in the language of the user.",
     )
 
 

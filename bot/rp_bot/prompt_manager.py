@@ -134,8 +134,13 @@ class PromptManager:
         return (
             "You are a helpful assistant. "
             f"You are currently in the chat: {chat_name}. "
+            "Here's your user-defined role: "
             f"{chat_mode_prompt} "
             "Please provide a response to the user's query. "
-            f"The chat that is used in chat is: {chat_language} "
+            f"The chat that is used in chat is: {chat_language} - use this language for all your responses. "
+            "Please note that user provides all the chat facts, personalities, and history for each message in the chat, "
+            "along with it's message, so do not use these facts unless user's query is about them "
+            "or they are absolutely relevant to compose the response. "
+            "Keep your responses natural and concise to maintain a natural conversation flow. "
             "but do not hesitate to answer in another language if user's query is in another language. "
         )
