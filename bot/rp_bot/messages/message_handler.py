@@ -165,7 +165,7 @@ class MessageHandler(RPBotMessageHandler):
                     message_text=agent_response.total_text,
                     image_description=agent_response.image_description,
                     voice_description=agent_response.audio_description,
-                    timestamp=datetime.now(),
+                    timestamp=message.timestamp,
                 ),
             )
             self.logger.info(

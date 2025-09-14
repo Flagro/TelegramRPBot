@@ -67,6 +67,9 @@ class ChatModes(BaseDBModel):
         return chat_data["mode_name"]
 
     async def set_chat_mode(self, context: Context, mode_id: str) -> None:
+        await self.chat_modes.update_many(
+            {"chat_id": context.chat_id}, {"$set": {"active_mode": False}}
+        )
         await self.chat_modes.update_one(
             {"chat_id": context.chat_id, "_id": ObjectId(mode_id)},
             {"$set": {"active_mode": True}},

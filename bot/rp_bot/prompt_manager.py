@@ -1,13 +1,7 @@
-from datetime import datetime
 from typing import Tuple
 
 from .db import DB
 from ..models.handlers_input import Person, Context, TranscribedMessage
-
-
-def _get_current_date_prompt() -> str:
-    date_prompt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    return date_prompt + " (UTC)"
 
 
 class PromptManager:
@@ -35,7 +29,10 @@ class PromptManager:
             )
             result.append(voice_prompt)
         message_prompt = " ".join(result)
-        return f"The user {person.user_handle} just said: {message_prompt}"
+        return (
+            f"The user {person.user_handle} just said "
+            f"({transcribed_message.timestamp.strftime('%Y-%m-%d %H:%M:%S')} UTC): {message_prompt}"
+        )
 
     async def compose_engage_needed_prompt(
         self,
@@ -49,6 +46,9 @@ class PromptManager:
             transcribed_message=user_transcribed_message,
         )
         chat_mode_prompt = await self._compose_chat_mode_prompt(context)
+        chat_history_prompt = await self._compose_chat_history_prompt(
+            user_input, context
+        )
         return (
             "Your task is to determine wether or not we can somehow "
             "engage after the user's input. "
@@ -58,6 +58,7 @@ class PromptManager:
             f"{user_input}\n\n"
             "Please note the current chat mode is: "
             f"{chat_mode_prompt}"
+            f"{chat_history_prompt}"
             "Use it to balance the engagement according to chat mode's "
             "usefulness, funniness and other factors."
         )
@@ -126,8 +127,8 @@ class PromptManager:
         context: Context,
         user_transcribed_message: TranscribedMessage,
     ) -> str:
-        current_date = _get_current_date_prompt()
-        current_date_prompt = f"Today's date and time is: {current_date}"
+        current_date = user_transcribed_message.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+        current_date_prompt = f"Today's date and time is: {current_date} (UTC)"
         user_input_prompt = await self._compose_user_input_prompt(
             person=initiator,
             context=context,
@@ -144,8 +145,8 @@ class PromptManager:
         return "\n".join(
             [
                 current_date_prompt,
-                user_input_prompt,
                 chat_history_prompt,
+                user_input_prompt,
                 chat_facts_prompt,
                 user_facts_prompt,
                 user_introduction_prompt,
