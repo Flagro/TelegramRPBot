@@ -16,7 +16,7 @@ class CommandHandler(ShowChatLanguagesMixin, RPBotCommandHandler):
     ) -> CommandResponse:
         return CommandResponse(
             text="choose_language",
-            keyboard=self._get_chat_languages_keyboard(
+            keyboard=await self._get_chat_languages_keyboard(
                 db=self.db,
                 context=context,
                 callback_action=CallbackHandler.callback_action,

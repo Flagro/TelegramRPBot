@@ -33,7 +33,7 @@ class CallbackHandler(ShowChatLanguagesMixin, RPBotCallbackHandler):
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
         return CommandResponse(
-            keyboard=self._get_chat_languages_keyboard(
+            keyboard=await self._get_chat_languages_keyboard(
                 db=self.db,
                 context=context,
                 callback_action=args[0],

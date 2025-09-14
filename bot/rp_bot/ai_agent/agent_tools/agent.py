@@ -41,7 +41,7 @@ class TextStreamingResponse(BaseModel):
 class AudioResponse(BaseModel):
     """
     By selecting this output type, the audio generation will be used.
-    Use this output type only when excplitily requested.
+    Use this output type only when excplitily requested since it is expensive.
     """
 
     audio_text_to_generate: str = Field(
