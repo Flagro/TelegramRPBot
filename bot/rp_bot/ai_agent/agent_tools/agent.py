@@ -48,7 +48,7 @@ class AudioResponse(BaseModel):
             "fable - calm, narrative, and a bit whimsical; sounds like a storyteller guiding listeners through ideas.\n"
             "onyx - deep, confident, and steady; conveys authority and composure without being harsh.\n"
             "nova - friendly, approachable, and modern; upbeat and easygoing, like chatting with a helpful companion.\n"
-            "shimmer - gentle, melodic, and slightly playful; soothing with a touch of sparkle, making interactions feel engaging and pleasant.",
+            "shimmer - gentle, melodic, and slightly playful; soothing with a touch of sparkle, making interactions feel engaging and pleasant."
         ),
     )
 
