@@ -108,6 +108,7 @@ class BaseHandler(ABC):
                 text="message_moderation_failed",
                 kwargs={"moderation_reason": "openai moderation checker"},
             )
+            self.logger.error(f"Message moderation failed: {moderation_error}")
         if response is None:
             return None
         return await self.get_localized_response(response, context)
@@ -131,6 +132,7 @@ class BaseHandler(ABC):
                 text="message_moderation_failed",
                 kwargs={"moderation_reason": "openai moderation checker"},
             )
+            self.logger.error(f"Message moderation failed: {moderation_error}")
             yield await self.get_localized_response(chunk, context)
             return
 
