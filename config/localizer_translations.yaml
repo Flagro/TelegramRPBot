@@ -1,98 +1,98 @@
 LocalizerTranslations:
   start_description:
-    english: "Start description text"
+    english: "⚡ Power up your conversation! Get ready to chat with lightning speed!"
   stop_description:
-    english: "Stop description text"
+    english: "⚡ Time to take a break! Powering down the conversation for now."
   reset_description:
-    english: "Reset description text"
+    english: "⚡ Clear the slate! Reset your conversation history like a bolt from the blue."
   mode_description:
-    english: "Mode description text"
+    english: "⚡ Switch up the vibe! Change your chat mode to spark new conversations."
   addmode_description:
-    english: "Add mode description text"
+    english: "⚡ Create your own lightning-fast chat personality! Add a custom mode."
   deletemode_description:
-    english: "Delete mode description text"
+    english: "⚡ Zap away unwanted modes! Remove chat modes you no longer need."
   introduce_description:
-    english: "Introduce description text"
+    english: "⚡ Let me know who you are! Share your introduction for better conversations."
   fact_description:
-    english: "Fact description text"
+    english: "⚡ Share lightning-quick facts! Add interesting details about yourself or others."
   facts_description:
-    english: "Facts description text"
+    english: "⚡ View stored facts! See all the lightning facts you've collected."
   clearfacts_description:
-    english: "Clear facts description text"
+    english: "⚡ Strike out the old! Clear all facts for a fresh start."
   usage_description:
-    english: "Usage description text"
+    english: "⚡ Check your power levels! View your current usage and limits."
   language_description:
-    english: "Language description text"
+    english: "⚡ Speak my language! Set your preferred language for lightning-fast communication."
   conversationtracker_description:
-    english: "Conversation tracker description text"
+    english: "⚡ Track the lightning! Toggle conversation tracking on or off."
   ban_description:
-    english: "Ban description text"
+    english: "⚡ Thunder strike! Temporarily ban a user from the chat (Admin only)."
   unban_description:
-    english: "Unban description text"
+    english: "⚡ Lift the storm! Remove a user's ban and welcome them back (Admin only)."
   help_description:
-    english: "Help description text"
+    english: "⚡ Need a spark? Get help and learn how to use all the lightning features!"
   default_command_description:
-    english: "Default command description text"
+    english: "⚡ Lightning command! Execute powerful bot actions."
   mode_set:
-    english: "Mode {mode_name} set"
+    english: "⚡ Lightning mode activated! Now chatting in {mode_name} mode."
   mode_deleted:
-    english: "Mode {mode_name} deleted"
+    english: "⚡ Zapped! {mode_name} mode has been struck from existence."
   choose_mode:
-    english: "Choose mode text"
+    english: "⚡ Time to choose your lightning! Pick a chat mode that sparks your interest."
   mode_added:
-    english: "Mode {mode_name} added"
+    english: "⚡ Electrifying! {mode_name} mode has been charged up and ready to go!"
   inappropriate_mode:
-    english: "Inappropriate mode text"
+    english: "⚡ Storm warning! That mode seems inappropriate - let's try something more positive."
   user_banned:
-    english: "User {user_handle} banned for {ban_duration} seconds"
+    english: "⚡ Thunder strike! {user_handle} has been temporarily banned for {ban_duration} seconds."
   user_unbanned:
-    english: "User {user_handle} unbanned"
+    english: "⚡ Storm cleared! {user_handle} is now free to chat again."
   start_done:
-    english: "Start done!"
+    english: "⚡ Powered up! Let's make some lightning conversations happen!"
   stop_done:
-    english: "Stop done!"
+    english: "⚡ Power down complete! Chat you later when you're ready to spark up again."
   introduction_added:
-    english: "Introduction {user_handle} added"
+    english: "⚡ Nice to meet you! {user_handle}'s introduction has been lightning-fast saved."
   inappropriate_introduction:
-    english: "Inappropriate introduction text"
+    english: "⚡ Static detected! That introduction seems inappropriate - let's keep things positive."
   invalid_fact_args:
-    english: "Invalid fact arguments. Usage: /fact [@tg_handle] [fact text]"
+    english: "⚡ Wiring issue! Please use: /fact [@username] [your lightning fact here]"
   fact_added:
-    english: "Fact {user_handle} added"
+    english: "⚡ Fact charged! New lightning knowledge about {user_handle} has been stored."
   user_facts:
-    english: "User {user_handle} facts: {facts}"
+    english: "⚡ Lightning facts about {user_handle}: {facts}"
   inappropriate_fact:
-    english: "Inappropriate fact text"
+    english: "⚡ Short circuit! That fact seems inappropriate - let's keep the energy positive."
   facts_cleared:
-    english: "Facts {user_handle} cleared"
+    english: "⚡ Memory wiped! All facts about {user_handle} have been cleared like lightning."
   usage_text:
-    english: "Usage {this_month_usage} text"
+    english: "⚡ Power meter reading: {this_month_usage} lightning bolts used this month!"
   language_set:
-    english: "Language {language} set"
+    english: "⚡ Language switched! Now speaking {language} at lightning speed."
   reset_done:
-    english: "Reset done!"
+    english: "⚡ Fresh start! Your conversation history has been cleared like a lightning flash."
   not_authenticated:
-    english: "You are not authenticated to do this action"
+    english: "⚡ Access denied! You need lightning-level permissions for this action."
   conversation_tracker_turned_on:
-    english: "Conversation tracker turned on"
+    english: "⚡ Tracking enabled! Now monitoring conversations at lightning speed."
   conversation_tracker_turned_off:
-    english: "Conversation tracker turned off"
+    english: "⚡ Tracking disabled! Conversation monitoring has been powered down."
   autoengage_turned_on:
-    english: "Autoengage turned on"
+    english: "⚡ Auto-spark activated! I'll now jump into conversations like lightning."
   autoengage_turned_off:
-    english: "Autoengage turned off"
+    english: "⚡ Auto-spark deactivated! I'll wait for your lightning call before joining."
   autofact_turned_on:
-    english: "Autofact turned on"
+    english: "⚡ Auto-facts charged! I'll now collect lightning facts automatically."
   autofact_turned_off:
-    english: "Autofact turned off"
+    english: "⚡ Auto-facts powered down! Manual fact collection mode activated."
   message_response:
-    english: "{response_text}"
+    english: "⚡ {response_text}"
   streaming_message_response:
-    english: "{response_text}"
+    english: "⚡ {response_text}"
   message_moderation_failed:
-    english: "Message moderation failed, reason: {moderation_reason}"
+    english: "⚡ Static interference! Message blocked for: {moderation_reason}"
   usage_limit_exceeded:
-    english: "Usage limit exceeded for {user_handle} with {user_limit} limit"
+    english: "⚡ Power overload! {user_handle} has exceeded their {user_limit} lightning limit."
   help_text:
     english: |
       <strong>Features 🌟</strong>
