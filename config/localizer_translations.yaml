@@ -2,144 +2,191 @@ LocalizerTranslations:
   start_description:
     english: "⚡ Power up your conversation! Get ready to chat with lightning speed!"
     russian: "⚡ Запускаем беседу! Готовьтесь к общению со скоростью молнии!"
+    spanish: "⚡ ¡Enciende tu conversación! ¡Prepárate para chatear a la velocidad del rayo!"
   stop_description:
     english: "⚡ Time to take a break! Powering down the conversation for now."
     russian: "⚡ Время для перерыва! Выключаем беседу на время."
+    spanish: "⚡ ¡Hora de tomar un descanso! Apagando la conversación por ahora."
   reset_description:
     english: "⚡ Clear the slate! Reset your conversation history like a bolt from the blue."
     russian: "⚡ Очистим историю! Сбрасываем историю диалога как молния!"
+    spanish: "⚡ ¡Borrón y cuenta nueva! Reinicia tu historial de conversación como un rayo."
   mode_description:
     english: "⚡ Switch up the vibe! Change your chat mode to spark new conversations."
     russian: "⚡ Меняем атмосферу! Переключите режим чата для новых разговоров."
+    spanish: "⚡ ¡Cambia el ambiente! Cambia tu modo de chat para encender nuevas conversaciones."
   addmode_description:
     english: "⚡ Create your own lightning-fast chat personality! Add a custom mode."
     russian: "⚡ Создайте собственную молниеносную личность! Добавьте свой режим."
+    spanish: "⚡ ¡Crea tu propia personalidad de chat ultrarrápida! Agrega un modo personalizado."
   deletemode_description:
     english: "⚡ Zap away unwanted modes! Remove chat modes you no longer need."
     russian: "⚡ Удаляем ненужные режимы! Убираем режимы чата, которые больше не нужны."
+    spanish: "⚡ ¡Elimina modos no deseados! Remueve modos de chat que ya no necesitas."
   introduce_description:
     english: "⚡ Let me know who you are! Share your introduction for better conversations."
     russian: "⚡ Расскажите о себе! Поделитесь своим представлением для лучших бесед."
+    spanish: "⚡ ¡Déjame saber quién eres! Comparte tu presentación para mejores conversaciones."
   fact_description:
     english: "⚡ Share lightning-quick facts! Add interesting details about yourself or others."
     russian: "⚡ Поделитесь молниеносными фактами! Добавьте интересные детали о себе или других."
+    spanish: "⚡ ¡Comparte datos ultrarrápidos! Agrega detalles interesantes sobre ti o sobre otros."
   facts_description:
     english: "⚡ View stored facts! See all the lightning facts you've collected."
     russian: "⚡ Просмотр сохранённых фактов! Посмотрите все собранные молниеносные факты."
+    spanish: "⚡ ¡Ve los datos guardados! Mira todos los datos ultrarrápidos que has recolectado."
   clearfacts_description:
     english: "⚡ Strike out the old! Clear all facts for a fresh start."
     russian: "⚡ Стираем старое! Очищаем все факты для нового начала."
+    spanish: "⚡ ¡Borra lo viejo! Limpia todos los datos para un nuevo comienzo."
   usage_description:
     english: "⚡ Check your power levels! View your current usage and limits."
     russian: "⚡ Проверьте уровень энергии! Посмотрите текущее использование и лимиты."
+    spanish: "⚡ ¡Revisa tus niveles de energía! Ve tu uso actual y límites."
   language_description:
     english: "⚡ Speak my language! Set your preferred language for lightning-fast communication."
     russian: "⚡ Говорите на моём языке! Установите предпочитаемый язык для молниеносного общения."
+    spanish: "⚡ ¡Habla mi idioma! Establece tu idioma preferido para comunicación ultrarrápida."
   conversationtracker_description:
     english: "⚡ Track the lightning! Toggle conversation tracking on or off."
     russian: "⚡ Отслеживайте молнию! Включите или выключите отслеживание разговоров."
+    spanish: "⚡ ¡Rastrea el rayo! Activa o desactiva el seguimiento de conversaciones."
   ban_description:
     english: "⚡ Thunder strike! Temporarily ban a user from the chat (Admin only)."
     russian: "⚡ Удар грома! Временно заблокировать пользователя в чате (только для админов)."
+    spanish: "⚡ ¡Golpe de trueno! Banea temporalmente a un usuario del chat (Solo administradores)."
   unban_description:
     english: "⚡ Lift the storm! Remove a user's ban and welcome them back (Admin only)."
     russian: "⚡ Снимаем бурю! Убираем блокировку пользователя и приглашаем обратно (только для админов)."
+    spanish: "⚡ ¡Levanta la tormenta! Remueve el baneo de un usuario y dales la bienvenida de vuelta (Solo administradores)."
   help_description:
     english: "⚡ Need a spark? Get help and learn how to use all the lightning features!"
     russian: "⚡ Нужна искра? Получите помощь и узнайте, как использовать все молниеносные функции!"
+    spanish: "⚡ ¿Necesitas una chispa? ¡Obtén ayuda y aprende a usar todas las funciones ultrarrápidas!"
   default_command_description:
     english: "⚡ Lightning command! Execute powerful bot actions."
     russian: "⚡ Молниеносная команда! Выполняйте мощные действия бота."
+    spanish: "⚡ ¡Comando ultrarrápido! Ejecuta acciones poderosas del bot."
   mode_set:
     english: "⚡ Lightning mode activated! Now chatting in {mode_name} mode."
     russian: "⚡ Молниеносный режим активирован! Теперь общаемся в режиме {mode_name}."
+    spanish: "⚡ ¡Modo ultrarrápido activado! Ahora chateando en modo {mode_name}."
   mode_deleted:
     english: "⚡ Zapped! {mode_name} mode has been struck from existence."
     russian: "⚡ Удалено! Режим {mode_name} стёрт из существования."
+    spanish: "⚡ ¡Eliminado! El modo {mode_name} ha sido borrado de la existencia."
   choose_mode:
     english: "⚡ Time to choose your lightning! Pick a chat mode that sparks your interest."
     russian: "⚡ Время выбрать свою молнию! Выберите режим чата, который вас заинтересует."
+    spanish: "⚡ ¡Hora de elegir tu rayo! Escoge un modo de chat que despierte tu interés."
   mode_added:
     english: "⚡ Electrifying! {mode_name} mode has been charged up and ready to go!"
     russian: "⚡ Электрифицирующе! Режим {mode_name} заряжен и готов к работе!"
+    spanish: "⚡ ¡Electrizante! ¡El modo {mode_name} ha sido cargado y está listo para funcionar!"
   inappropriate_mode:
     english: "⚡ Storm warning! That mode seems inappropriate - let's try something more positive."
     russian: "⚡ Предупреждение о буре! Этот режим кажется неподходящим - попробуем что-то более позитивное."
+    spanish: "⚡ ¡Alerta de tormenta! Ese modo parece inapropiado - probemos algo más positivo."
   user_banned:
     english: "⚡ Thunder strike! {user_handle} has been temporarily banned for {ban_duration} seconds."
     russian: "⚡ Удар грома! {user_handle} временно заблокирован на {ban_duration} секунд."
+    spanish: "⚡ ¡Golpe de trueno! {user_handle} ha sido baneado temporalmente por {ban_duration} segundos."
   user_unbanned:
     english: "⚡ Storm cleared! {user_handle} is now free to chat again."
     russian: "⚡ Буря прошла! {user_handle} теперь снова может общаться."
+    spanish: "⚡ ¡Tormenta despejada! {user_handle} ahora es libre de chatear de nuevo."
   start_done:
     english: "⚡ Powered up! Let's make some lightning conversations happen!"
     russian: "⚡ Включились! Давайте создадим молниеносные беседы!"
+    spanish: "⚡ ¡Encendido! ¡Hagamos que sucedan conversaciones ultrarrápidas!"
   stop_done:
     english: "⚡ Power down complete! Chat you later when you're ready to spark up again."
     russian: "⚡ Выключение завершено! Поговорим позже, когда будете готовы зажечь снова."
+    spanish: "⚡ ¡Apagado completo! Te hablo después cuando estés listo para encenderte de nuevo."
   introduction_added:
     english: "⚡ Nice to meet you! {user_handle}'s introduction has been lightning-fast saved."
     russian: "⚡ Приятно познакомиться! Представление {user_handle} сохранено со скоростью молнии."
+    spanish: "⚡ ¡Mucho gusto! La presentación de {user_handle} ha sido guardada a la velocidad del rayo."
   inappropriate_introduction:
     english: "⚡ Static detected! That introduction seems inappropriate - let's keep things positive."
     russian: "⚡ Обнаружены помехи! Это представление кажется неподходящим - давайте останемся позитивными."
+    spanish: "⚡ ¡Interferencia detectada! Esa presentación parece inapropiada - mantengamos las cosas positivas."
   invalid_fact_args:
     english: "⚡ Wiring issue! Please use: /fact [@username] [your lightning fact here]"
     russian: "⚡ Проблема с проводкой! Используйте: /fact [@имя_пользователя] [ваш молниеносный факт]"
+    spanish: "⚡ ¡Problema de cableado! Por favor usa: /fact [@usuario] [tu dato ultrarrápido aquí]"
   fact_added:
     english: "⚡ Fact charged! New lightning knowledge about {user_handle} has been stored."
     russian: "⚡ Факт заряжен! Новые молниеносные знания о {user_handle} сохранены."
+    spanish: "⚡ ¡Dato cargado! Nuevo conocimiento ultrarrápido sobre {user_handle} ha sido almacenado."
   user_facts:
     english: "⚡ Lightning facts about {user_handle}: {facts}"
     russian: "⚡ Молниеносные факты о {user_handle}: {facts}"
+    spanish: "⚡ Datos ultrarrápidos sobre {user_handle}: {facts}"
   inappropriate_fact:
     english: "⚡ Short circuit! That fact seems inappropriate - let's keep the energy positive."
     russian: "⚡ Короткое замыкание! Этот факт кажется неподходящим - давайте сохраним позитивную энергию."
+    spanish: "⚡ ¡Cortocircuito! Ese dato parece inapropiado - mantengamos la energía positiva."
   facts_cleared:
     english: "⚡ Memory wiped! All facts about {user_handle} have been cleared like lightning."
     russian: "⚡ Память стёрта! Все факты о {user_handle} очищены как молния."
+    spanish: "⚡ ¡Memoria borrada! Todos los datos sobre {user_handle} han sido limpiados como un rayo."
   usage_text:
     english: "⚡ Power meter reading: {this_month_usage} lightning bolts used this month!"
     russian: "⚡ Показания счётчика энергии: {this_month_usage} молний использовано в этом месяце!"
+    spanish: "⚡ Lectura del medidor de energía: ¡{this_month_usage} rayos usados este mes!"
   language_set:
     english: "⚡ Language switched! Now speaking {language} at lightning speed."
     russian: "⚡ Язык переключён! Теперь говорим на {language} со скоростью молнии."
+    spanish: "⚡ ¡Idioma cambiado! Ahora hablando {language} a la velocidad del rayo."
   reset_done:
     english: "⚡ Fresh start! Your conversation history has been cleared like a lightning flash."
     russian: "⚡ Новое начало! История вашего разговора очищена как вспышка молнии."
+    spanish: "⚡ ¡Nuevo comienzo! Tu historial de conversación ha sido limpiado como un destello de rayo."
   not_authenticated:
     english: "⚡ Access denied! You need lightning-level permissions for this action."
     russian: "⚡ Доступ запрещён! Для этого действия нужны разрешения уровня молнии."
+    spanish: "⚡ ¡Acceso denegado! Necesitas permisos de nivel rayo para esta acción."
   conversation_tracker_turned_on:
     english: "⚡ Tracking enabled! Now monitoring conversations at lightning speed."
     russian: "⚡ Отслеживание включено! Теперь мониторим разговоры со скоростью молнии."
+    spanish: "⚡ ¡Seguimiento activado! Ahora monitoreando conversaciones a la velocidad del rayo."
   conversation_tracker_turned_off:
     english: "⚡ Tracking disabled! Conversation monitoring has been powered down."
     russian: "⚡ Отслеживание отключено! Мониторинг разговоров выключен."
+    spanish: "⚡ ¡Seguimiento desactivado! El monitoreo de conversaciones ha sido apagado."
   autoengage_turned_on:
     english: "⚡ Auto-spark activated! I'll now jump into conversations like lightning."
     russian: "⚡ Авто-искра активирована! Теперь я буду вступать в разговоры как молния."
+    spanish: "⚡ ¡Auto-chispa activada! Ahora saltaré a las conversaciones como un rayo."
   autoengage_turned_off:
     english: "⚡ Auto-spark deactivated! I'll wait for your lightning call before joining."
     russian: "⚡ Авто-искра деактивирована! Буду ждать вашего молниеносного вызова перед участием."
+    spanish: "⚡ ¡Auto-chispa desactivada! Esperaré tu llamada ultrarrápida antes de unirme."
   autofact_turned_on:
     english: "⚡ Auto-facts charged! I'll now collect lightning facts automatically."
     russian: "⚡ Авто-факты заряжены! Теперь я буду собирать молниеносные факты автоматически."
+    spanish: "⚡ ¡Auto-datos cargados! Ahora recolectaré datos ultrarrápidos automáticamente."
   autofact_turned_off:
     english: "⚡ Auto-facts powered down! Manual fact collection mode activated."
     russian: "⚡ Авто-факты выключены! Активирован режим ручного сбора фактов."
+    spanish: "⚡ ¡Auto-datos apagados! Modo de recolección manual de datos activado."
   message_response:
     english: "⚡ {response_text}"
     russian: "⚡ {response_text}"
+    spanish: "⚡ {response_text}"
   streaming_message_response:
     english: "⚡ {response_text}"
     russian: "⚡ {response_text}"
+    spanish: "⚡ {response_text}"
   message_moderation_failed:
     english: "⚡ Static interference! Message blocked for: {moderation_reason}"
     russian: "⚡ Статические помехи! Сообщение заблокировано по причине: {moderation_reason}"
+    spanish: "⚡ ¡Interferencia estática! Mensaje bloqueado por: {moderation_reason}"
   usage_limit_exceeded:
     english: "⚡ Power overload! {user_handle} has exceeded their {user_limit} lightning limit."
     russian: "⚡ Перегрузка мощности! {user_handle} превысил лимит {user_limit} молний."
+    spanish: "⚡ ¡Sobrecarga de energía! {user_handle} ha excedido su límite de {user_limit} rayos."
   help_text:
     english: |
       <strong>Features 🌟</strong>
@@ -203,3 +250,34 @@ LocalizerTranslations:
       • <em>/ban [@tg_handle]</em> (только админ) - Заблокировать пользователя (может работать при ответе на сообщение пользователя)
       • <em>/unban [@tg_handle]</em> (только админ) - Разблокировать пользователя
       • <em>/help</em> - Показать справку
+    spanish: |
+      <strong>Características 🌟</strong>
+      • <b>Crea y usa modos de chat limitados</b> describiendo el agente y cómo quieres que actúe
+      • <b>Preséntate al modelo</b>
+      • <b>Agrega datos sobre ti o sobre otras personas</b> que el modelo usará después
+      • <b>Chatea con el bot</b>:
+        - Envíale texto 📝
+        - Envíale imágenes 📷
+        - Envíale mensajes de voz 🎙
+        - Recibe texto de vuelta 📩
+        - Recibe imágenes de vuelta 🖼
+      • <b>Seguimiento flexible del uso de recursos de IA</b> 📊
+      • <b>Completamente de código abierto</b> revisa el código en <a href="https://github.com/Flagro/TelegramRPBot">GitHub</a>
+
+      <strong>Comandos del bot 🔧</strong>
+      • <em>/start</em> - Iniciar el diálogo
+      • <em>/stop</em> - Detener el diálogo
+      • <em>/reset</em> - Reiniciar el historial del diálogo
+      • <em>/mode [modo]</em> - Seleccionar modo de chat de los existentes
+      • <em>/addmode [modo] [descripción]</em> - Agregar nuevo modo de chat
+      • <em>/deletemode [modo]</em> - eliminar modo de chat existente de este chat
+      • <em>/introduce [tu presentación]</em> - Agregar dato sobre ti mismo
+      • <em>/fact [@tg_handle] [dato]</em> - agregar dato sobre la persona en el chat
+      • <em>/clearfacts [@tg_handle]</em> - eliminar datos para la persona dada
+      • <em>/conversationtracker</em> - Activar/desactivar seguimiento de conversaciones
+      • <em>/autoengage</em> - Activar/desactivar el modo de participación automática (el bot participará automáticamente en la conversación)
+      • <em>/usage</em> - Mostrar límites de uso para tu usuario
+      • <em>/language</em> - Establecer idioma preferido del bot
+      • <em>/ban [@tg_handle]</em> (Solo admin) - Banear al usuario (también puede funcionar respondiendo al mensaje del usuario)
+      • <em>/unban [@tg_handle]</em> (Solo admin) - Desbanear al usuario
+      • <em>/help</em> - Mostrar ayuda
