@@ -1,4 +1,3 @@
-from abc import abstractmethod
 from typing import List
 from collections import OrderedDict
 
@@ -8,7 +7,6 @@ from ...models.handlers_input import Person, Context, Message
 from ..rp_bot_handlers import RPBotCallbackHandler
 from ..db import DB
 from ..auth import AllowedUser, NotBanned
-from ..localizer import Localizer
 
 
 class ShowChatLanguagesMixin:
@@ -17,7 +15,7 @@ class ShowChatLanguagesMixin:
     async def _get_chat_languages_keyboard(
         self, db: DB, context: Context, callback_action: str
     ) -> KeyboardResponse:
-        available_languages = self.localizer.get_supported_languages()
+        available_languages = await self.localizer.get_supported_languages()
         modes_dict = OrderedDict(
             {str(language): str(language) for language in available_languages}
         )
@@ -26,11 +24,6 @@ class ShowChatLanguagesMixin:
             callback=self._show_chat_languages_callback,
             button_action=callback_action,
         )
-
-    @property
-    @abstractmethod
-    def localizer(self) -> Localizer:
-        raise NotImplementedError
 
 
 class CallbackHandler(ShowChatLanguagesMixin, RPBotCallbackHandler):
@@ -41,6 +34,7 @@ class CallbackHandler(ShowChatLanguagesMixin, RPBotCallbackHandler):
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
         return CommandResponse(
+            text="choose_language",
             keyboard=await self._get_chat_languages_keyboard(
                 db=self.db,
                 context=context,

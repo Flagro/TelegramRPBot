@@ -1,5 +1,4 @@
 from typing import List, Tuple, Union, Literal, Optional
-from datetime import datetime
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from .base_db_model import BaseDBModel

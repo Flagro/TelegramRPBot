@@ -135,6 +135,10 @@ LocalizerTranslations:
     english: "⚡ Power meter reading: {this_month_usage} lightning bolts used this month!"
     russian: "⚡ Показания счётчика энергии: {this_month_usage} молний использовано в этом месяце!"
     spanish: "⚡ Lectura del medidor de energía: ¡{this_month_usage} rayos usados este mes!"
+  choose_language:
+    english: "⚡ Time to choose your language! Pick a language that sparks your interest."
+    russian: "⚡ Время выбрать свой язык! Выберите язык, который вас заинтересует."
+    spanish: "⚡ ¡Hora de elegir tu idioma! Escoge un idioma que despierte tu interés."
   language_set:
     english: "⚡ Language switched! Now speaking {language} at lightning speed."
     russian: "⚡ Язык переключён! Теперь говорим на {language} со скоростью молнии."
