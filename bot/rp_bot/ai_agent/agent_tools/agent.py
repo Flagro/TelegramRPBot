@@ -18,6 +18,7 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from .agent_toolkit import AIAgentToolkit
 from ...prompt_manager import PromptManager
 from ....models.handlers_input import Person, Context, Message, TranscribedMessage
+from .autofact_generation import UserFact
 
 
 class AIAgentResponseOutputTypeModel(Protocol):
@@ -117,6 +118,9 @@ class AIAgentStreamingResponse(BaseModel):
         description="Total price of the model response based on input and output.",
     )
     transcribed_user_message: TranscribedMessage = Field(default=None)
+    generated_facts: List[UserFact] = Field(
+        default_factory=list, description="Generated facts about the users in the chat."
+    )
 
 
 class AIAgent:
@@ -128,6 +132,7 @@ class AIAgent:
         db: AsyncIOMotorDatabase,
         models_toolkit: ModelsToolkit,
         prompt_manager: PromptManager,
+        autofact_enabled: bool,
         logger: Logger,
     ):
         self.person = person
@@ -140,6 +145,7 @@ class AIAgent:
             person, context, message, db, models_toolkit, prompt_manager
         )
         self.models_toolkit = models_toolkit
+        self.autofact_enabled = autofact_enabled
         self.logger = logger
 
     async def _get_transcribed_message(self) -> TranscribedMessage:

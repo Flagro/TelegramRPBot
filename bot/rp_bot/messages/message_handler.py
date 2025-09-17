@@ -120,6 +120,8 @@ class MessageHandler(RPBotMessageHandler):
             yield await self.get_usage_over_limit_response(person=person)
             return
 
+        autofact_enabled = await self.db.chats.get_auto_fact_state(context=context)
+
         ai_agent = AIAgent(
             person=person,
             context=context,
@@ -127,6 +129,7 @@ class MessageHandler(RPBotMessageHandler):
             db=self.db,
             models_toolkit=self.models_toolkit,
             prompt_manager=self.prompt_manager,
+            autofact_enabled=autofact_enabled,
             logger=self.logger,
         )
         self.logger.info(
