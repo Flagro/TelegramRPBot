@@ -171,6 +171,12 @@ class MessageHandler(RPBotMessageHandler):
                     timestamp=message.timestamp,
                 ),
             )
+            for fact in agent_response.generated_facts:
+                await self.db.user_facts.add_fact(
+                    context=context,
+                    facts_user_handle=fact.user_handle,
+                    fact=fact.user_fact,
+                )
             self.logger.info(
                 f"Generated a response for the message from {person.user_handle} in chat {context.chat_id} "
                 f"with usage of {agent_response.total_price}"
