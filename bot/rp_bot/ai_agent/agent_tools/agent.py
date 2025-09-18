@@ -339,12 +339,19 @@ class AIAgent:
             )
         else:
             raise ValueError("Unexpected output type received from the model.")
-        yield self.inject_price(
+        final_response = self.inject_price(
             output=final_response,
             transcribed_user_message=transcribed_user_message,
             system_prompt=system_prompt,
             communication_history=communication_history,
         )
+        final_response = self.inject_autofact(
+            output=final_response,
+            transcribed_user_message=transcribed_user_message,
+            system_prompt=system_prompt,
+            communication_history=communication_history,
+        )
+        yield final_response
 
     def inject_price(
         self,
@@ -391,3 +398,18 @@ class AIAgent:
         modified_response = output
         modified_response.total_price = price
         return modified_response
+
+    def inject_autofact(
+        self,
+        output: AIAgentStreamingResponse,
+        transcribed_user_message: TranscribedMessage,
+        system_prompt: Optional[str] = None,
+        communication_history: Optional[List[OpenAIMessage]] = None,
+    ) -> AIAgentStreamingResponse:
+        """
+        Inject the autofact into the AIAgentStreamingResponse based on the input and output.
+        """
+        if not self.autofact_enabled:
+            return output
+        # TODO: generate facts about the users
+        return output
