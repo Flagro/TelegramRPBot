@@ -345,7 +345,7 @@ class AIAgent:
             system_prompt=system_prompt,
             communication_history=communication_history,
         )
-        final_response = self.inject_autofact(
+        final_response = await self.inject_autofact(
             output=final_response,
             transcribed_user_message=transcribed_user_message,
             system_prompt=system_prompt,
@@ -399,7 +399,7 @@ class AIAgent:
         modified_response.total_price = price
         return modified_response
 
-    def inject_autofact(
+    async def inject_autofact(
         self,
         output: AIAgentStreamingResponse,
         transcribed_user_message: TranscribedMessage,
@@ -410,6 +410,9 @@ class AIAgent:
         Inject the autofact into the AIAgentStreamingResponse based on the input and output.
         """
         if not self.autofact_enabled:
+            return output
+        check_generation_needed = await self.toolkit.check_if_facts_needed.run()
+        if not check_generation_needed:
             return output
         # TODO: generate facts about the users
         return output
