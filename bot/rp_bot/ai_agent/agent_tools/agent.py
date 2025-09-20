@@ -411,8 +411,19 @@ class AIAgent:
         """
         if not self.autofact_enabled:
             return output
-        check_generation_needed = await self.toolkit.check_if_facts_needed.run()
+        check_generation_needed = await self.toolkit.check_if_facts_needed.run(
+            output=output,
+            transcribed_user_message=transcribed_user_message,
+            system_prompt=system_prompt,
+            communication_history=communication_history,
+        )
         if not check_generation_needed:
             return output
-        # TODO: generate facts about the users
+        facts = await self.toolkit.compose_facts_based_on_messages.run(
+            output=output,
+            transcribed_user_message=transcribed_user_message,
+            system_prompt=system_prompt,
+            communication_history=communication_history,
+        )
+        output.generated_facts = facts
         return output
