@@ -45,7 +45,13 @@ class ComposeFactsBasedOnMessagesTool(BaseTool):
         system_prompt: Optional[str] = None,
         communication_history: Optional[List[OpenAIMessage]] = None,
     ) -> ChatFacts:
-        prompt = "Generate a list of facts based on the messages in the chat."
+        prompt = (
+            "Generate a list of facts based on the latest message from the user in the chat."
+            f"{output.total_text}\n\n"
+            f"{transcribed_user_message.message_text}\n\n"
+            f"{system_prompt}\n\n"
+            f"{communication_history}\n\n"
+        )
         results: ChatFacts = await self.models_toolkit.text_model.run(
             user_input=prompt,
             pydantic_model=ChatFacts,
