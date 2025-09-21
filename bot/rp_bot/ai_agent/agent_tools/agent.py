@@ -18,7 +18,6 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from .agent_toolkit import AIAgentToolkit
 from ...prompt_manager import PromptManager
 from ....models.handlers_input import Person, Context, Message, TranscribedMessage
-from .autofact_generation import UserFact
 
 
 class AIAgentResponseOutputTypeModel(Protocol):
@@ -120,6 +119,30 @@ class AIAgentStreamingResponse(BaseModel):
     transcribed_user_message: TranscribedMessage = Field(default=None)
     generated_facts: List[UserFact] = Field(
         default_factory=list, description="Generated facts about the users in the chat."
+    )
+
+
+class ChatFact(BaseModel):
+    user_fact: str = Field(description="a fact about the user")
+    user_handle: str = Field(description="the user handle")
+
+
+class ResponseFactsGeneration(BaseModel):
+    facts_generation_needed: bool = Field(
+        default=False,
+        description=(
+            "Indicates if the response requires facts generation. "
+            "Note that the fact extraction is called on each user message, "
+            "so you need to be very sure that the facts generation is needed. "
+            "Only when a very important fact that is clearly truthful and cannot be easily inferred from the context, "
+            "should you set this to True and generate the facts."
+        ),
+    )
+    user_facts: Optional[List[ChatFact]] = Field(
+        default=None,
+        description=(
+            "List of facts about the user. Be resourceful and generate facts only when necessary."
+        ),
     )
 
 
@@ -411,19 +434,22 @@ class AIAgent:
         """
         if not self.autofact_enabled:
             return output
-        check_generation_needed = await self.toolkit.check_if_facts_needed.run(
-            output=output,
-            transcribed_user_message=transcribed_user_message,
-            system_prompt=system_prompt,
-            communication_history=communication_history,
+        prompt = (
+            "We got the following response from the agent:"
+            f"{output.total_text}\n\n"
+            "Which was a response based on the following message:"
+            f"{transcribed_user_message.message_text}\n\n"
+            "Which was a response based on the following system prompt:"
+            f"{system_prompt}\n\n"
+            "Which was a response based on the following communication history:"
+            f"{communication_history}\n\n"
         )
-        if not check_generation_needed:
-            return output
-        facts = await self.toolkit.compose_facts_based_on_messages.run(
-            output=output,
-            transcribed_user_message=transcribed_user_message,
-            system_prompt=system_prompt,
-            communication_history=communication_history,
+        facts: ResponseFactsGeneration = await self.models_toolkit.text_model.run(
+            user_input=prompt,
+            pydantic_model=ResponseFactsGeneration,
         )
-        output.generated_facts = facts
+        if facts.facts_generation_needed:
+            output.generated_facts = facts.user_facts
+        else:
+            output.generated_facts = []
         return output
