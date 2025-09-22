@@ -79,6 +79,30 @@ class TextWithImageStreamingResponse(BaseModel):
     )
 
 
+class ChatFact(BaseModel):
+    user_fact: str = Field(description="a fact about the user")
+    user_handle: str = Field(description="the user handle")
+
+
+class ResponseFactsGeneration(BaseModel):
+    facts_generation_needed: bool = Field(
+        default=False,
+        description=(
+            "Indicates if the response requires facts generation. "
+            "Note that the fact extraction is called on each user message, "
+            "so you need to be very sure that the facts generation is needed. "
+            "Only when a very important fact that is clearly truthful and cannot be easily inferred from the context, "
+            "should you set this to True and generate the facts."
+        ),
+    )
+    user_facts: Optional[List[ChatFact]] = Field(
+        default=None,
+        description=(
+            "List of facts about the user. Be resourceful and generate facts only when necessary."
+        ),
+    )
+
+
 class AIAgentStreamingResponse(BaseModel):
     model_config = ConfigDict(
         arbitrary_types_allowed=True,
@@ -117,32 +141,8 @@ class AIAgentStreamingResponse(BaseModel):
         description="Total price of the model response based on input and output.",
     )
     transcribed_user_message: TranscribedMessage = Field(default=None)
-    generated_facts: List[UserFact] = Field(
+    generated_facts: List[ChatFact] = Field(
         default_factory=list, description="Generated facts about the users in the chat."
-    )
-
-
-class ChatFact(BaseModel):
-    user_fact: str = Field(description="a fact about the user")
-    user_handle: str = Field(description="the user handle")
-
-
-class ResponseFactsGeneration(BaseModel):
-    facts_generation_needed: bool = Field(
-        default=False,
-        description=(
-            "Indicates if the response requires facts generation. "
-            "Note that the fact extraction is called on each user message, "
-            "so you need to be very sure that the facts generation is needed. "
-            "Only when a very important fact that is clearly truthful and cannot be easily inferred from the context, "
-            "should you set this to True and generate the facts."
-        ),
-    )
-    user_facts: Optional[List[ChatFact]] = Field(
-        default=None,
-        description=(
-            "List of facts about the user. Be resourceful and generate facts only when necessary."
-        ),
     )
 
 
