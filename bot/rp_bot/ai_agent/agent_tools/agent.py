@@ -98,7 +98,8 @@ class ResponseFactsGeneration(BaseModel):
     user_facts: Optional[List[ChatFact]] = Field(
         default=None,
         description=(
-            "List of facts about the user. Be resourceful and generate facts only when necessary."
+            "List of facts about the user. Be resourceful and generate facts only when necessary. "
+            "If facts are not needed, set this field to null."
         ),
     )
 
