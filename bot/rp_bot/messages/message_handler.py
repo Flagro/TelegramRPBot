@@ -55,7 +55,6 @@ class MessageHandler(RPBotMessageHandler):
     async def stream_get_response(
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> AsyncIterator[CommandResponse]:
-        # Prepare and analyze the message (formerly prepare_get_reply logic)
         conversation_tracker_enabled = (
             await self.db.chats.get_conversation_tracker_state(context=context)
         )
@@ -149,15 +148,12 @@ class MessageHandler(RPBotMessageHandler):
             )
             yield response
 
-        await self.db.dialogs.add_message_to_dialog(
-            context=context,
-            person=person,
-            transcribed_message=TranscribedMessage(
-                message_text=message.message_text,
-                timestamp=message.timestamp,
-            ),
-        )
         if agent_response:
+            await self.db.dialogs.add_message_to_dialog(
+                context=context,
+                person=person,
+                transcribed_message=agent_response.transcribed_user_message,
+            )
             await self.db.user_usage.add_usage_points(
                 person=person, points=agent_response.total_price
             )
@@ -182,6 +178,14 @@ class MessageHandler(RPBotMessageHandler):
                 f"with usage of {agent_response.total_price}"
             )
         else:
+            await self.db.dialogs.add_message_to_dialog(
+                context=context,
+                person=person,
+                transcribed_message=TranscribedMessage(
+                    message_text=message.message_text,
+                    timestamp=message.timestamp,
+                ),
+            )
             self.logger.info(
                 f"No response generated for the message from {person.user_handle} in chat {context.chat_id}"
             )
