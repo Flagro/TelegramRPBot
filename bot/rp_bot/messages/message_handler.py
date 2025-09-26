@@ -1,5 +1,4 @@
 from typing import Optional, AsyncIterator, List
-from datetime import datetime
 
 from ...models.handlers_response import CommandResponse
 from ...models.handlers_input import Person, Context, Message, TranscribedMessage
@@ -11,20 +10,14 @@ from ..ai_agent.agent_tools.agent import AIAgent
 class MessageHandler(RPBotMessageHandler):
     permission_classes = (AllowedUser, NotBanned)
 
-    async def estimate_price(self, message: Message) -> float:
-        """
-        Estimates the price of the message
-        """
-        return self.models_toolkit.estimate_price(
+    async def is_usage_under_limit(
+        self, person: Person, context: Context, message: Message
+    ) -> bool:
+        estimated_usage = self.models_toolkit.estimate_price(
             input_text=message.message_text,
             input_image=message.in_file_image,
             input_audio=message.in_file_audio,
         )
-
-    async def is_usage_under_limit(
-        self, person: Person, context: Context, transcribed_message: TranscribedMessage
-    ) -> bool:
-        estimated_usage = await self.estimate_price(message=transcribed_message)
         user_usage = await self.db.user_usage.get_user_usage(person=person)
         user_limit = await self.db.user_usage.get_user_usage_limit(person=person)
         return user_usage + estimated_usage < user_limit
@@ -114,7 +107,7 @@ class MessageHandler(RPBotMessageHandler):
             )
 
         if not await self.is_usage_under_limit(
-            person=person, context=context, transcribed_message=message
+            person=person, context=context, message=message
         ):
             yield await self.get_usage_over_limit_response(person=person)
             return
