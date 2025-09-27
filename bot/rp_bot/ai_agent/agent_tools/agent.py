@@ -279,7 +279,6 @@ class AIAgent:
 
         # Determine the output type based on the input data
         dynamic_output_type_model = self._create_dynamic_output_type_model()
-        print("!!!!!!!!!!", system_prompt, user_input, communication_history)
         output_type_model: AIAgentResponseOutputTypeModel = (
             await self.models_toolkit.text_model.arun(
                 system_prompt=system_prompt,
@@ -448,11 +447,14 @@ class AIAgent:
             f"{communication_history}\n\n"
         )
         facts: ResponseFactsGeneration = await self.models_toolkit.text_model.arun(
-            user_input=prompt,
+            system_prompt=system_prompt,
             pydantic_model=ResponseFactsGeneration,
+            user_input=prompt,
         )
         if facts.facts_generation_needed:
+            self.logger.info(f"Generated new facts: {facts.user_facts}")
             output.generated_facts = facts.user_facts
         else:
+            self.logger.info(f"No new facts generated for the message")
             output.generated_facts = []
         return output
