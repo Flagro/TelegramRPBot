@@ -279,6 +279,7 @@ class AIAgent:
 
         # Determine the output type based on the input data
         dynamic_output_type_model = self._create_dynamic_output_type_model()
+        print("!!!!!!!!!!", system_prompt, user_input, communication_history)
         output_type_model: AIAgentResponseOutputTypeModel = (
             await self.models_toolkit.text_model.arun(
                 system_prompt=system_prompt,
@@ -446,7 +447,7 @@ class AIAgent:
             "Which was a response based on the following communication history:"
             f"{communication_history}\n\n"
         )
-        facts: ResponseFactsGeneration = await self.models_toolkit.text_model.run(
+        facts: ResponseFactsGeneration = await self.models_toolkit.text_model.arun(
             user_input=prompt,
             pydantic_model=ResponseFactsGeneration,
         )
