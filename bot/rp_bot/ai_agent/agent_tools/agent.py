@@ -375,6 +375,7 @@ class AIAgent:
             system_prompt=system_prompt,
             communication_history=communication_history,
         )
+        final_response.transcribed_user_message = transcribed_user_message
         yield final_response
 
     def inject_price(
