@@ -64,3 +64,15 @@ class Users(BaseDBModel):
     async def is_user_banned(self, user_handle: str) -> bool:
         user_data = await self.users.find_one({"handle": user_handle}, {"banned": 1})
         return user_data.get("banned", False)
+
+    async def has_accepted_terms(self, user_handle: str) -> bool:
+        user_data = await self.users.find_one(
+            {"handle": user_handle}, {"accepted_terms": 1}
+        )
+        return user_data.get("accepted_terms", False)
+
+    async def has_declined_terms(self, user_handle: str) -> bool:
+        user_data = await self.users.find_one(
+            {"handle": user_handle}, {"declined_terms": 1}
+        )
+        return user_data.get("declined_terms", False)

@@ -24,6 +24,9 @@ class Auth:
     async def is_banned(self, user_handle):
         return await self.db.users.is_user_banned(user_handle)
 
+    async def has_accepted_terms(self, user_handle):
+        return await self.db.users.has_accepted_terms(user_handle)
+
 
 class BaseRPBotPermission(ABC):
     def __init__(self, auth: Auth):
@@ -48,3 +51,8 @@ class BotAdmin(BaseRPBotPermission):
 class NotBanned(BaseRPBotPermission):
     async def check(self, person: Person, context: Context) -> bool:
         return not await self.auth.is_banned(person.user_handle)
+
+
+class HasAcceptedTerms(BaseRPBotPermission):
+    async def check(self, person: Person, context: Context) -> bool:
+        return await self.auth.has_accepted_terms(person.user_handle)
