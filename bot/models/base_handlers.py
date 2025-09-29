@@ -13,6 +13,7 @@ from .base_auth import BasePermission
 
 
 class BaseHandler(ABC):
+    needs_terms_accepted: bool = False
     permission_classes: Tuple[Type[BasePermission], ...] = ()
     streamable: bool = False
 
