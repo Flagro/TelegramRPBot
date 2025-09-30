@@ -8,6 +8,7 @@ from ..rp_bot_handlers import RPBotCommandHandler
 
 
 class CommandHandler(ShowChatModesMixin, RPBotCommandHandler):
+    needs_terms_accepted = CallbackHandler.needs_terms_accepted
     permission_classes = CallbackHandler.permission_classes
     command = "mode"
 

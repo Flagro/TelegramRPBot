@@ -8,6 +8,7 @@ from ..ai_agent.agent_tools.agent import AIAgent
 
 
 class MessageHandler(RPBotMessageHandler):
+    needs_terms_accepted = True
     permission_classes = (AllowedUser, NotBanned)
 
     async def is_usage_under_limit(

@@ -7,6 +7,7 @@ from ..rp_bot_handlers import RPBotCommandHandler
 
 
 class CommandHandler(RPBotCommandHandler):
+    needs_terms_accepted = True
     permission_classes = (AllowedUser, NotBanned)
     command = "introduce"
 
