@@ -110,11 +110,6 @@ class TelegramBot:
         """
         Handles the update and sends the response back to the user.
         """
-        if not update.message:
-            self.logger.warning(
-                f"Update {update.update_id} has no message, skipping"
-            )
-            return
         bot_input = await get_bot_input(update, context)
 
         if bot_handler.streamable and self.telegram_bot_config.enable_message_streaming:

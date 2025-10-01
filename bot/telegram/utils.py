@@ -112,6 +112,8 @@ async def get_args(update: Update, context: ContextTypes.DEFAULT_TYPE) -> List[s
 
 
 def bot_mentioned(update: Update, context: ContextTypes.DEFAULT_TYPE) -> bool:
+    if is_callback(update):
+        return False
     is_private_chat = update.message.chat.type == "private"
     is_bot_mentioned = (
         update.message.text is not None
