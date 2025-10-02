@@ -445,6 +445,8 @@ class AIAgent:
             f"{system_prompt}\n\n"
             "Which was a response based on the following communication history:"
             f"{communication_history}\n\n"
+            "Generate facts based on the above context. Avoid generating facts that are "
+            "already saved in our database."
         )
         facts: ResponseFactsGeneration = await self.models_toolkit.text_model.arun(
             system_prompt=system_prompt,
