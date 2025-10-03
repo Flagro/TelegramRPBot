@@ -151,6 +151,14 @@ LocalizerTranslations:
     english: "⚡ Access denied! You need lightning-level permissions for this action."
     russian: "⚡ Доступ запрещён! Для этого действия нужны разрешения уровня молнии."
     spanish: "⚡ ¡Acceso denegado! Necesitas permisos de nivel rayo para esta acción."
+  terms_declined:
+    english: "⚡ Terms declined! You need to accept the terms of use to use the bot."
+    russian: "⚡ Термины отклонены! Вы должны принять условия использования, чтобы использовать бота."
+    spanish: "⚡ ¡Términos rechazados! Necesitas aceptar los términos de uso para usar el bot."
+  terms_not_accepted:
+    english: "⚡ Terms not accepted! You need to accept the terms of use to use the bot."
+    russian: "⚡ Термины не приняты! Вы должны принять условия использования, чтобы использовать бота."
+    spanish: "⚡ ¡Términos no aceptados! Necesitas aceptar los términos de uso para usar el bot."
   conversation_tracker_turned_on:
     english: "⚡ Tracking enabled! Now monitoring conversations at lightning speed."
     russian: "⚡ Отслеживание включено! Теперь мониторим разговоры со скоростью молнии."

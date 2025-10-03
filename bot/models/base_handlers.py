@@ -57,6 +57,14 @@ class BaseHandler(ABC):
                 return False
         return True
 
+    async def has_terms_accepted(self, person: Person, context: Context) -> bool:
+        # TODO: Implement this
+        return True
+
+    async def has_terms_declined(self, person: Person, context: Context) -> bool:
+        # TODO: Implement this
+        return False
+
     async def get_localized_response(
         self, command_response: CommandResponse, context: Optional[Context] = None
     ) -> LocalizedCommandResponse:
@@ -101,6 +109,17 @@ class BaseHandler(ABC):
             return await self.get_localized_response(
                 CommandResponse(text="not_authenticated"), context
             )
+        if self.needs_terms_accepted and await self.has_terms_declined(person, context):
+            return await self.get_localized_response(
+                CommandResponse(text="terms_declined"), context
+            )
+        if self.needs_terms_accepted and not await self.has_terms_accepted(
+            person, context
+        ):
+            # TODO: add keyboard with terms acceptance
+            return await self.get_localized_response(
+                CommandResponse(text="terms_not_accepted"), context
+            )
         await self._log_handler_request(person, context, message, args)
         try:
             response = await self.get_response(person, context, message, args)
@@ -120,6 +139,17 @@ class BaseHandler(ABC):
         await self.initialize_context(person, context)
         if not await self.is_authenticated(person, context):
             chunk = CommandResponse(text="not_authenticated")
+            yield await self.get_localized_response(chunk, context)
+            return
+        if self.needs_terms_accepted and await self.has_terms_declined(person, context):
+            chunk = CommandResponse(text="terms_declined")
+            yield await self.get_localized_response(chunk, context)
+            return
+        if self.needs_terms_accepted and not await self.has_terms_accepted(
+            person, context
+        ):
+            # TODO: add keyboard with terms acceptance
+            chunk = CommandResponse(text="terms_not_accepted")
             yield await self.get_localized_response(chunk, context)
             return
         await self._log_handler_request(person, context, message, args)
