@@ -47,15 +47,3 @@ def get_paginated_list_keyboard(
     keyboard_markup = InlineKeyboardMarkup(keyboard)
 
     return keyboard_markup
-
-
-def get_terms_acceptance_keyboard() -> InlineKeyboardMarkup:
-    """Create a keyboard for accepting or declining terms"""
-    # TODO: move this to the base callback handler
-    keyboard = [
-        [
-            InlineKeyboardButton("✅ Accept Terms", callback_data="accept_terms"),
-            InlineKeyboardButton("❌ Decline Terms", callback_data="decline_terms"),
-        ]
-    ]
-    return InlineKeyboardMarkup(keyboard)

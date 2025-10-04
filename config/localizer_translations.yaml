@@ -163,6 +163,10 @@ LocalizerTranslations:
     english: "✅ Terms accepted! You can now use all bot features."
     russian: "✅ Термины приняты! Теперь вы можете использовать все функции бота."
     spanish: "✅ ¡Términos aceptados! Ahora puedes usar todas las funciones del bot."
+  invalid_terms_action:
+    english: "⚠️ Invalid terms action. Please try again."
+    russian: "⚠️ Неверное действие с терминами. Попробуйте снова."
+    spanish: "⚠️ Acción de términos inválida. Por favor, inténtalo de nuevo."
   conversation_tracker_turned_on:
     english: "⚡ Tracking enabled! Now monitoring conversations at lightning speed."
     russian: "⚡ Отслеживание включено! Теперь мониторим разговоры со скоростью молнии."

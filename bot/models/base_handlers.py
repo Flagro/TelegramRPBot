@@ -1,12 +1,14 @@
 import enum
 from abc import ABC, abstractmethod
 from typing import Tuple, List, AsyncIterator, Optional, Type
+from collections import OrderedDict
 from logging import Logger
 from omnimodkit.moderation import ModerationError
 
 from .handlers_input import Person, Context, Message
 from .handlers_response import (
     CommandResponse,
+    KeyboardResponse,
     LocalizedCommandResponse,
 )
 from .base_auth import BasePermission
@@ -116,9 +118,19 @@ class BaseHandler(ABC):
         if self.needs_terms_accepted and not await self.has_terms_accepted(
             person, context
         ):
-            # TODO: add keyboard with terms acceptance
+            terms_keyboard = KeyboardResponse(
+                modes_dict=OrderedDict(
+                    {
+                        "accept": "✅ Accept Terms",
+                        "decline": "❌ Decline Terms",
+                    }
+                ),
+                callback="terms_response",
+                button_action="terms_action",
+            )
             return await self.get_localized_response(
-                CommandResponse(text="terms_not_accepted"), context
+                CommandResponse(text="terms_not_accepted", keyboard=terms_keyboard),
+                context,
             )
         await self._log_handler_request(person, context, message, args)
         try:
@@ -148,8 +160,17 @@ class BaseHandler(ABC):
         if self.needs_terms_accepted and not await self.has_terms_accepted(
             person, context
         ):
-            # TODO: add keyboard with terms acceptance
-            chunk = CommandResponse(text="terms_not_accepted")
+            terms_keyboard = KeyboardResponse(
+                modes_dict=OrderedDict(
+                    {
+                        "accept": "✅ Accept Terms",
+                        "decline": "❌ Decline Terms",
+                    }
+                ),
+                callback="terms_response",
+                button_action="terms_action",
+            )
+            chunk = CommandResponse(text="terms_not_accepted", keyboard=terms_keyboard)
             yield await self.get_localized_response(chunk, context)
             return
         await self._log_handler_request(person, context, message, args)
