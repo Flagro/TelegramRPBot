@@ -27,6 +27,15 @@ class Auth:
     async def has_accepted_terms(self, user_handle):
         return await self.db.users.has_accepted_terms(user_handle)
 
+    async def has_declined_terms(self, user_handle):
+        return await self.db.users.has_declined_terms(user_handle)
+
+    async def accept_terms(self, user_handle):
+        return await self.db.users.accept_terms(user_handle)
+
+    async def decline_terms(self, user_handle):
+        return await self.db.users.decline_terms(user_handle)
+
 
 class BaseRPBotPermission(ABC):
     def __init__(self, auth: Auth):

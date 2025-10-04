@@ -76,3 +76,25 @@ class Users(BaseDBModel):
             {"handle": user_handle}, {"declined_terms": 1}
         )
         return user_data.get("declined_terms", False)
+
+    async def accept_terms(self, user_handle: str) -> None:
+        """Accept terms for a user and clear any previous decline"""
+        await self.users.update_one(
+            {"handle": user_handle},
+            {
+                "$set": {"accepted_terms": True},
+                "$unset": {"declined_terms": ""}
+            },
+            upsert=True,
+        )
+
+    async def decline_terms(self, user_handle: str) -> None:
+        """Decline terms for a user and clear any previous acceptance"""
+        await self.users.update_one(
+            {"handle": user_handle},
+            {
+                "$set": {"declined_terms": True},
+                "$unset": {"accepted_terms": ""}
+            },
+            upsert=True,
+        )

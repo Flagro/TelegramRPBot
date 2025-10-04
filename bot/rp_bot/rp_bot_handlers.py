@@ -60,6 +60,12 @@ class RPBotHandlerMixin(ABC):
         await self.db.create_if_not_exists(person, context)
         await self.db.update_if_needed(person, context)
 
+    async def has_terms_accepted(self, person: Person, context: Context) -> bool:
+        return await self.auth.has_accepted_terms(person.user_handle)
+
+    async def has_terms_declined(self, person: Person, context: Context) -> bool:
+        return await self.auth.has_declined_terms(person.user_handle)
+
 
 class RPBotCommandHandler(RPBotHandlerMixin, BaseCommandHandler, ABC):
     pass

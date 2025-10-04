@@ -159,6 +159,10 @@ LocalizerTranslations:
     english: "⚡ Terms not accepted! You need to accept the terms of use to use the bot."
     russian: "⚡ Термины не приняты! Вы должны принять условия использования, чтобы использовать бота."
     spanish: "⚡ ¡Términos no aceptados! Necesitas aceptar los términos de uso para usar el bot."
+  terms_accepted:
+    english: "✅ Terms accepted! You can now use all bot features."
+    russian: "✅ Термины приняты! Теперь вы можете использовать все функции бота."
+    spanish: "✅ ¡Términos aceptados! Ahora puedes usar todas las funciones del bot."
   conversation_tracker_turned_on:
     english: "⚡ Tracking enabled! Now monitoring conversations at lightning speed."
     russian: "⚡ Отслеживание включено! Теперь мониторим разговоры со скоростью молнии."

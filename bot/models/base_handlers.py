@@ -57,13 +57,13 @@ class BaseHandler(ABC):
                 return False
         return True
 
+    @abstractmethod
     async def has_terms_accepted(self, person: Person, context: Context) -> bool:
-        # TODO: Implement this
-        return True
+        raise NotImplementedError
 
+    @abstractmethod
     async def has_terms_declined(self, person: Person, context: Context) -> bool:
-        # TODO: Implement this
-        return False
+        raise NotImplementedError
 
     async def get_localized_response(
         self, command_response: CommandResponse, context: Optional[Context] = None
