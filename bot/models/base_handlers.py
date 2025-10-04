@@ -47,6 +47,20 @@ class BaseHandler(ABC):
     def permissions(self) -> List[BasePermission]:
         return self._initialized_permissions
 
+    @classmethod
+    def _get_terms_keyboard(cls) -> KeyboardResponse:
+        """Create keyboard for terms acceptance/decline"""
+        return KeyboardResponse(
+            modes_dict=OrderedDict(
+                {
+                    "accept": "✅ Accept Terms",
+                    "decline": "❌ Decline Terms",
+                }
+            ),
+            callback="terms_response",
+            button_action="terms_action",
+        )
+
     async def is_authenticated(self, person: Person, context: Context) -> bool:
         for permission in self.permissions:
             if not await permission.check(person, context):
@@ -118,18 +132,10 @@ class BaseHandler(ABC):
         if self.needs_terms_accepted and not await self.has_terms_accepted(
             person, context
         ):
-            terms_keyboard = KeyboardResponse(
-                modes_dict=OrderedDict(
-                    {
-                        "accept": "✅ Accept Terms",
-                        "decline": "❌ Decline Terms",
-                    }
-                ),
-                callback="terms_response",
-                button_action="terms_action",
-            )
             return await self.get_localized_response(
-                CommandResponse(text="terms_not_accepted", keyboard=terms_keyboard),
+                CommandResponse(
+                    text="terms_not_accepted", keyboard=self._get_terms_keyboard()
+                ),
                 context,
             )
         await self._log_handler_request(person, context, message, args)
@@ -160,17 +166,9 @@ class BaseHandler(ABC):
         if self.needs_terms_accepted and not await self.has_terms_accepted(
             person, context
         ):
-            terms_keyboard = KeyboardResponse(
-                modes_dict=OrderedDict(
-                    {
-                        "accept": "✅ Accept Terms",
-                        "decline": "❌ Decline Terms",
-                    }
-                ),
-                callback="terms_response",
-                button_action="terms_action",
+            chunk = CommandResponse(
+                text="terms_not_accepted", keyboard=self._get_terms_keyboard()
             )
-            chunk = CommandResponse(text="terms_not_accepted", keyboard=terms_keyboard)
             yield await self.get_localized_response(chunk, context)
             return
         await self._log_handler_request(person, context, message, args)
