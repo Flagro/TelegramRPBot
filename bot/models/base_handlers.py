@@ -47,14 +47,22 @@ class BaseHandler(ABC):
     def permissions(self) -> List[BasePermission]:
         return self._initialized_permissions
 
-    @classmethod
-    def _get_terms_keyboard(cls) -> KeyboardResponse:
+    async def _get_terms_keyboard(
+        self, context: Optional[Context] = None
+    ) -> KeyboardResponse:
         """Create keyboard for terms acceptance/decline"""
+        accept_text = await self.get_localized_text(
+            "terms_accept_button", context=context
+        )
+        decline_text = await self.get_localized_text(
+            "terms_decline_button", context=context
+        )
+
         return KeyboardResponse(
             modes_dict=OrderedDict(
                 {
-                    "accept": "✅ Accept Terms",
-                    "decline": "❌ Decline Terms",
+                    "accept": accept_text,
+                    "decline": decline_text,
                 }
             ),
             callback="terms_response",
@@ -134,7 +142,8 @@ class BaseHandler(ABC):
         ):
             return await self.get_localized_response(
                 CommandResponse(
-                    text="terms_not_accepted", keyboard=self._get_terms_keyboard()
+                    text="terms_not_accepted",
+                    keyboard=await self._get_terms_keyboard(context),
                 ),
                 context,
             )
@@ -167,7 +176,8 @@ class BaseHandler(ABC):
             person, context
         ):
             chunk = CommandResponse(
-                text="terms_not_accepted", keyboard=self._get_terms_keyboard()
+                text="terms_not_accepted",
+                keyboard=await self._get_terms_keyboard(context),
             )
             yield await self.get_localized_response(chunk, context)
             return

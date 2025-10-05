@@ -207,6 +207,14 @@ LocalizerTranslations:
     english: "⚡ Power overload! {user_handle} has exceeded their {user_limit} lightning limit."
     russian: "⚡ Перегрузка мощности! {user_handle} превысил лимит {user_limit} молний."
     spanish: "⚡ ¡Sobrecarga de energía! {user_handle} ha excedido su límite de {user_limit} rayos."
+  terms_accept_button:
+    english: "✅ Accept Terms"
+    russian: "✅ Принять Условия"
+    spanish: "✅ Aceptar Términos"
+  terms_decline_button:
+    english: "❌ Decline Terms"
+    russian: "❌ Отклонить Условия"
+    spanish: "❌ Rechazar Términos"
   help_text:
     english: |
       <strong>Features 🌟</strong>
