@@ -53,7 +53,9 @@ class TelegramBot:
                 command=command.command,
                 description=await command.get_localized_description(),
             )
-            for command in self.commands
+            for command in sorted(
+                self.commands, key=lambda x: (x.list_priority_order, x.command)
+            )
         ]
         await application.bot.set_my_commands(bot_commands)
 
