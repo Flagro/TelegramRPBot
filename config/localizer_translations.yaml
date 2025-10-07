@@ -156,9 +156,90 @@ LocalizerTranslations:
     russian: "⚡ Термины отклонены! Вы должны принять условия использования, чтобы использовать бота."
     spanish: "⚡ ¡Términos rechazados! Necesitas aceptar los términos de uso para usar el bot."
   terms_not_accepted:
-    english: "⚡ Terms not accepted! You need to accept the terms of use to use the bot."
-    russian: "⚡ Термины не приняты! Вы должны принять условия использования, чтобы использовать бота."
-    spanish: "⚡ ¡Términos no aceptados! Necesitas aceptar los términos de uso para usar el bot."
+    english: |
+      <strong>📋 Terms of Use</strong>
+      
+      By using this bot, you agree to the following terms:
+      
+      <strong>🔒 Data Processing & Storage</strong>
+      • <b>Messages:</b> The bot processes and stores your text messages to provide AI responses and maintain conversation context
+      • <b>Images:</b> Images you send are processed by AI services for analysis and response generation
+      • <b>Audio:</b> Voice messages are transcribed to text and processed for AI responses
+      • <b>Conversation History:</b> Your chat history is stored to provide context for better AI interactions
+      
+      <strong>🎯 Purpose</strong>
+      This data is used solely to:
+      • Generate AI responses to your messages
+      • Maintain conversation context
+      • Provide personalized roleplay experiences
+      • Improve bot functionality
+      
+      <strong>🔗 Open Source</strong>
+      This bot is fully open source. You can view the complete source code at:
+      <a href="https://github.com/Flagro/TelegramRPBot">GitHub Repository</a>
+      
+      <strong>⚡ Your Rights</strong>
+      • You can reset your conversation history at any time using /reset
+      • You can stop the bot using /stop
+      • You can clear stored facts about yourself using /clearfacts
+      
+      By accepting these terms, you consent to the processing of your messages, images, and audio as described above.
+    russian: |
+      <strong>📋 Условия использования</strong>
+      
+      Используя этого бота, вы соглашаетесь со следующими условиями:
+      
+      <strong>🔒 Обработка и хранение данных</strong>
+      • <b>Сообщения:</b> Бот обрабатывает и сохраняет ваши текстовые сообщения для генерации ИИ-ответов и поддержания контекста разговора
+      • <b>Изображения:</b> Отправленные вами изображения обрабатываются ИИ-сервисами для анализа и генерации ответов
+      • <b>Аудио:</b> Голосовые сообщения транскрибируются в текст и обрабатываются для ИИ-ответов
+      • <b>История разговоров:</b> Ваша история чата сохраняется для обеспечения контекста лучших ИИ-взаимодействий
+      
+      <strong>🎯 Цель</strong>
+      Эти данные используются исключительно для:
+      • Генерации ИИ-ответов на ваши сообщения
+      • Поддержания контекста разговора
+      • Предоставления персонализированных ролевых игр
+      • Улучшения функциональности бота
+      
+      <strong>🔗 Открытый исходный код</strong>
+      Этот бот полностью открыт. Вы можете просмотреть полный исходный код по адресу:
+      <a href="https://github.com/Flagro/TelegramRPBot">Репозиторий GitHub</a>
+      
+      <strong>⚡ Ваши права</strong>
+      • Вы можете сбросить историю разговора в любое время с помощью /reset
+      • Вы можете остановить бота с помощью /stop
+      • Вы можете очистить сохранённые факты о себе с помощью /clearfacts
+      
+      Принимая эти условия, вы даёте согласие на обработку ваших сообщений, изображений и аудио, как описано выше.
+    spanish: |
+      <strong>📋 Términos de Uso</strong>
+      
+      Al usar este bot, aceptas los siguientes términos:
+      
+      <strong>🔒 Procesamiento y Almacenamiento de Datos</strong>
+      • <b>Mensajes:</b> El bot procesa y almacena tus mensajes de texto para proporcionar respuestas de IA y mantener el contexto de la conversación
+      • <b>Imágenes:</b> Las imágenes que envíes son procesadas por servicios de IA para análisis y generación de respuestas
+      • <b>Audio:</b> Los mensajes de voz se transcriben a texto y se procesan para respuestas de IA
+      • <b>Historial de Conversación:</b> Tu historial de chat se almacena para proporcionar contexto para mejores interacciones de IA
+      
+      <strong>🎯 Propósito</strong>
+      Estos datos se utilizan únicamente para:
+      • Generar respuestas de IA a tus mensajes
+      • Mantener el contexto de la conversación
+      • Proporcionar experiencias de roleplay personalizadas
+      • Mejorar la funcionalidad del bot
+      
+      <strong>🔗 Código Abierto</strong>
+      Este bot es completamente de código abierto. Puedes ver el código fuente completo en:
+      <a href="https://github.com/Flagro/TelegramRPBot">Repositorio de GitHub</a>
+      
+      <strong>⚡ Tus Derechos</strong>
+      • Puedes reiniciar tu historial de conversación en cualquier momento usando /reset
+      • Puedes detener el bot usando /stop
+      • Puedes limpiar los datos almacenados sobre ti usando /clearfacts
+      
+      Al aceptar estos términos, consientes el procesamiento de tus mensajes, imágenes y audio como se describe arriba.
   terms_accepted:
     english: "✅ Terms accepted! You can now use all bot features."
     russian: "✅ Термины приняты! Теперь вы можете использовать все функции бота."
