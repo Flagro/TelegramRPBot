@@ -4,11 +4,11 @@ from ...models.base_handlers import CommandPriority
 from ...models.handlers_response import CommandResponse
 from ...models.handlers_input import Person, Context, Message
 from ..rp_bot_handlers import RPBotCommandHandler
-from ..auth import BotAdmin
+from ..auth import BotAdmin, AllowedUser
 
 
 class CommandHandler(RPBotCommandHandler):
-    permission_classes = (BotAdmin,)
+    permission_classes = (BotAdmin, AllowedUser)
     command = "ban"
     list_priority_order = CommandPriority.ADMIN
 
