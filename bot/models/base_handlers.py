@@ -134,9 +134,10 @@ class BaseHandler(ABC):
                 CommandResponse(text="not_authenticated"), context
             )
         if self.needs_terms_accepted and await self.has_terms_declined(person, context):
-            return await self.get_localized_response(
-                CommandResponse(text="terms_declined"), context
+            self.logger.info(
+                f"User {person.user_handle} has declined terms, skipping handle"
             )
+            return None
         if self.needs_terms_accepted and not await self.has_terms_accepted(
             person, context
         ):
@@ -169,8 +170,9 @@ class BaseHandler(ABC):
             yield await self.get_localized_response(chunk, context)
             return
         if self.needs_terms_accepted and await self.has_terms_declined(person, context):
-            chunk = CommandResponse(text="terms_declined")
-            yield await self.get_localized_response(chunk, context)
+            self.logger.info(
+                f"User {person.user_handle} has declined terms, skipping stream"
+            )
             return
         if self.needs_terms_accepted and not await self.has_terms_accepted(
             person, context
