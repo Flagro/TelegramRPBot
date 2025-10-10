@@ -14,10 +14,10 @@ class CallbackHandler(RPBotCallbackHandler):
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
         # args[0] should be "terms_action", args[1] should be "accept" or "decline"
-        if len(args) < 2:
+        if len(args) < 1:
             return CommandResponse(text="invalid_terms_action")
 
-        action = args[1]  # "accept" or "decline"
+        action = args[0]  # "accept" or "decline"
 
         if action == "accept":
             await self.auth.accept_terms(person.user_handle)
