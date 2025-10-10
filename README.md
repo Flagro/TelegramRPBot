@@ -30,6 +30,7 @@ Note: Currently this is the work in progress.
 - `/clearfacts [@tg_handle]` - delete facts for given person
 - `/usage` – Show usage limits for your user
 - `/language` - Set bot preferred language
+- `/terms` - View terms of use and your current acceptance state
 - `/conversationtracker` - Turn on/off the conversation tracker for current chat
 - `/autofact` - Turn on/off the automatic fact extraction for the current chat based on chat history
 - `/autoengage` - Turn on/off the automatic engage mode (the bot will reply to your messages when it finds it necessary)

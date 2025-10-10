@@ -296,6 +296,14 @@ LocalizerTranslations:
     english: "❌ Decline Terms"
     russian: "❌ Отклонить Условия"
     spanish: "❌ Rechazar Términos"
+  terms_description:
+    english: "⚡ Check your terms status! View the terms of use and your current acceptance state."
+    russian: "⚡ Проверьте статус условий! Посмотрите условия использования и ваше текущее состояние принятия."
+    spanish: "⚡ ¡Revisa tu estado de términos! Ve los términos de uso y tu estado actual de aceptación."
+  terms_already_accepted:
+    english: "✅ You have already accepted the terms of use. You can use all bot features!"
+    russian: "✅ Вы уже приняли условия использования. Вы можете использовать все функции бота!"
+    spanish: "✅ Ya has aceptado los términos de uso. ¡Puedes usar todas las funciones del bot!"
   help_text:
     english: |
       <strong>Features 🌟</strong>
@@ -325,6 +333,7 @@ LocalizerTranslations:
       • <em>/autoengage</em> - Turn on/off the automatic engage mode (the bot will automatically engage in the conversation)
       • <em>/usage</em> - Show usage limits for your user
       • <em>/language</em> - Set bot preferred language
+      • <em>/terms</em> - View terms of use and your current acceptance state
       • <em>/ban [@tg_handle]</em> (Admin only) - Ban the user (could work by replying to user's message as well)
       • <em>/unban [@tg_handle]</em> (Admin only) - Unban the user
       • <em>/help</em> - Show help
@@ -356,6 +365,7 @@ LocalizerTranslations:
       • <em>/autoengage</em> - Включить/выключить режим автоматического участия (бот будет автоматически участвовать в разговоре)
       • <em>/usage</em> - Показать лимиты использования для вашего пользователя
       • <em>/language</em> - Установить предпочитаемый язык бота
+      • <em>/terms</em> - Просмотреть условия использования и ваше текущее состояние принятия
       • <em>/ban [@tg_handle]</em> (только админ) - Заблокировать пользователя (может работать при ответе на сообщение пользователя)
       • <em>/unban [@tg_handle]</em> (только админ) - Разблокировать пользователя
       • <em>/help</em> - Показать справку
@@ -387,6 +397,7 @@ LocalizerTranslations:
       • <em>/autoengage</em> - Activar/desactivar el modo de participación automática (el bot participará automáticamente en la conversación)
       • <em>/usage</em> - Mostrar límites de uso para tu usuario
       • <em>/language</em> - Establecer idioma preferido del bot
+      • <em>/terms</em> - Ver términos de uso y tu estado actual de aceptación
       • <em>/ban [@tg_handle]</em> (Solo admin) - Banear al usuario (también puede funcionar respondiendo al mensaje del usuario)
       • <em>/unban [@tg_handle]</em> (Solo admin) - Desbanear al usuario
       • <em>/help</em> - Mostrar ayuda
