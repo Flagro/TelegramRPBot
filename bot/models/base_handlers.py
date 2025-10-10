@@ -66,7 +66,7 @@ class BaseHandler(ABC):
                 }
             ),
             callback="terms_response",
-            button_action="terms_action",
+            button_action="terms_response",
         )
 
     async def is_authenticated(self, person: Person, context: Context) -> bool:
@@ -141,6 +141,8 @@ class BaseHandler(ABC):
         if self.needs_terms_accepted and not await self.has_terms_accepted(
             person, context
         ):
+            if not context.is_bot_mentioned:
+                return None
             return await self.get_localized_response(
                 CommandResponse(
                     text="terms_not_accepted",
@@ -177,6 +179,8 @@ class BaseHandler(ABC):
         if self.needs_terms_accepted and not await self.has_terms_accepted(
             person, context
         ):
+            if not context.is_bot_mentioned:
+                return
             chunk = CommandResponse(
                 text="terms_not_accepted",
                 keyboard=await self._get_terms_keyboard(context),
