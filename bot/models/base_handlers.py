@@ -145,7 +145,7 @@ class BaseHandler(ABC):
                 return None
             return await self.get_localized_response(
                 CommandResponse(
-                    text="terms_not_accepted",
+                    text="terms_text",
                     keyboard=await self._get_terms_keyboard(context),
                 ),
                 context,
@@ -182,7 +182,7 @@ class BaseHandler(ABC):
             if not context.is_bot_mentioned:
                 return
             chunk = CommandResponse(
-                text="terms_not_accepted",
+                text="terms_text",
                 keyboard=await self._get_terms_keyboard(context),
             )
             yield await self.get_localized_response(chunk, context)

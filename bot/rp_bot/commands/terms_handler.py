@@ -23,18 +23,18 @@ class CommandHandler(RPBotCommandHandler):
         if has_accepted:
             # User has already accepted terms - show extra prompt
             return CommandResponse(
-                text="terms_not_accepted",
+                text="terms_text",
                 keyboard=await self._get_terms_keyboard(context),
             )
         elif has_declined:
             # User has declined terms - show extra prompt
             return CommandResponse(
-                text="terms_not_accepted",
+                text="terms_text",
                 keyboard=await self._get_terms_keyboard(context),
             )
         else:
             # User hasn't made a decision yet - show standard terms
             return CommandResponse(
-                text="terms_not_accepted",
+                text="terms_text",
                 keyboard=await self._get_terms_keyboard(context),
             )

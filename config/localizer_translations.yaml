@@ -155,7 +155,7 @@ LocalizerTranslations:
     english: "⚡ Terms declined! You need to accept the terms of use to use the bot."
     russian: "⚡ Термины отклонены! Вы должны принять условия использования, чтобы использовать бота."
     spanish: "⚡ ¡Términos rechazados! Necesitas aceptar los términos de uso para usar el bot."
-  terms_not_accepted:
+  terms_text:
     english: |
       <strong>📋 Terms of Use</strong>
       
