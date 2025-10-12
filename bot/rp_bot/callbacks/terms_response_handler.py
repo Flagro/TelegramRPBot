@@ -23,7 +23,7 @@ class CallbackHandler(RPBotCallbackHandler):
             await self.auth.accept_terms(person.user_handle)
             return CommandResponse(text="terms_accepted")
         elif action == "decline":
-            # TODO: clear user stored data
+            await self.db.clear_user_data(person.user_handle)
             await self.auth.decline_terms(person.user_handle)
             return CommandResponse(text="terms_declined")
         else:

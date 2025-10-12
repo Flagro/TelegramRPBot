@@ -53,3 +53,8 @@ class DB:
     async def update_if_needed(self, person: Person, context: Context) -> None:
         for model in self.models:
             await model.update_if_needed(person=person, context=context)
+
+    async def clear_user_data(self, user_handle: str) -> None:
+        # TODO: implement this method for all models
+        for model in self.models:
+            await model.clear_user_data(user_handle)

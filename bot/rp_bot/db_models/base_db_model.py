@@ -12,3 +12,6 @@ class BaseDBModel:
 
     async def update_if_needed(self, person: Person, context: Context) -> None:
         pass
+
+    async def clear_user_data(self, user_handle: str) -> None:
+        pass
