@@ -85,3 +85,6 @@ class Dialogs(BaseDBModel):
             )
             if oldest_message:
                 await self.dialogs.delete_one({"_id": oldest_message["_id"]})
+
+    async def clear_user_data(self, user_handle: str) -> None:
+        await self.dialogs.delete_many({"user_handle": user_handle})
