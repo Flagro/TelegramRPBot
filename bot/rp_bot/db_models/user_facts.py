@@ -64,3 +64,6 @@ class UserFacts(BaseDBModel):
         await self.user_facts.delete_one(
             {"chat_id": context.chat_id, "user_handle": facts_user_handle}
         )
+
+    async def clear_user_data(self, user_handle: str) -> None:
+        await self.user_facts.delete_many({"user_handle": user_handle})
