@@ -23,3 +23,6 @@ class UserIntroductions(BaseDBModel):
             {"chat_id": context.chat_id, "user_handle": person.user_handle}
         )
         return introduction.get("introduction", "") if introduction else ""
+
+    async def clear_user_data(self, user_handle: str) -> None:
+        await self.user_introductions.delete_many({"user_handle": user_handle})
