@@ -17,8 +17,11 @@ class CommandHandler(RPBotCommandHandler):
         # Get the first sentence or paragraph of the mode description:
         # TODO: implement NER here
         mode_name = mode_description.split("\n")[0].split(".")[0]
+        added_by_handle = person.user_handle
         try:
-            await self.db.chat_modes.add_chat_mode(context, mode_name, mode_description)
+            await self.db.chat_modes.add_chat_mode(
+                context, mode_name, mode_description, added_by_handle
+            )
             return CommandResponse(text="mode_added", kwargs={"mode_name": mode_name})
         except ValueError as e:
             self.logger.error(f"Error adding mode: {e}")

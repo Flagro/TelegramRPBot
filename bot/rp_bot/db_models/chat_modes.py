@@ -81,12 +81,17 @@ class ChatModes(BaseDBModel):
         )
 
     async def add_chat_mode(
-        self, context: Context, mode_name: str, mode_description: str
+        self,
+        context: Context,
+        mode_name: str,
+        mode_description: str,
+        added_by_handle: str,
     ) -> None:
         await self.chat_modes.insert_one(
             {
                 "chat_id": context.chat_id,
                 "mode_name": mode_name,
                 "mode_description": mode_description,
+                "added_by_handle": added_by_handle,
             }
         )
