@@ -95,3 +95,6 @@ class ChatModes(BaseDBModel):
                 "added_by_handle": added_by_handle,
             }
         )
+
+    async def clear_user_data(self, user_handle: str) -> None:
+        await self.chat_modes.delete_many({"added_by_handle": user_handle})
