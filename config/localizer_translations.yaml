@@ -182,6 +182,7 @@ LocalizerTranslations:
       • You can reset your conversation history at any time using /reset
       • You can stop the bot using /stop
       • You can clear stored facts about yourself using /clearfacts
+      • If you decline these terms, your custom stored data (messages, facts, introductions) will be cleared, but usage data is retained to prevent abuse of paid API endpoints
       
       By accepting these terms, you consent to the processing of your messages, images, and audio as described above.
     russian: |
@@ -210,6 +211,7 @@ LocalizerTranslations:
       • Вы можете сбросить историю разговора в любое время с помощью /reset
       • Вы можете остановить бота с помощью /stop
       • Вы можете очистить сохранённые факты о себе с помощью /clearfacts
+      • Если вы отклоните эти условия, ваши пользовательские данные (сообщения, факты, представления) будут удалены, но данные об использовании сохраняются для предотвращения злоупотребления платными API-эндпоинтами
       
       Принимая эти условия, вы даёте согласие на обработку ваших сообщений, изображений и аудио, как описано выше.
     spanish: |
@@ -238,6 +240,7 @@ LocalizerTranslations:
       • Puedes reiniciar tu historial de conversación en cualquier momento usando /reset
       • Puedes detener el bot usando /stop
       • Puedes limpiar los datos almacenados sobre ti usando /clearfacts
+      • Si rechazas estos términos, tus datos personalizados (mensajes, datos, presentaciones) serán eliminados, pero los datos de uso se conservan para prevenir el abuso de endpoints de API pagados
       
       Al aceptar estos términos, consientes el procesamiento de tus mensajes, imágenes y audio como se describe arriba.
   terms_accepted:
