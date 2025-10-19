@@ -166,6 +166,7 @@ LocalizerTranslations:
       • <b>Images:</b> Images you send are processed by AI services for analysis and response generation
       • <b>Audio:</b> Voice messages are transcribed to text and processed for AI responses
       • <b>Conversation History:</b> Your chat history is stored to provide context for better AI interactions
+      • <b>Usage Data:</b> Your usage is tracked and stored in the form of points to monitor API consumption and enforce usage limits
       
       <strong>🎯 Purpose</strong>
       This data is used solely to:
@@ -182,7 +183,7 @@ LocalizerTranslations:
       • You can reset your conversation history at any time using /reset
       • You can stop the bot using /stop
       • You can clear stored facts about yourself using /clearfacts
-      • If you decline these terms, your custom stored data (messages, facts, introductions) will be cleared, but usage data is retained to prevent abuse of paid API endpoints
+      • If you decline these terms, your custom stored data (messages, facts, introductions) will be cleared, but usage data is retained to prevent abuse of paid API endpoints, and basic data (terms acceptance status, banned status) is stored to remember your preferences and security settings
       
       By accepting these terms, you consent to the processing of your messages, images, and audio as described above.
     russian: |
@@ -195,6 +196,7 @@ LocalizerTranslations:
       • <b>Изображения:</b> Отправленные вами изображения обрабатываются ИИ-сервисами для анализа и генерации ответов
       • <b>Аудио:</b> Голосовые сообщения транскрибируются в текст и обрабатываются для ИИ-ответов
       • <b>История разговоров:</b> Ваша история чата сохраняется для обеспечения контекста лучших ИИ-взаимодействий
+      • <b>Данные об использовании:</b> Ваше использование отслеживается и сохраняется в виде баллов для мониторинга потребления API и применения лимитов использования
       
       <strong>🎯 Цель</strong>
       Эти данные используются исключительно для:
@@ -211,7 +213,7 @@ LocalizerTranslations:
       • Вы можете сбросить историю разговора в любое время с помощью /reset
       • Вы можете остановить бота с помощью /stop
       • Вы можете очистить сохранённые факты о себе с помощью /clearfacts
-      • Если вы отклоните эти условия, ваши пользовательские данные (сообщения, факты, представления) будут удалены, но данные об использовании сохраняются для предотвращения злоупотребления платными API-эндпоинтами
+      • Если вы отклоните эти условия, ваши пользовательские данные (сообщения, факты, представления) будут удалены, но данные об использовании сохраняются для предотвращения злоупотребления платными API-эндпоинтами, а базовые данные (статус принятия условий, статус блокировки) сохраняются для запоминания ваших предпочтений и настроек безопасности
       
       Принимая эти условия, вы даёте согласие на обработку ваших сообщений, изображений и аудио, как описано выше.
     spanish: |
@@ -224,6 +226,7 @@ LocalizerTranslations:
       • <b>Imágenes:</b> Las imágenes que envíes son procesadas por servicios de IA para análisis y generación de respuestas
       • <b>Audio:</b> Los mensajes de voz se transcriben a texto y se procesan para respuestas de IA
       • <b>Historial de Conversación:</b> Tu historial de chat se almacena para proporcionar contexto para mejores interacciones de IA
+      • <b>Datos de Uso:</b> Tu uso se rastrea y almacena en forma de puntos para monitorear el consumo de API y aplicar límites de uso
       
       <strong>🎯 Propósito</strong>
       Estos datos se utilizan únicamente para:
@@ -240,7 +243,7 @@ LocalizerTranslations:
       • Puedes reiniciar tu historial de conversación en cualquier momento usando /reset
       • Puedes detener el bot usando /stop
       • Puedes limpiar los datos almacenados sobre ti usando /clearfacts
-      • Si rechazas estos términos, tus datos personalizados (mensajes, datos, presentaciones) serán eliminados, pero los datos de uso se conservan para prevenir el abuso de endpoints de API pagados
+      • Si rechazas estos términos, tus datos personalizados (mensajes, datos, presentaciones) serán eliminados, pero los datos de uso se conservan para prevenir el abuso de endpoints de API pagados, y los datos básicos (estado de aceptación de términos, estado de baneo) se almacenan para recordar tus preferencias y configuración de seguridad
       
       Al aceptar estos términos, consientes el procesamiento de tus mensajes, imágenes y audio como se describe arriba.
   terms_accepted:
