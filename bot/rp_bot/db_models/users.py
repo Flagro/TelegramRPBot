@@ -81,10 +81,7 @@ class Users(BaseDBModel):
         """Accept terms for a user and clear any previous decline"""
         await self.users.update_one(
             {"handle": user_handle},
-            {
-                "$set": {"accepted_terms": True},
-                "$unset": {"declined_terms": ""}
-            },
+            {"$set": {"accepted_terms": True}, "$unset": {"declined_terms": ""}},
             upsert=True,
         )
 
@@ -92,9 +89,20 @@ class Users(BaseDBModel):
         """Decline terms for a user and clear any previous acceptance"""
         await self.users.update_one(
             {"handle": user_handle},
-            {
-                "$set": {"declined_terms": True},
-                "$unset": {"accepted_terms": ""}
-            },
+            {"$set": {"declined_terms": True}, "$unset": {"accepted_terms": ""}},
             upsert=True,
+        )
+
+    async def clear_user_data(self, user_handle: str) -> None:
+        # Nullify first and last name for the handle
+        # TODO: move banned and terms status to their own tables
+        # so we can delete all the data here
+        await self.users.update_one(
+            {"handle": user_handle},
+            {
+                "$unset": {
+                    "first_name": "",
+                    "last_name": "",
+                }
+            },
         )
