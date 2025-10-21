@@ -81,7 +81,9 @@ class TextWithImageStreamingResponse(BaseModel):
 
 class ChatFact(BaseModel):
     user_fact: str = Field(description="a fact about the user")
-    user_handle: str = Field(description="the user handle")
+    user_handle: str = Field(
+        description="the user's handle (e.g., '@username'), NOT their display name or first name"
+    )
 
 
 class ResponseFactsGeneration(BaseModel):
@@ -436,6 +438,9 @@ class AIAgent:
         """
         if not self.autofact_enabled:
             return output
+
+        existing_facts = self.prompt_manager.compose_chat_facts_prompt(self.context)
+
         prompt = (
             "We got the following response from the agent:"
             f"{output.total_text}\n\n"
@@ -445,8 +450,11 @@ class AIAgent:
             f"{system_prompt}\n\n"
             "Which was a response based on the following communication history:"
             f"{communication_history}\n\n"
+            f"{existing_facts}\n"
             "Generate facts based on the above context. Avoid generating facts that are "
-            "already saved in our database."
+            "already saved in our database (see existing facts above).\n"
+            "IMPORTANT: For the user_handle field, use the user's handle (e.g., '@username'), "
+            "NOT their display name or first name."
         )
         facts: ResponseFactsGeneration = await self.models_toolkit.text_model.arun(
             system_prompt=system_prompt,
