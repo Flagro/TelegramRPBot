@@ -68,7 +68,6 @@ class PromptManager:
         return f"The current chat mode is: {chat_mode.mode_name}. {chat_mode.mode_description}"
 
     async def compose_chat_facts_prompt(self, context: Context) -> str:
-        # TODO: this should be an optional tool
         chat_facts = await self.db.user_facts.get_chat_facts(context)
         return (
             "The following facts are known about the users in this chat:\n"

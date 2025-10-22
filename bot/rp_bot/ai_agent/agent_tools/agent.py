@@ -440,6 +440,9 @@ class AIAgent:
             return output
 
         existing_facts = self.prompt_manager.compose_chat_facts_prompt(self.context)
+        existing_user_facts = self.prompt_manager.compose_user_facts_prompt(
+            self.person, self.context
+        )
 
         prompt = (
             "We got the following response from the agent:"
@@ -451,6 +454,7 @@ class AIAgent:
             "Which was a response based on the following communication history:"
             f"{communication_history}\n\n"
             f"{existing_facts}\n"
+            f"{existing_user_facts}\n"
             "Generate facts based on the above context. Avoid generating facts that are "
             "already saved in our database (see existing facts above).\n"
             "IMPORTANT: For the user_handle field, use the user's handle (e.g., '@username'), "
