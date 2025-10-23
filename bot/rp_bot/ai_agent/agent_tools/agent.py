@@ -447,7 +447,8 @@ class AIAgent:
         prompt = (
             "We got the following response from the agent:"
             f"{output.total_text}\n\n"
-            "Which was a response based on the following message:"
+            "Which was a response based on the following message from the user "
+            f"with handle {self.person.user_handle}:"
             f"{transcribed_user_message.message_text}\n\n"
             "Which was a response based on the following system prompt:"
             f"{system_prompt}\n\n"
