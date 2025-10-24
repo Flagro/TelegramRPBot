@@ -64,12 +64,14 @@ async def get_person(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Pers
     if is_callback(update):
         return Person(
             user_handle="@" + update.callback_query.from_user.username,
+            telegram_id=update.callback_query.from_user.id,
             first_name=update.callback_query.from_user.first_name,
             last_name=update.callback_query.from_user.last_name,
         )
     else:
         return Person(
             user_handle="@" + update.message.from_user.username,
+            telegram_id=update.message.from_user.id,
             first_name=update.message.from_user.first_name,
             last_name=update.message.from_user.last_name,
         )
