@@ -1,5 +1,6 @@
 from datetime import datetime
 from motor.motor_asyncio import AsyncIOMotorDatabase
+import telegram
 
 from .base_db_model import BaseDBModel
 from ...models.handlers_input import Person, Context
@@ -17,6 +18,7 @@ class Users(BaseDBModel):
             {"handle": user_handle},
             {
                 "$setOnInsert": {
+                    "telegram_id": person.telegram_id,
                     "handle": user_handle,
                     "first_name": person.first_name,
                     "last_name": person.last_name,
@@ -27,9 +29,13 @@ class Users(BaseDBModel):
 
     async def get_person_by_handle(self, user_handle: str) -> Person:
         user_data = await self.users.find_one({"handle": user_handle})
+        telegram_id = user_data.get(
+            "telegram_id", -1
+        )  # -1 is a placeholder for no telegram_id
         user_first_name = user_data.get("first_name", "")
         user_last_name = user_data.get("last_name", "")
         return Person(
+            telegram_id=telegram_id,
             user_handle=user_handle,
             first_name=user_first_name,
             last_name=user_last_name,
