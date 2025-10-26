@@ -8,6 +8,7 @@ from pydantic import BaseModel, ConfigDict
 class Person(BaseModel):
     telegram_id: int
     user_handle: str
+    is_premium: bool = False
     first_name: Optional[str] = None
     last_name: Optional[str] = None
 

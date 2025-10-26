@@ -1,6 +1,5 @@
 from datetime import datetime
 from motor.motor_asyncio import AsyncIOMotorDatabase
-import telegram
 
 from .base_db_model import BaseDBModel
 from ...models.handlers_input import Person, Context
@@ -13,7 +12,6 @@ class Users(BaseDBModel):
 
     async def create_if_not_exists(self, person: Person, context: Context) -> None:
         user_handle = person.user_handle
-        # TODO: think about passing the whole person object
         await self.users.update_one(
             {"handle": user_handle},
             {
