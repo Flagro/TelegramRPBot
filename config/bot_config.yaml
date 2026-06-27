@@ -3,3 +3,14 @@ BotConfig:
   last_n_messages_to_remember: 25
   last_n_messages_to_store: 50
   default_usage_limit: 1000000000
+  memory:
+    enabled: false
+    strategy: "legacy_prompt"
+    runtime: "omnimodkit"
+    facts_access: "prompt"
+    provider_state: "disabled"
+    provider_state_ttl_hours: 24
+    fallback_last_n_messages: 6
+    summary_enabled: false
+    summary_token_target: 800
+    shadow_mode: false
