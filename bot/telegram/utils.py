@@ -9,6 +9,12 @@ from ..models.handlers_input import Person, Context, Message, BotInput
 from ..models.handlers_response import LocalizedCommandResponse
 
 
+def get_user_handle(user) -> str:
+    if user.username:
+        return "@" + user.username
+    return f"telegram:{user.id}"
+
+
 def is_callback(update: Update) -> bool:
     return update.callback_query is not None
 
@@ -45,7 +51,7 @@ async def get_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Con
         )
     else:
         replied_to_user_handle = (
-            "@" + str(update.message.reply_to_message.from_user.username)
+            get_user_handle(update.message.reply_to_message.from_user)
             if update.message.reply_to_message
             else None
         )
@@ -63,7 +69,7 @@ async def get_context(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Con
 async def get_person(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Person:
     if is_callback(update):
         return Person(
-            user_handle="@" + update.callback_query.from_user.username,
+            user_handle=get_user_handle(update.callback_query.from_user),
             telegram_id=update.callback_query.from_user.id,
             first_name=update.callback_query.from_user.first_name,
             last_name=update.callback_query.from_user.last_name,
@@ -71,7 +77,7 @@ async def get_person(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Pers
         )
     else:
         return Person(
-            user_handle="@" + update.message.from_user.username,
+            user_handle=get_user_handle(update.message.from_user),
             telegram_id=update.message.from_user.id,
             first_name=update.message.from_user.first_name,
             last_name=update.message.from_user.last_name,
