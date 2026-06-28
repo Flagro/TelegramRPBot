@@ -122,6 +122,7 @@ class MessageHandler(RPBotMessageHandler):
             db=self.db,
             models_toolkit=self.models_toolkit,
             prompt_manager=self.prompt_manager,
+            memory_manager=self.memory_manager,
             autofact_enabled=autofact_enabled,
             logger=self.logger,
         )
@@ -166,6 +167,7 @@ class MessageHandler(RPBotMessageHandler):
                     context=context,
                     facts_user_handle=fact.user_handle,
                     fact=fact.user_fact,
+                    created_by="autofact",
                 )
             self.logger.info(
                 f"Generated a response for the message from {person.user_handle} in chat {context.chat_id} "
