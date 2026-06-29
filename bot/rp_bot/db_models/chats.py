@@ -22,6 +22,11 @@ class Chats(BaseDBModel):
                     "conversation_tracker": False,
                     "auto_fact": False,
                     "autoengage": False,
+                    "memory": {
+                        "version": 1,
+                        "strategy": "legacy_prompt",
+                        "scopes": {},
+                    },
                 }
             },
             upsert=True,
@@ -106,3 +111,33 @@ class Chats(BaseDBModel):
             {"$set": {"autoengage": new_autoengage_state}},
         )
         return new_autoengage_state
+
+    async def get_memory_scope(self, context: Context, scope_key: str) -> dict:
+        chat_data = await self.chats.find_one(
+            {"chat_id": context.chat_id}, {"_id": 0, f"memory.scopes.{scope_key}": 1}
+        )
+        return (
+            chat_data.get("memory", {}).get("scopes", {}).get(scope_key, {})
+            if chat_data
+            else {}
+        )
+
+    async def set_memory_scope(
+        self, context: Context, scope_key: str, memory_scope: dict
+    ) -> None:
+        await self.chats.update_one(
+            {"chat_id": context.chat_id},
+            {
+                "$set": {
+                    "memory.version": 1,
+                    f"memory.scopes.{scope_key}": memory_scope,
+                }
+            },
+            upsert=True,
+        )
+
+    async def clear_memory(self, context: Context) -> None:
+        await self.chats.update_one(
+            {"chat_id": context.chat_id},
+            {"$set": {"memory.scopes": {}}},
+        )
