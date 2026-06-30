@@ -17,6 +17,7 @@ from omnimodkit.base_toolkit_model import OpenAIMessage
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from .agent_toolkit import AIAgentToolkit
 from ...prompt_manager import PromptManager
+from ...memory_manager import MemoryManager
 from ....models.handlers_input import Person, Context, Message, TranscribedMessage
 
 
@@ -158,6 +159,7 @@ class AIAgent:
         db: AsyncIOMotorDatabase,
         models_toolkit: ModelsToolkit,
         prompt_manager: PromptManager,
+        memory_manager: MemoryManager,
         autofact_enabled: bool,
         logger: Logger,
     ):
@@ -167,6 +169,7 @@ class AIAgent:
         self.db = db
         self.models_toolkit = models_toolkit
         self.prompt_manager = prompt_manager
+        self.memory_manager = memory_manager
         self.toolkit = AIAgentToolkit(
             person, context, message, db, models_toolkit, prompt_manager
         )
@@ -268,11 +271,18 @@ class AIAgent:
         Asynchronously run the OmniModel with the provided inputs and return the output.
         """
         transcribed_user_message = await self._get_transcribed_message()
-        user_input = await self.prompt_manager.compose_prompt(
+        prepared_memory_context = await self.memory_manager.prepare_context(
             initiator=self.person,
             context=self.context,
             user_transcribed_message=transcribed_user_message,
         )
+        for shadow_result in prepared_memory_context.shadow_tool_results:
+            self.logger.info(
+                "Memory shadow tool %s returned %s result(s)",
+                shadow_result.tool_name,
+                shadow_result.result_count,
+            )
+        user_input = prepared_memory_context.user_input
         system_prompt = await self.prompt_manager.get_reply_system_prompt(
             context=self.context
         )
@@ -439,8 +449,10 @@ class AIAgent:
         if not self.autofact_enabled:
             return output
 
-        existing_facts = self.prompt_manager.compose_chat_facts_prompt(self.context)
-        existing_user_facts = self.prompt_manager.compose_user_facts_prompt(
+        existing_facts = await self.prompt_manager.compose_chat_facts_prompt(
+            self.context
+        )
+        existing_user_facts = await self.prompt_manager.compose_user_facts_prompt(
             self.person, self.context
         )
 
