@@ -14,4 +14,5 @@ class CommandHandler(RPBotCommandHandler):
         self, person: Person, context: Context, message: Message, args: List[str]
     ) -> CommandResponse:
         await self.db.dialogs.reset(context)
+        await self.db.chats.clear_memory(context)
         return CommandResponse(text="reset_done")
