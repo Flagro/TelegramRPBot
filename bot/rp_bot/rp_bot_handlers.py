@@ -3,6 +3,7 @@ from typing import List, Optional
 from omnimodkit.models_toolkit import ModelsToolkit
 from .db import DB
 from .prompt_manager import PromptManager
+from .memory_manager import MemoryManager
 from .auth import Auth
 from .localizer import Localizer
 from ..models.config import BotConfig
@@ -22,6 +23,7 @@ class RPBotHandlerMixin(ABC):
         models_toolkit: ModelsToolkit,
         localizer: Localizer,
         prompt_manager: PromptManager,
+        memory_manager: MemoryManager,
         auth: Auth,
         bot_config: BotConfig,
         *args,
@@ -31,6 +33,7 @@ class RPBotHandlerMixin(ABC):
         self.models_toolkit = models_toolkit
         self.localizer = localizer
         self.prompt_manager = prompt_manager
+        self.memory_manager = memory_manager
         self.auth = auth
         self.bot_config = bot_config
         super().__init__(*args, **kwargs)
