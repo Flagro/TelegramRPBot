@@ -14,6 +14,7 @@ from .messages import handlers as message_handlers
 from .db import DB
 from .auth import Auth
 from .prompt_manager import PromptManager
+from .memory_manager import MemoryManager
 from .localizer import Localizer
 from ..models.config import (
     BotConfig,
@@ -47,6 +48,11 @@ def get_rp_bot(
         default_language=bot_config.default_language,
     )
     prompt_manager = PromptManager(db=db)
+    memory_manager = MemoryManager(
+        db=db,
+        prompt_manager=prompt_manager,
+        memory_config=bot_config.memory,
+    )
     models_toolkit = ModelsToolkit(
         openai_api_key=openai_api_key,
         ai_config=ai_config,
@@ -61,6 +67,7 @@ def get_rp_bot(
         models_toolkit=models_toolkit,
         localizer=localizer,
         prompt_manager=prompt_manager,
+        memory_manager=memory_manager,
         auth=auth,
         bot_config=bot_config,
         logger=logger,
@@ -74,6 +81,7 @@ class RPBot(BaseBot):
         models_toolkit: ModelsToolkit,
         localizer: Localizer,
         prompt_manager: PromptManager,
+        memory_manager: MemoryManager,
         auth: Auth,
         bot_config: BotConfig,
         logger: Logger,
@@ -82,6 +90,7 @@ class RPBot(BaseBot):
         self.models_toolkit = models_toolkit
         self.localizer = localizer
         self.prompt_manager = prompt_manager
+        self.memory_manager = memory_manager
         self.auth = auth
         self.bot_config = bot_config
         self.logger = logger
@@ -102,6 +111,7 @@ class RPBot(BaseBot):
                 models_toolkit=self.models_toolkit,
                 localizer=self.localizer,
                 prompt_manager=self.prompt_manager,
+                memory_manager=self.memory_manager,
                 auth=self.auth,
                 bot_config=self.bot_config,
                 logger=self.logger.getChild(handler.__name__),
