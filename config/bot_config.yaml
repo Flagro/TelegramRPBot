@@ -14,3 +14,4 @@ BotConfig:
     summary_enabled: false
     summary_token_target: 800
     shadow_mode: false
+    agent_model: null
