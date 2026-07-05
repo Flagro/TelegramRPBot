@@ -1,5 +1,6 @@
 import io
 import asyncio
+from datetime import datetime
 from typing import (
     Optional,
     Union,
@@ -18,6 +19,9 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from .agent_toolkit import AIAgentToolkit
 from ...prompt_manager import PromptManager
 from ...memory_manager import MemoryManager
+from ...agent_runtime import AgentInput, MemoryState
+from ...openai_agents_runtime import OpenAIAgentsRuntime
+from ...memory_utils import get_participant_key
 from ....models.handlers_input import Person, Context, Message, TranscribedMessage
 
 
@@ -286,6 +290,27 @@ class AIAgent:
         system_prompt = await self.prompt_manager.get_reply_system_prompt(
             context=self.context
         )
+        if self.memory_manager.should_use_live_agent():
+            try:
+                async for response in self._astream_openai_agent(
+                    transcribed_user_message=transcribed_user_message,
+                    prepared_user_input=user_input,
+                    system_prompt=system_prompt,
+                    scope_key=prepared_memory_context.scope_key,
+                ):
+                    yield response
+                return
+            except Exception as exc:
+                self.logger.error(
+                    "OpenAI Agents runtime failed; falling back to legacy generation: %s",
+                    exc,
+                )
+                user_input = await self.prompt_manager.compose_prompt(
+                    initiator=self.person,
+                    context=self.context,
+                    user_transcribed_message=transcribed_user_message,
+                )
+
         # Explicit communication history confuses the structured output generation
         communication_history = None
 
@@ -387,6 +412,73 @@ class AIAgent:
             system_prompt=system_prompt,
             communication_history=communication_history,
         )
+        final_response.transcribed_user_message = transcribed_user_message
+        yield final_response
+
+    async def _astream_openai_agent(
+        self,
+        transcribed_user_message: TranscribedMessage,
+        prepared_user_input: str,
+        system_prompt: str,
+        scope_key: Optional[str],
+    ) -> AsyncGenerator[AIAgentStreamingResponse, None]:
+        instructions = "\n".join(
+            [
+                system_prompt,
+                "Use the available memory tools to retrieve durable user or chat facts when they are relevant.",
+                "Do not assume facts that were not provided in the current input or returned by tools.",
+                "Keep responses natural and concise.",
+            ]
+        )
+        runtime = OpenAIAgentsRuntime(
+            model=self.memory_manager.memory_config.agent_model
+        )
+        tools = self.memory_manager.get_agent_tools(self.person, self.context)
+        total_text = ""
+        provider_metadata = {}
+        async for chunk in runtime.stream(
+            instructions=instructions,
+            input=AgentInput(text=prepared_user_input),
+            tools=tools,
+            memory_state=MemoryState(scope_key=scope_key),
+        ):
+            if not chunk.text_chunk:
+                continue
+            provider_metadata = chunk.provider_metadata or provider_metadata
+            total_text = chunk.total_text or (total_text + chunk.text_chunk)
+            yield AIAgentStreamingResponse(
+                is_final_response=False,
+                total_text=total_text,
+                text_new_chunk=chunk.text_chunk,
+            )
+
+        final_response = AIAgentStreamingResponse(
+            total_text=total_text,
+            text_new_chunk="",
+        )
+        final_response = self.inject_price(
+            output=final_response,
+            transcribed_user_message=transcribed_user_message,
+            system_prompt=system_prompt,
+            communication_history=None,
+        )
+        final_response = await self.inject_autofact(
+            output=final_response,
+            transcribed_user_message=transcribed_user_message,
+            system_prompt=system_prompt,
+            communication_history=None,
+        )
+        if scope_key:
+            await self.db.chats.set_memory_scope(
+                context=self.context,
+                scope_key=scope_key,
+                memory_scope={
+                    "scope_key": scope_key,
+                    "participants": [get_participant_key(self.person)],
+                    "updated_at": datetime.utcnow(),
+                    "provider_metadata": {"openai": provider_metadata},
+                },
+            )
         final_response.transcribed_user_message = transcribed_user_message
         yield final_response
 
