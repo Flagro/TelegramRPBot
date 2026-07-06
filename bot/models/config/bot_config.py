@@ -23,6 +23,7 @@ class MemoryConfig(BaseYAMLConfigModel):
     summary_enabled: bool = False
     summary_token_target: int = 800
     shadow_mode: bool = False
+    agent_model: Optional[str] = None
 
 
 class BotConfig(BaseYAMLConfigModel):
