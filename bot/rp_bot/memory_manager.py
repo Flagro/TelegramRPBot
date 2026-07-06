@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
 
+from .agent_runtime import AgentTool
 from ..models.config.bot_config import MemoryConfig
 from ..models.handlers_input import Context, Person, TranscribedMessage
 from .db import DB
@@ -114,6 +115,14 @@ class MemoryManager:
             )
             return PreparedMemoryContext(user_input=user_input, scope_key=scope_key)
 
+        if self.memory_config.strategy in {"agent_tools", "hybrid_provider_state"}:
+            user_input = self._compose_agent_user_input(
+                initiator=initiator,
+                context=context,
+                user_transcribed_message=user_transcribed_message,
+            )
+            return PreparedMemoryContext(user_input=user_input, scope_key=scope_key)
+
         user_input = await self.prompt_manager.compose_prompt(
             initiator=initiator,
             context=context,
@@ -149,6 +158,36 @@ class MemoryManager:
         )
         return "\n\n".join([identity_prompt, legacy_prompt])
 
+    def _compose_agent_user_input(
+        self,
+        initiator: Person,
+        context: Context,
+        user_transcribed_message: TranscribedMessage,
+    ) -> str:
+        result = [
+            "Current message:",
+            f"participant_key: {get_participant_key(initiator)}",
+            f"display_name: {get_display_name(initiator)}",
+            f"telegram_id: {initiator.telegram_id}",
+            f"chat_id: {context.chat_id}",
+            f"thread_id: {context.thread_id}",
+            f"timestamp_utc: {user_transcribed_message.timestamp.strftime('%Y-%m-%d %H:%M:%S')}",
+            f"text: {user_transcribed_message.message_text or ''}",
+        ]
+        if context.replied_to_user_handle:
+            result.append(f"replied_to_user: {context.replied_to_user_handle}")
+        if user_transcribed_message.image_description:
+            result.append(
+                "image_description: "
+                f"{user_transcribed_message.image_description}"
+            )
+        if user_transcribed_message.voice_description:
+            result.append(
+                "voice_description: "
+                f"{user_transcribed_message.voice_description}"
+            )
+        return "\n".join(result)
+
     async def run_shadow_tools(
         self, initiator: Person, context: Context
     ) -> List[MemoryToolResult]:
@@ -172,3 +211,59 @@ class MemoryManager:
                 recent_dialog[:3],
             ),
         ]
+
+    def get_agent_tools(self, initiator: Person, context: Context) -> List[AgentTool]:
+        async def get_user_facts() -> str:
+            """Return known facts about the user who sent the current message."""
+            facts = await self.tools.get_user_facts(context, initiator)
+            return "\n".join(facts) if facts else "No facts found."
+
+        async def get_replied_user_facts() -> str:
+            """Return known facts about the user being replied to, if any."""
+            facts = await self.tools.get_replied_user_facts(context)
+            return "\n".join(facts) if facts else "No replied-to user facts found."
+
+        async def search_chat_facts(query: str) -> str:
+            """Search known chat facts by text query."""
+            facts = await self.tools.search_chat_facts(context, query=query)
+            return "\n".join(facts) if facts else "No matching chat facts found."
+
+        async def search_recent_dialog(query: str, limit: int) -> str:
+            """Search recent dialog messages by text query."""
+            capped_limit = max(1, min(limit, self.memory_config.fallback_last_n_messages))
+            messages = await self.tools.search_recent_dialog(
+                context=context,
+                query=query,
+                limit=capped_limit,
+            )
+            return "\n".join(messages) if messages else "No matching dialog found."
+
+        return [
+            AgentTool(
+                name="get_user_facts",
+                description="Return known facts about the current message sender.",
+                handler=get_user_facts,
+            ),
+            AgentTool(
+                name="get_replied_user_facts",
+                description="Return known facts about the replied-to user, if any.",
+                handler=get_replied_user_facts,
+            ),
+            AgentTool(
+                name="search_chat_facts",
+                description="Search durable facts in this chat. Use when a fact may be relevant.",
+                handler=search_chat_facts,
+            ),
+            AgentTool(
+                name="search_recent_dialog",
+                description="Search recent local dialog history for this chat/thread.",
+                handler=search_recent_dialog,
+            ),
+        ]
+
+    def should_use_live_agent(self) -> bool:
+        return (
+            self.memory_config.enabled
+            and self.memory_config.runtime == "openai_agents_sdk"
+            and self.memory_config.strategy in {"agent_tools", "hybrid_provider_state"}
+        )
