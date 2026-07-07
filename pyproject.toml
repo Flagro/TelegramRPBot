@@ -13,6 +13,7 @@ motor = "*"
 python-decouple = "*"
 pydantic = "^2.7.4"
 omnimodkit = "0.0.9"
+openai-agents = "*"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
