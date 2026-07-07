@@ -76,10 +76,12 @@ class MemoryManager:
         db: DB,
         prompt_manager: PromptManager,
         memory_config: MemoryConfig,
+        openai_api_key: Optional[str] = None,
     ) -> None:
         self.db = db
         self.prompt_manager = prompt_manager
         self.memory_config = memory_config
+        self.openai_api_key = openai_api_key
         self.tools = MemoryTools(db)
 
     def is_legacy_mode(self) -> bool:
