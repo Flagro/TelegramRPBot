@@ -431,7 +431,8 @@ class AIAgent:
             ]
         )
         runtime = OpenAIAgentsRuntime(
-            model=self.memory_manager.memory_config.agent_model
+            model=self.memory_manager.memory_config.agent_model,
+            openai_api_key=self.memory_manager.openai_api_key,
         )
         tools = self.memory_manager.get_agent_tools(self.person, self.context)
         total_text = ""
