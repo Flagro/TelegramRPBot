@@ -4,8 +4,13 @@ from .agent_runtime import AgentInput, AgentStreamChunk, AgentTool, MemoryState
 
 
 class OpenAIAgentsRuntime:
-    def __init__(self, model: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        model: Optional[str] = None,
+        openai_api_key: Optional[str] = None,
+    ) -> None:
         self.model = model or "gpt-4o"
+        self.openai_api_key = openai_api_key
 
     async def stream(
         self,
@@ -15,7 +20,7 @@ class OpenAIAgentsRuntime:
         memory_state: Optional[MemoryState] = None,
     ) -> AsyncIterator[AgentStreamChunk]:
         try:
-            from agents import Agent, Runner, function_tool
+            from agents import Agent, OpenAIProvider, RunConfig, Runner, function_tool
             from openai.types.responses import ResponseTextDeltaEvent
         except ImportError as exc:
             raise RuntimeError(
@@ -40,10 +45,16 @@ class OpenAIAgentsRuntime:
             tools=sdk_tools,
         )
 
-        result = Runner.run_streamed(
-            agent,
-            input=input.text,
-        )
+        run_config = None
+        if self.openai_api_key:
+            run_config = RunConfig(
+                model_provider=OpenAIProvider(api_key=self.openai_api_key)
+            )
+
+        if run_config:
+            result = Runner.run_streamed(agent, input=input.text, run_config=run_config)
+        else:
+            result = Runner.run_streamed(agent, input=input.text)
         total_text = ""
         async for event in result.stream_events():
             if event.type != "raw_response_event":
