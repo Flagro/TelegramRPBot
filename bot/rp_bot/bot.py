@@ -52,6 +52,7 @@ def get_rp_bot(
         db=db,
         prompt_manager=prompt_manager,
         memory_config=bot_config.memory,
+        openai_api_key=openai_api_key,
     )
     models_toolkit = ModelsToolkit(
         openai_api_key=openai_api_key,
