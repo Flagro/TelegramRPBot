@@ -12,7 +12,6 @@ from typing import (
 )
 from logging import Logger
 from pydantic import BaseModel, Field, ConfigDict, create_model
-from omnimodkit import ModelsToolkit
 from omnimodkit.models_toolkit import ModelsToolkit, AvailableModelType
 from omnimodkit.base_toolkit_model import OpenAIMessage
 from motor.motor_asyncio import AsyncIOMotorDatabase
@@ -575,6 +574,6 @@ class AIAgent:
             self.logger.info(f"Generated new facts: {facts.user_facts}")
             output.generated_facts = facts.user_facts
         else:
-            self.logger.info(f"No new facts generated for the message")
+            self.logger.info("No new facts generated for the message")
             output.generated_facts = []
         return output

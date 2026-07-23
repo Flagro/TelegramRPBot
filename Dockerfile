@@ -2,12 +2,12 @@ FROM python:3.11
 
 WORKDIR /app
 
-COPY pyproject.toml poetry.lock ./
+COPY --from=ghcr.io/astral-sh/uv:0.5.31 /uv /uvx /bin/
 
-RUN pip install poetry
+COPY pyproject.toml uv.lock ./
 
-RUN poetry config virtualenvs.create false && poetry install
+RUN uv sync --frozen --no-dev
 
 COPY . .
 
-CMD ["python", "main.py"]
+CMD ["uv", "run", "--no-sync", "python", "main.py"]

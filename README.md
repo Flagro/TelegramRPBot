@@ -45,6 +45,12 @@ Note: Currently this is the work in progress.
 
 3. Compose a `.env` file locally according to the `.env.example` file. Make sure to specify proper database credentials.
 
-4. Run docker containers with `docker-compose.yaml` file by doing `docker-compose up` locally.
+4. Install Python dependencies with `uv sync --dev`.
 
-5. (Optional) TODO: for more advanced use cases you can setup environment for automatic deployment (see `.github/workflows/deploy.yaml`)
+5. Run docker containers with `docker-compose.yaml` file by doing `docker-compose up` locally.
+
+6. Run the bot locally with `uv run python main.py`.
+
+7. Run tests with `uv run pytest`.
+
+8. (Optional) TODO: for more advanced use cases you can setup environment for automatic deployment (see `.github/workflows/deploy.yaml`)

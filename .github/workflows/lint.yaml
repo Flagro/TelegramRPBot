@@ -12,33 +12,21 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version-file: '.python-version'
 
-      - name: Install lint dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install pipenv
-          pip install flake8
-          pip install pylint
-          pip install yamllint
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
 
-      - name: Install project dependencies
-        run: |
-          pip install poetry
-          poetry install
+      - name: Install dependencies
+        run: uv sync --frozen --dev
 
-      - name: Lint with flake8
-        run: |
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          flake8 . --count --exit-zero --max-complexity=10 \
-            --max-line-length=127 --statistics
+      - name: Lint Python files
+        run: uv run ruff check .
 
-      - name: Lint with pylint
-        run: |
-          pylint ./bot --exit-zero
+      - name: Run tests
+        run: uv run pytest
 
       - name: Lint YAML files
-        run: |
-          yamllint .
+        run: uv run yamllint .

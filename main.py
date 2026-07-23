@@ -1,6 +1,7 @@
 import logging
 from decouple import config
 from pathlib import Path
+from typing import Optional
 from omnimodkit.ai_config import AIConfig
 from bot.rp_bot.bot import get_rp_bot
 from bot.models.config import (
@@ -10,6 +11,14 @@ from bot.models.config import (
     LocalizerTranslations,
 )
 from bot.telegram.bot import TelegramBot
+
+
+def parse_handle_list(raw_handles: str) -> Optional[list[str]]:
+    handles = [handle.strip() for handle in raw_handles.split(",")]
+    handles = [handle for handle in handles if handle]
+    if not handles or "*" in handles:
+        return None
+    return handles
 
 
 def main():
@@ -42,8 +51,8 @@ def main():
         default_chat_modes=default_chat_modes,
         ai_config=ai_config,
         bot_config=bot_config,
-        allowed_handles=config("ALLOWED_HANDLES", "").split(",") or None,
-        admin_handles=config("ADMIN_HANDLES", "").split(",") or None,
+        allowed_handles=parse_handle_list(config("ALLOWED_HANDLES", "")),
+        admin_handles=parse_handle_list(config("ADMIN_HANDLES", "")),
         logger=logging.getLogger("RPBot"),
     )
 

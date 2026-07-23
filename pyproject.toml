@@ -1,20 +1,35 @@
-[tool.poetry]
+[project]
 name = "telegramrpbot"
-package-mode = false
 version = "0.0.0"
 description = "Bring the ability to setup a full roleplay experience in your telegram group chats."
-authors = ["Anton Potapov <fgreyeducation@gmail.com>"]
+authors = [{ name = "Anton Potapov", email = "fgreyeducation@gmail.com" }]
+requires-python = ">=3.10,<3.13"
+dependencies = [
+    "motor>=3.5.1,<4.0.0",
+    "omnimodkit==0.0.9",
+    "openai-agents>=0.2.0,<1.0.0",
+    "pydantic>=2.7.4,<3.0.0",
+    "python-decouple>=3.8,<4.0",
+    "python-telegram-bot[rate-limiter]>=21.0,<23.0",
+    "pyyaml==6.0",
+]
 
-[tool.poetry.dependencies]
-python = "^3.10"
-python-telegram-bot = {version="20.1", extras=["rate-limiter"]}
-PyYAML = "6.0"
-motor = "*"
-python-decouple = "*"
-pydantic = "^2.7.4"
-omnimodkit = "0.0.9"
-openai-agents = "*"
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0,<9.0.0",
+    "pytest-asyncio>=0.23.0,<1.0.0",
+    "ruff>=0.5.0,<1.0.0",
+    "yamllint>=1.35.0,<2.0.0",
+]
 
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
