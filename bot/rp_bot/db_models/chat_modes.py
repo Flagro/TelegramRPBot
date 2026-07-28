@@ -1,5 +1,4 @@
 from typing import List
-from pydantic import BaseModel, ConfigDict
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
@@ -7,14 +6,10 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from .base_db_model import BaseDBModel
 from ...models.config import DefaultChatModes
 from ...models.handlers_input import Context, Person
+from ..storage import ChatModeRecord
 
 
-class ChatModeResponse(BaseModel):
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-
-    id: ObjectId
-    mode_name: str
-    mode_description: str
+ChatModeResponse = ChatModeRecord
 
 
 class ChatModes(BaseDBModel):
