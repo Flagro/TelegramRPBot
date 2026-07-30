@@ -4,7 +4,6 @@ from motor.motor_asyncio import AsyncIOMotorClient
 
 from ..models.config import DefaultChatModes
 from ..models.handlers_input import Person, Context
-from .db_models.base_db_model import BaseDBModel
 from .db_models.chats import Chats
 from .db_models.user_facts import UserFacts
 from .db_models.user_introductions import UserIntroductions
@@ -12,6 +11,16 @@ from .db_models.chat_modes import ChatModes
 from .db_models.dialogs import Dialogs
 from .db_models.users import Users
 from .db_models.user_usage import UserUsage
+from .storage import (
+    BaseStore,
+    ChatModesStore,
+    ChatsStore,
+    RecentDialogStore,
+    UserFactsStore,
+    UserIntroductionsStore,
+    UsersStore,
+    UserUsageStore,
+)
 
 
 class DB:
@@ -26,17 +35,16 @@ class DB:
     ):
         client = AsyncIOMotorClient(db_uri)
         db = client.get_default_database()
-        self.users = Users(db)
-        self.user_usage = UserUsage(db, default_usage_limit)
-        self.chats = Chats(db, default_language)
-        self.user_facts = UserFacts(db)
-        self.user_introductions = UserIntroductions(db)
-        self.chat_modes = ChatModes(db, default_chat_modes)
-        self.dialogs = Dialogs(
+        self.users: UsersStore = Users(db)
+        self.user_usage: UserUsageStore = UserUsage(db, default_usage_limit)
+        self.chats: ChatsStore = Chats(db, default_language)
+        self.user_facts: UserFactsStore = UserFacts(db)
+        self.user_introductions: UserIntroductionsStore = UserIntroductions(db)
+        self.chat_modes: ChatModesStore = ChatModes(db, default_chat_modes)
+        self.dialogs: RecentDialogStore = Dialogs(
             db, last_n_messages_to_remember, last_n_messages_to_store
         )
-        # TODO: deduplicate this
-        self.models: List[BaseDBModel] = [
+        self.models: List[BaseStore] = [
             self.users,
             self.user_usage,
             self.chats,
