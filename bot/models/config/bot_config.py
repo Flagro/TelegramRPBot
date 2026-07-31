@@ -4,6 +4,14 @@ from pydantic import Field
 from .base_config import BaseYAMLConfigModel
 
 
+class MessageStorageConfig(BaseYAMLConfigModel):
+    mode: Literal["off", "ephemeral", "persistent_recent", "persistent_full"] = (
+        "persistent_recent"
+    )
+    ttl_seconds: int = 21600
+    max_messages: int = 50
+
+
 class MemoryConfig(BaseYAMLConfigModel):
     enabled: bool = False
     strategy: Literal[
@@ -31,4 +39,5 @@ class BotConfig(BaseYAMLConfigModel):
     last_n_messages_to_remember: int
     last_n_messages_to_store: Optional[int] = None
     default_usage_limit: int
+    message_storage: MessageStorageConfig = Field(default_factory=MessageStorageConfig)
     memory: MemoryConfig = Field(default_factory=MemoryConfig)
