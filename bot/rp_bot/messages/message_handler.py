@@ -11,6 +11,26 @@ class MessageHandler(RPBotMessageHandler):
     needs_terms_accepted = True
     permission_classes = (AllowedUser, NotBanned)
 
+    def should_persist_dialog_messages(self) -> bool:
+        message_storage = getattr(self.bot_config, "message_storage", None)
+        storage_mode = getattr(message_storage, "mode", "persistent_recent")
+        return storage_mode in {"persistent_recent", "persistent_full"}
+
+    async def persist_dialog_message(
+        self,
+        *,
+        context: Context,
+        person: Person | str,
+        transcribed_message: TranscribedMessage,
+    ) -> None:
+        if not self.should_persist_dialog_messages():
+            return
+        await self.db.dialogs.add_message_to_dialog(
+            context=context,
+            person=person,
+            transcribed_message=transcribed_message,
+        )
+
     async def is_usage_under_limit(
         self, person: Person, context: Context, message: Message
     ) -> bool:
@@ -80,11 +100,10 @@ class MessageHandler(RPBotMessageHandler):
 
         # Determine if we should engage or just save to DB
         should_engage = engage_is_needed or context.is_bot_mentioned
-        save_message_to_db = True
 
-        if save_message_to_db and not should_engage:
+        if not should_engage:
             # Save message without transcribing to save resources
-            await self.db.dialogs.add_message_to_dialog(
+            await self.persist_dialog_message(
                 context=context,
                 person=person,
                 transcribed_message=TranscribedMessage(
@@ -92,13 +111,16 @@ class MessageHandler(RPBotMessageHandler):
                     timestamp=message.timestamp,
                 ),
             )
-            self.logger.info(
-                f"Saving the message from {person.user_handle} in chat {context.chat_id} "
-                "as context for future responses and not generating a response"
-            )
-            return
-
-        if not should_engage:
+            if self.should_persist_dialog_messages():
+                self.logger.info(
+                    f"Saving the message from {person.user_handle} in chat {context.chat_id} "
+                    "as context for future responses and not generating a response"
+                )
+            else:
+                self.logger.info(
+                    f"Not persisting the message from {person.user_handle} in chat {context.chat_id} "
+                    "and not generating a response"
+                )
             return
 
         if not context.is_bot_mentioned and engage_is_needed:
@@ -144,7 +166,7 @@ class MessageHandler(RPBotMessageHandler):
             yield response
 
         if agent_response:
-            await self.db.dialogs.add_message_to_dialog(
+            await self.persist_dialog_message(
                 context=context,
                 person=person,
                 transcribed_message=agent_response.transcribed_user_message,
@@ -152,7 +174,7 @@ class MessageHandler(RPBotMessageHandler):
             await self.db.user_usage.add_usage_points(
                 person=person, points=agent_response.total_price
             )
-            await self.db.dialogs.add_message_to_dialog(
+            await self.persist_dialog_message(
                 context=context,
                 person="bot",
                 transcribed_message=TranscribedMessage(
@@ -174,7 +196,7 @@ class MessageHandler(RPBotMessageHandler):
                 f"with usage of {agent_response.total_price}"
             )
         else:
-            await self.db.dialogs.add_message_to_dialog(
+            await self.persist_dialog_message(
                 context=context,
                 person=person,
                 transcribed_message=TranscribedMessage(

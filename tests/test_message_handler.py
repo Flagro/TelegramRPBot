@@ -114,6 +114,7 @@ def build_handler(
     conversation_tracker_enabled: bool = False,
     autoengage_enabled: bool = False,
     autofact_enabled: bool = False,
+    message_storage_mode: str = "persistent_recent",
     usage: float = 0,
     limit: float = 100,
     estimated_price: float = 1,
@@ -136,7 +137,9 @@ def build_handler(
         prompt_manager=None,
         memory_manager=None,
         auth=None,
-        bot_config=None,
+        bot_config=SimpleNamespace(
+            message_storage=SimpleNamespace(mode=message_storage_mode)
+        ),
         logger=getLogger("test-message-handler"),
     )
 
@@ -184,6 +187,20 @@ async def test_stream_get_response_saves_context_without_ai_when_not_mentioned(p
     saved_message = handler.db.dialogs.messages[0]
     assert saved_message["person"] == person
     assert saved_message["transcribed_message"].message_text == "hello"
+    assert handler.db.user_usage.added_points == []
+
+
+@pytest.mark.asyncio
+async def test_stream_get_response_skips_context_persistence_in_ephemeral_mode(person):
+    handler = build_handler(
+        conversation_tracker_enabled=True,
+        message_storage_mode="ephemeral",
+    )
+
+    responses = await collect_stream(handler, person, context(is_bot_mentioned=False))
+
+    assert responses == []
+    assert handler.db.dialogs.messages == []
     assert handler.db.user_usage.added_points == []
 
 
@@ -247,6 +264,53 @@ async def test_stream_get_response_records_dialog_usage_and_facts_after_agent_re
         handler.db.dialogs.messages[1]["transcribed_message"].message_text
         == "Bot reply"
     )
+    assert handler.db.user_facts.facts == [
+        {
+            "context": context(is_bot_mentioned=True),
+            "facts_user_handle": "@ada",
+            "fact": "Ada likes tests.",
+            "created_by": "autofact",
+        }
+    ]
+
+
+@pytest.mark.asyncio
+async def test_stream_get_response_keeps_usage_and_facts_without_persisted_dialogs(
+    monkeypatch,
+    person,
+):
+    class FakeAIAgent:
+        def __init__(self, **kwargs) -> None:
+            self.kwargs = kwargs
+
+        async def astream(self):
+            yield AIAgentStreamingResponse(
+                total_text="Bot reply",
+                total_price=3.5,
+                transcribed_user_message=TranscribedMessage(
+                    message_text="User transcript",
+                    timestamp=datetime(2026, 7, 24),
+                ),
+                generated_facts=[
+                    ChatFact(user_handle="@ada", user_fact="Ada likes tests.")
+                ],
+            )
+
+    monkeypatch.setattr(
+        "bot.rp_bot.messages.message_handler.AIAgent",
+        FakeAIAgent,
+    )
+    handler = build_handler(
+        autofact_enabled=True,
+        message_storage_mode="ephemeral",
+    )
+
+    responses = await collect_stream(handler, person, context(is_bot_mentioned=True))
+
+    assert len(responses) == 1
+    assert responses[0].text == "streaming_message_response"
+    assert handler.db.dialogs.messages == []
+    assert handler.db.user_usage.added_points == [{"person": person, "points": 3.5}]
     assert handler.db.user_facts.facts == [
         {
             "context": context(is_bot_mentioned=True),
