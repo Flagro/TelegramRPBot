@@ -3,6 +3,10 @@ BotConfig:
   last_n_messages_to_remember: 25
   last_n_messages_to_store: 50
   default_usage_limit: 1000000000
+  message_storage:
+    mode: "persistent_recent"
+    ttl_seconds: 21600
+    max_messages: 50
   memory:
     enabled: false
     strategy: "legacy_prompt"
